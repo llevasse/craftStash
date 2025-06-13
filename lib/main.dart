@@ -2,6 +2,7 @@ import 'package:craft_stash/class/yarn.dart';
 import 'package:craft_stash/pages/patterns.dart';
 import 'package:craft_stash/pages/yarn_stash.dart';
 import 'package:craft_stash/services/database_service.dart';
+import 'package:craft_stash/widgets/add_item_button.dart';
 import 'package:flutter/material.dart';
 
 Future<void> main() async {
@@ -76,26 +77,9 @@ class _MyHomePageState extends State<MyHomePage>
           controller: _tabController,
           children: [YarnStashPage(), PatternsPage()],
         ),
-        floatingActionButton: OutlinedButton(
+        floatingActionButton: AddItemButton(
+          text: actionButtonText[_tabController.index],
           onPressed: () {},
-
-          style: ButtonStyle(
-            side: WidgetStatePropertyAll(
-              BorderSide(color: theme.colorScheme.primary, width: 5),
-            ),
-            shape: WidgetStatePropertyAll(
-              RoundedSuperellipseBorder(
-                borderRadius: BorderRadiusGeometry.all(Radius.circular(18)),
-              ),
-            ),
-
-            backgroundColor: WidgetStateProperty.all(Colors.white),
-          ),
-          child: Text(
-            actionButtonText[_tabController.index],
-            style: TextStyle(color: theme.colorScheme.secondary),
-            textScaler: TextScaler.linear(1.25),
-          ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         bottomNavigationBar: BottomAppBar(
@@ -107,6 +91,7 @@ class _MyHomePageState extends State<MyHomePage>
             indicatorColor: theme.colorScheme.tertiary,
             unselectedLabelColor: theme.colorScheme.secondary,
             dividerColor: theme.colorScheme.primary,
+            textScaler: TextScaler.linear(1.25),
             tabs: [
               Tab(text: "Yarn"),
               Tab(text: "Patterns"),
