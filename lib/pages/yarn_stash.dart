@@ -13,16 +13,17 @@ class _YarnStashPageState extends State<YarnStashPage> {
 
   Future<void> _getAllYarns() async {
     yarns = await getAllYarn();
+    setState(() {});
   }
 
   @override
   void initState() {
-    super.initState();
     try {
       _getAllYarns();
     } catch (e) {
       print(e);
     }
+    super.initState();
   }
 
   @override

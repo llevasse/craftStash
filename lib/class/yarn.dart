@@ -78,3 +78,12 @@ Future<List<Yarn>> getAllYarn() async {
     throw DatabaseDoesNotExistException("Could not get database");
   }
 }
+
+Future<void> removeAllYarn() async {
+  final db = (await DbService().database);
+  if (db != null) {
+    db.rawDelete('DELETE FROM yarn');
+  } else {
+    throw DatabaseDoesNotExistException("Could not get database");
+  }
+}

@@ -6,10 +6,11 @@ import 'package:flutter/material.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // await removeAllYarn();
   // await insertYarnInDb(
   //   Yarn(
   //     color: Colors.pink.toARGB32(),
-  //     brand: "Phildart",
+  //     brand: "Phildar",
   //     material: "Coton",
   //     colorName: "Pink",
   //     minHook: 2.5,
@@ -46,18 +47,62 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  List<String> actionButtonText = ["Add yarn", "Add pattern"];
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(() {
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        body: TabBarView(children: [YarnStashPage(), PatternsPage()]),
+        body: TabBarView(
+          controller: _tabController,
+          children: [YarnStashPage(), PatternsPage()],
+        ),
+        floatingActionButton: OutlinedButton(
+          onPressed: () {},
+
+          style: ButtonStyle(
+            side: WidgetStatePropertyAll(
+              BorderSide(color: theme.colorScheme.primary, width: 5),
+            ),
+            shape: WidgetStatePropertyAll(
+              RoundedSuperellipseBorder(
+                borderRadius: BorderRadiusGeometry.all(Radius.circular(18)),
+              ),
+            ),
+
+            backgroundColor: WidgetStateProperty.all(Colors.white),
+          ),
+          child: Text(
+            actionButtonText[_tabController.index],
+            style: TextStyle(color: theme.colorScheme.secondary),
+            textScaler: TextScaler.linear(1.25),
+          ),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         bottomNavigationBar: BottomAppBar(
           color: theme.colorScheme.primary,
 
           child: TabBar(
+            controller: _tabController,
             labelColor: theme.colorScheme.tertiary,
             indicatorColor: theme.colorScheme.tertiary,
             unselectedLabelColor: theme.colorScheme.secondary,
