@@ -1,8 +1,23 @@
+import 'package:craft_stash/class/yarn.dart';
 import 'package:craft_stash/pages/patterns.dart';
 import 'package:craft_stash/pages/yarn_stash.dart';
+import 'package:craft_stash/services/database_service.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // await insertYarnInDb(
+  //   Yarn(
+  //     color: Colors.pink.toARGB32(),
+  //     brand: "Phildart",
+  //     material: "Coton",
+  //     colorName: "Pink",
+  //     minHook: 2.5,
+  //     maxHook: 3.5,
+  //     thickness: 3,
+  //     nbOfSkeins: 1,
+  //   ),
+  // );
   runApp(const MyApp());
 }
 

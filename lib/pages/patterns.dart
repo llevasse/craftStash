@@ -1,4 +1,4 @@
-import 'package:craft_stash/class/Yarn.dart';
+import 'package:craft_stash/class/yarn.dart';
 import 'package:flutter/material.dart';
 
 class PatternsPage extends StatefulWidget {
