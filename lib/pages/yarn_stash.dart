@@ -11,7 +11,7 @@ class YarnStashPage extends StatefulWidget {
 class _YarnStashPageState extends State<YarnStashPage> {
   List<Yarn> yarns = List.empty(growable: true);
 
-  Future<void> _getAllYarns() async {
+  Future<void> getAllYarns() async {
     yarns = await getAllYarn();
     setState(() {});
   }
@@ -19,7 +19,7 @@ class _YarnStashPageState extends State<YarnStashPage> {
   @override
   void initState() {
     try {
-      _getAllYarns();
+      getAllYarns();
     } catch (e) {
       print(e);
     }

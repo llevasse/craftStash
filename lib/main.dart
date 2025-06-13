@@ -2,6 +2,7 @@ import 'package:craft_stash/class/yarn.dart';
 import 'package:craft_stash/pages/patterns.dart';
 import 'package:craft_stash/pages/yarn_stash.dart';
 import 'package:craft_stash/services/database_service.dart';
+import 'package:craft_stash/widgets/addYarnButton.dart';
 import 'package:craft_stash/widgets/add_item_button.dart';
 import 'package:flutter/material.dart';
 
@@ -51,7 +52,15 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  List<String> actionButtonText = ["Add yarn", "Add pattern"];
+
+  void update() {
+    setState(() {});
+  }
+
+  List<Widget> actionButtons = [
+    AddYarnButton(updateYarn: () {}),
+    AddItemButton(text: "Add pattern", onPressed: () {}),
+  ];
   @override
   void initState() {
     super.initState();
@@ -77,10 +86,7 @@ class _MyHomePageState extends State<MyHomePage>
           controller: _tabController,
           children: [YarnStashPage(), PatternsPage()],
         ),
-        floatingActionButton: AddItemButton(
-          text: actionButtonText[_tabController.index],
-          onPressed: () {},
-        ),
+        floatingActionButton: actionButtons[_tabController.index],
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         bottomNavigationBar: BottomAppBar(
           color: theme.colorScheme.primary,
