@@ -4,6 +4,7 @@ import 'dart:ffi';
 import 'package:craft_stash/class/yarn.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class AddYarnButton extends StatefulWidget {
   final Future<void> Function() updateYarn;
@@ -25,8 +26,9 @@ class _AddYarnButton extends State<AddYarnButton> {
   List<MenuEntry> materialMenuEntries = List.empty(growable: true);
 
   String _brand = "Unknown", _colorName = "Unknown", _material = "Unknown";
-  int _color = 0, _nbSkeins = 1;
+  int _nbSkeins = 1;
   double _minHook = 0, _maxHook = 0, _thickness = 0;
+  Color _pickerColor = Colors.amber;
 
   Future<List<String>> getAllBrandsAsList() async {
     final db = (await DbService().database);
@@ -79,6 +81,32 @@ class _AddYarnButton extends State<AddYarnButton> {
     setState(() {});
   }
 
+  void changeColor(Color color) {
+    setState(() => _pickerColor = color);
+  }
+
+  Future<dynamic> _createColorPickerPopup(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text("Pick a color"),
+        content: ColorPicker(
+          pickerColor: _pickerColor,
+          onColorChanged: changeColor,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              setState(() {});
+            },
+            child: Text("Select"),
+          ),
+        ],
+      ),
+    );
+  }
+
   Form _createForm() {
     return Form(
       key: _formKey,
@@ -89,6 +117,24 @@ class _AddYarnButton extends State<AddYarnButton> {
           child: ListView(
             //spacing: spacing,
             children: [
+              Row(
+                children: [
+                  Expanded(child: Container(height: 20, color: _pickerColor)),
+
+                  TextButton(
+                    onPressed: () {
+                      _createColorPickerPopup(context);
+                    },
+                    child: const Text(
+                      "Pick a color",
+                      softWrap: false,
+                      overflow: TextOverflow.visible,
+                    ),
+                  ),
+                  Expanded(child: Container(height: 20, color: _pickerColor)),
+                ],
+              ),
+
               TextFormField(
                 keyboardType: TextInputType.numberWithOptions(),
                 decoration: InputDecoration(label: Text("Min hook size")),
@@ -103,6 +149,7 @@ class _AddYarnButton extends State<AddYarnButton> {
                   _minHook = double.parse(newValue);
                 },
               ),
+
               TextFormField(
                 decoration: InputDecoration(label: Text("Color name")),
                 validator: (value) {
@@ -116,6 +163,7 @@ class _AddYarnButton extends State<AddYarnButton> {
                   _colorName = newValue;
                 },
               ),
+
               DropdownMenu(
                 inputDecorationTheme: InputDecorationTheme(
                   border: InputBorder.none,
@@ -154,6 +202,7 @@ class _AddYarnButton extends State<AddYarnButton> {
                   _thickness = double.parse(newValue);
                 },
               ),
+
               TextFormField(
                 keyboardType: TextInputType.numberWithOptions(),
                 decoration: InputDecoration(label: Text("Min hook size")),
@@ -168,6 +217,7 @@ class _AddYarnButton extends State<AddYarnButton> {
                   _minHook = double.parse(newValue);
                 },
               ),
+
               TextFormField(
                 keyboardType: TextInputType.numberWithOptions(),
                 decoration: InputDecoration(label: Text("Max hook size")),
@@ -221,7 +271,7 @@ class _AddYarnButton extends State<AddYarnButton> {
                 _formKey.currentState!.save();
                 await insertYarnInDb(
                   Yarn(
-                    color: _color,
+                    color: _pickerColor.toARGB32(),
                     brand: _brand,
                     material: _material,
                     colorName: _colorName,
