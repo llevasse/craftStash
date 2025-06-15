@@ -1,34 +1,45 @@
-import 'dart:collection';
-import 'dart:ffi';
-
 import 'package:craft_stash/class/yarn.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
-class AddYarnButton extends StatefulWidget {
+class YarnForm extends StatefulWidget {
   final Future<void> Function() updateYarn;
+  String confirm;
+  String cancel;
+  String title;
+  Yarn base;
 
-  const AddYarnButton({super.key, required this.updateYarn});
+  YarnForm({
+    super.key,
+    required this.base,
+    required this.updateYarn,
+    required this.confirm,
+    required this.cancel,
+    required this.title,
+  });
 
   @override
-  State<StatefulWidget> createState() => _AddYarnButton();
+  State<StatefulWidget> createState() => _YarnForm();
 }
 
 typedef MenuEntry = DropdownMenuEntry<String>;
 
-class _AddYarnButton extends State<AddYarnButton> {
+class _YarnForm extends State<YarnForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  List<String> brandList = List.empty(growable: true);
-  List<String> materialList = List.empty(growable: true);
-  List<MenuEntry> brandMenuEntries = List.empty(growable: true);
-  List<MenuEntry> materialMenuEntries = List.empty(growable: true);
-
-  String _brand = "Unknown", _colorName = "Unknown", _material = "Unknown";
-  int _nbSkeins = 1;
-  double _minHook = 0, _maxHook = 0, _thickness = 0;
-  Color _pickerColor = Colors.amber;
+  List<String> brandList = List.filled(1, "Unknown", growable: true);
+  List<String> materialList = List.filled(1, "Unknown", growable: true);
+  List<MenuEntry> brandMenuEntries = List.filled(
+    1,
+    MenuEntry(label: "Unknown", value: "Unknown"),
+    growable: true,
+  );
+  List<MenuEntry> materialMenuEntries = List.filled(
+    1,
+    MenuEntry(label: "Unknown", value: "Unknown"),
+    growable: true,
+  );
 
   Future<List<String>> getAllBrandsAsList() async {
     final db = (await DbService().database);
@@ -61,28 +72,33 @@ class _AddYarnButton extends State<AddYarnButton> {
   Future<void> updateDropdownMenuList() async {
     await getAllBrandsAsList();
     await getAllMaterialsAsList();
-    brandMenuEntries.clear();
-    materialMenuEntries.clear();
+    List<MenuEntry> brandMenuEntriesTmp = List.empty(growable: true);
+    List<MenuEntry> materialMenuEntriesTmp = List.empty(growable: true);
     for (String brand in brandList) {
-      brandMenuEntries.add(DropdownMenuEntry(value: brand, label: brand));
+      brandMenuEntriesTmp.add(DropdownMenuEntry(value: brand, label: brand));
     }
-    brandMenuEntries.add(DropdownMenuEntry(value: "Unknown", label: "Unknown"));
-    brandMenuEntries.add(DropdownMenuEntry(value: "New", label: "New"));
+    brandMenuEntriesTmp.add(
+      DropdownMenuEntry(value: "Unknown", label: "Unknown"),
+    );
+    brandMenuEntriesTmp.add(DropdownMenuEntry(value: "New", label: "New"));
 
     for (String material in materialList) {
-      materialMenuEntries.add(
+      materialMenuEntriesTmp.add(
         DropdownMenuEntry(value: material, label: material),
       );
     }
-    materialMenuEntries.add(
+    materialMenuEntriesTmp.add(
       DropdownMenuEntry(value: "Unknown", label: "Unknown"),
     );
-    materialMenuEntries.add(DropdownMenuEntry(value: "New", label: "New"));
-    setState(() {});
+    materialMenuEntriesTmp.add(DropdownMenuEntry(value: "New", label: "New"));
+    setState(() {
+      brandMenuEntries = brandMenuEntriesTmp;
+      materialMenuEntries = materialMenuEntriesTmp;
+    });
   }
 
   void changeColor(Color color) {
-    setState(() => _pickerColor = color);
+    setState(() => widget.base.color = color.toARGB32());
   }
 
   Future<dynamic> _createColorPickerPopup(BuildContext context) {
@@ -91,7 +107,7 @@ class _AddYarnButton extends State<AddYarnButton> {
       builder: (BuildContext context) => AlertDialog(
         title: const Text("Pick a color"),
         content: ColorPicker(
-          pickerColor: _pickerColor,
+          pickerColor: Color(widget.base.color),
           onColorChanged: changeColor,
         ),
         actions: [
@@ -107,6 +123,30 @@ class _AddYarnButton extends State<AddYarnButton> {
     );
   }
 
+  Widget getBrandDropdownMenu() {
+    return DropdownMenu(
+      inputDecorationTheme: InputDecorationTheme(border: InputBorder.none),
+      expandedInsets: EdgeInsets.all(0),
+      dropdownMenuEntries: brandMenuEntries,
+      initialSelection: widget.base.brand,
+      onSelected: (value) {
+        widget.base.brand = value!;
+      },
+    );
+  }
+
+  Widget getMaterialDropdownMenu() {
+    return DropdownMenu(
+      inputDecorationTheme: InputDecorationTheme(border: InputBorder.none),
+      expandedInsets: EdgeInsets.all(0),
+      dropdownMenuEntries: materialMenuEntries,
+      initialSelection: widget.base.material,
+      onSelected: (value) {
+        widget.base.material = value!;
+      },
+    );
+  }
+
   Form _createForm() {
     return Form(
       key: _formKey,
@@ -119,7 +159,12 @@ class _AddYarnButton extends State<AddYarnButton> {
             children: [
               Row(
                 children: [
-                  Expanded(child: Container(height: 20, color: _pickerColor)),
+                  Expanded(
+                    child: Container(
+                      height: 20,
+                      color: Color(widget.base.color),
+                    ),
+                  ),
 
                   TextButton(
                     onPressed: () {
@@ -131,24 +176,18 @@ class _AddYarnButton extends State<AddYarnButton> {
                       overflow: TextOverflow.visible,
                     ),
                   ),
-                  Expanded(child: Container(height: 20, color: _pickerColor)),
+                  Expanded(
+                    child: Container(
+                      height: 20,
+                      color: Color(widget.base.color),
+                    ),
+                  ),
                 ],
               ),
 
-              TextFormField(
-                keyboardType: TextInputType.numberWithOptions(),
-                decoration: InputDecoration(label: Text("Min hook size")),
-                validator: (value) {
-                  return null;
-                },
-                onSaved: (newValue) {
-                  newValue = newValue?.trim();
-                  if (newValue == null || newValue.isEmpty) {
-                    newValue = "0.0";
-                  }
-                  _minHook = double.parse(newValue);
-                },
-              ),
+              getBrandDropdownMenu(),
+
+              getMaterialDropdownMenu(),
 
               TextFormField(
                 decoration: InputDecoration(label: Text("Color name")),
@@ -160,31 +199,7 @@ class _AddYarnButton extends State<AddYarnButton> {
                   if (newValue == null || newValue.isEmpty) {
                     newValue = "Unknown";
                   }
-                  _colorName = newValue;
-                },
-              ),
-
-              DropdownMenu(
-                inputDecorationTheme: InputDecorationTheme(
-                  border: InputBorder.none,
-                ),
-                expandedInsets: EdgeInsets.all(0),
-                dropdownMenuEntries: brandMenuEntries,
-                initialSelection: _brand,
-                onSelected: (value) {
-                  _brand = value!;
-                },
-              ),
-
-              DropdownMenu(
-                inputDecorationTheme: InputDecorationTheme(
-                  border: InputBorder.none,
-                ),
-                expandedInsets: EdgeInsets.all(0),
-                dropdownMenuEntries: materialMenuEntries,
-                initialSelection: _material,
-                onSelected: (value) {
-                  _material = value!;
+                  widget.base.colorName = newValue;
                 },
               ),
 
@@ -199,7 +214,7 @@ class _AddYarnButton extends State<AddYarnButton> {
                   if (newValue == null || newValue.isEmpty) {
                     newValue = "0.0";
                   }
-                  _thickness = double.parse(newValue);
+                  widget.base.thickness = double.parse(newValue);
                 },
               ),
 
@@ -214,7 +229,7 @@ class _AddYarnButton extends State<AddYarnButton> {
                   if (newValue == null || newValue.isEmpty) {
                     newValue = "0.0";
                   }
-                  _minHook = double.parse(newValue);
+                  widget.base.minHook = double.parse(newValue);
                 },
               ),
 
@@ -229,7 +244,7 @@ class _AddYarnButton extends State<AddYarnButton> {
                   if (newValue == null || newValue.isEmpty) {
                     newValue = "0.0";
                   }
-                  _maxHook = double.parse(newValue);
+                  widget.base.maxHook = double.parse(newValue);
                 },
               ),
 
@@ -244,51 +259,12 @@ class _AddYarnButton extends State<AddYarnButton> {
                   if (newValue == null || newValue.isEmpty) {
                     newValue = "1";
                   }
-                  _nbSkeins = int.parse(newValue);
+                  widget.base.nbOfSkeins = int.parse(newValue);
                 },
               ),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Future<dynamic> createFormPopup(BuildContext context) {
-    return showDialog<String>(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-        title: const Text('Add Yarn'),
-        content: _createForm(),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () async {
-              if (_formKey.currentState!.validate()) {
-                _formKey.currentState!.save();
-                await insertYarnInDb(
-                  Yarn(
-                    color: _pickerColor.toARGB32(),
-                    brand: _brand,
-                    material: _material,
-                    colorName: _colorName,
-                    minHook: _minHook,
-                    maxHook: _maxHook,
-                    thickness: _thickness,
-                    nbOfSkeins: _nbSkeins,
-                  ),
-                );
-              }
-              await widget.updateYarn();
-              Navigator.pop(context);
-              setState(() {});
-            },
-            child: const Text('Add'),
-          ),
-        ],
       ),
     );
   }
@@ -301,27 +277,27 @@ class _AddYarnButton extends State<AddYarnButton> {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData theme = Theme.of(context);
-    return OutlinedButton(
-      onPressed: () => createFormPopup(context),
-
-      style: ButtonStyle(
-        side: WidgetStatePropertyAll(
-          BorderSide(color: theme.colorScheme.primary, width: 5),
+    return AlertDialog(
+      title: Text(widget.title),
+      content: _createForm(),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(widget.cancel),
         ),
-        shape: WidgetStatePropertyAll(
-          RoundedSuperellipseBorder(
-            borderRadius: BorderRadiusGeometry.all(Radius.circular(18)),
-          ),
+        TextButton(
+          onPressed: () async {
+            if (_formKey.currentState!.validate()) {
+              _formKey.currentState!.save();
+              await insertYarnInDb(widget.base);
+            }
+            await widget.updateYarn();
+            Navigator.pop(context);
+            setState(() {});
+          },
+          child: Text(widget.confirm),
         ),
-
-        backgroundColor: WidgetStateProperty.all(Colors.white),
-      ),
-      child: Text(
-        "Add yarn",
-        style: TextStyle(color: theme.colorScheme.secondary),
-        textScaler: TextScaler.linear(1.25),
-      ),
+      ],
     );
   }
 }

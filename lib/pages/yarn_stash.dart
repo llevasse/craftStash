@@ -55,6 +55,7 @@ class _YarnStashPageState extends State<YarnStashPage> {
               "Min hook : ${yarns[index].minHook.toStringAsFixed(2)}mm, Max hook : ${yarns[index].maxHook.toStringAsFixed(2)}mm",
             ),
             trailing: Text("${yarns[index].nbOfSkeins} skeins"),
+            onTap: () {},
           );
         },
         separatorBuilder: (context, index) =>
