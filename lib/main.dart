@@ -51,16 +51,13 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
+  late Future<void> Function() updateYarn;
   late TabController _tabController;
 
   void update() {
     setState(() {});
   }
 
-  List<Widget> actionButtons = [
-    AddYarnButton(updateYarn: () {}),
-    AddItemButton(text: "Add pattern", onPressed: () {}),
-  ];
   @override
   void initState() {
     super.initState();
@@ -78,13 +75,29 @@ class _MyHomePageState extends State<MyHomePage>
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> actionButtons = [
+      AddYarnButton(
+        updateYarn: () async {
+          updateYarn.call();
+        },
+      ),
+      AddItemButton(text: "Add pattern", onPressed: () {}),
+    ];
+
     ThemeData theme = Theme.of(context);
     return DefaultTabController(
       length: 2,
       child: Scaffold(
         body: TabBarView(
           controller: _tabController,
-          children: [YarnStashPage(), PatternsPage()],
+          children: [
+            YarnStashPage(
+              builder: (BuildContext context, Future<void> Function() method) {
+                updateYarn = method;
+              },
+            ),
+            PatternsPage(),
+          ],
         ),
         floatingActionButton: actionButtons[_tabController.index],
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

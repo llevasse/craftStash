@@ -6,7 +6,7 @@ import 'package:craft_stash/services/database_service.dart';
 import 'package:flutter/material.dart';
 
 class AddYarnButton extends StatefulWidget {
-  final Function() updateYarn;
+  final Future<void> Function() updateYarn;
 
   const AddYarnButton({super.key, required this.updateYarn});
 
@@ -80,7 +80,6 @@ class _AddYarnButton extends State<AddYarnButton> {
   }
 
   Form _createForm() {
-    double spacing = 10;
     return Form(
       key: _formKey,
       child: IntrinsicHeight(
@@ -233,7 +232,7 @@ class _AddYarnButton extends State<AddYarnButton> {
                   ),
                 );
               }
-              widget.updateYarn();
+              await widget.updateYarn();
               Navigator.pop(context);
               setState(() {});
             },

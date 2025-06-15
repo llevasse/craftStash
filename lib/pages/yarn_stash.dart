@@ -1,8 +1,12 @@
 import 'package:craft_stash/class/yarn.dart';
 import 'package:flutter/material.dart';
 
+typedef MyBuilder =
+    void Function(BuildContext context, Future<void> Function() updateYarn);
+
 class YarnStashPage extends StatefulWidget {
-  const YarnStashPage({super.key});
+  final MyBuilder builder;
+  const YarnStashPage({super.key, required this.builder});
 
   @override
   State<YarnStashPage> createState() => _YarnStashPageState();
@@ -12,6 +16,7 @@ class _YarnStashPageState extends State<YarnStashPage> {
   List<Yarn> yarns = List.empty(growable: true);
 
   Future<void> getAllYarns() async {
+    print("Update yarn");
     yarns = await getAllYarn();
     setState(() {});
   }
@@ -28,6 +33,7 @@ class _YarnStashPageState extends State<YarnStashPage> {
 
   @override
   Widget build(BuildContext context) {
+    widget.builder.call(context, getAllYarns);
     ThemeData theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
