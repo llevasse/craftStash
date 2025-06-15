@@ -2,18 +2,23 @@ import 'package:craft_stash/class/yarn.dart';
 import 'package:craft_stash/widgets/yarnButtons/yarn_form.dart';
 import 'package:flutter/material.dart';
 
-class AddYarnButton extends StatefulWidget {
+class EditYarnButton extends StatefulWidget {
   final Future<void> Function() updateYarn;
+  Yarn currentYarn;
 
-  const AddYarnButton({super.key, required this.updateYarn});
+  EditYarnButton({
+    super.key,
+    required this.updateYarn,
+    required this.currentYarn,
+  });
 
   @override
-  State<StatefulWidget> createState() => _AddYarnButton();
+  State<StatefulWidget> createState() => _EditYarnButton();
 }
 
 typedef MenuEntry = DropdownMenuEntry<String>;
 
-class _AddYarnButton extends State<AddYarnButton> {
+class _EditYarnButton extends State<EditYarnButton> {
   @override
   void initState() {
     super.initState();
@@ -22,34 +27,29 @@ class _AddYarnButton extends State<AddYarnButton> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
-    return OutlinedButton(
-      onPressed: () => showDialog(
+    return ListTile(
+      leading: Container(
+        width: 30,
+        height: 30,
+        color: Color(widget.currentYarn.color),
+      ),
+      title: Text(
+        "${widget.currentYarn.colorName}, ${widget.currentYarn.brand}, ${widget.currentYarn.material}, ${widget.currentYarn.thickness.toStringAsFixed(2)}mm",
+      ),
+      subtitle: Text(
+        "Min hook : ${widget.currentYarn.minHook.toStringAsFixed(2)}mm, Max hook : ${widget.currentYarn.maxHook.toStringAsFixed(2)}mm",
+      ),
+      trailing: Text("${widget.currentYarn.nbOfSkeins} skeins"),
+      onTap: () => showDialog(
         context: context,
         builder: (BuildContext context) => YarnForm(
-          base: Yarn(color: Colors.amber.toARGB32()),
+          base: widget.currentYarn,
           updateYarn: widget.updateYarn,
-          title: "Add yarn",
+          ifValideFunction: updateYarnInDb,
+          title: "Edit yarn",
           cancel: "Cancel",
-          confirm: "Add",
+          confirm: "Edit",
         ),
-      ),
-
-      style: ButtonStyle(
-        side: WidgetStatePropertyAll(
-          BorderSide(color: theme.colorScheme.primary, width: 5),
-        ),
-        shape: WidgetStatePropertyAll(
-          RoundedSuperellipseBorder(
-            borderRadius: BorderRadiusGeometry.all(Radius.circular(18)),
-          ),
-        ),
-
-        backgroundColor: WidgetStateProperty.all(Colors.white),
-      ),
-      child: Text(
-        "Add yarn",
-        style: TextStyle(color: theme.colorScheme.secondary),
-        textScaler: TextScaler.linear(1.25),
       ),
     );
   }

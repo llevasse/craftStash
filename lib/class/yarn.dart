@@ -1,4 +1,5 @@
 import 'package:craft_stash/services/database_service.dart';
+import 'package:sqflite/sqflite.dart';
 
 class Yarn {
   Yarn({
@@ -39,7 +40,20 @@ class Yarn {
 Future<void> insertYarnInDb(Yarn yarn) async {
   final db = (await DbService().database);
   if (db != null) {
-    db.insert('yarn', yarn.toMap());
+    db.insert(
+      'yarn',
+      yarn.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  } else {
+    throw DatabaseDoesNotExistException("Could not get database");
+  }
+}
+
+Future<void> updateYarnInDb(Yarn yarn) async {
+  final db = (await DbService().database);
+  if (db != null) {
+    db.update('yarn', yarn.toMap(), where: "id = ?", whereArgs: [yarn.id]);
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }

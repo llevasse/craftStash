@@ -28,6 +28,7 @@ class _AddYarnButton extends State<AddYarnButton> {
         builder: (BuildContext context) => YarnForm(
           base: Yarn(color: Colors.amber.toARGB32()),
           updateYarn: widget.updateYarn,
+          ifValideFunction: insertYarnInDb,
           title: "Add yarn",
           cancel: "Cancel",
           confirm: "Add",

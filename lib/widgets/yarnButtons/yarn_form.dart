@@ -5,6 +5,7 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class YarnForm extends StatefulWidget {
   final Future<void> Function() updateYarn;
+  final Future<void> Function(Yarn) ifValideFunction;
   String confirm;
   String cancel;
   String title;
@@ -14,6 +15,7 @@ class YarnForm extends StatefulWidget {
     super.key,
     required this.base,
     required this.updateYarn,
+    required this.ifValideFunction,
     required this.confirm,
     required this.cancel,
     required this.title,
@@ -28,18 +30,10 @@ typedef MenuEntry = DropdownMenuEntry<String>;
 class _YarnForm extends State<YarnForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  List<String> brandList = List.filled(1, "Unknown", growable: true);
-  List<String> materialList = List.filled(1, "Unknown", growable: true);
-  List<MenuEntry> brandMenuEntries = List.filled(
-    1,
-    MenuEntry(label: "Unknown", value: "Unknown"),
-    growable: true,
-  );
-  List<MenuEntry> materialMenuEntries = List.filled(
-    1,
-    MenuEntry(label: "Unknown", value: "Unknown"),
-    growable: true,
-  );
+  List<String> brandList = List.empty(growable: true);
+  List<String> materialList = List.empty(growable: true);
+  List<MenuEntry> brandMenuEntries = List.empty(growable: true);
+  List<MenuEntry> materialMenuEntries = List.empty(growable: true);
 
   Future<List<String>> getAllBrandsAsList() async {
     final db = (await DbService().database);
@@ -273,6 +267,7 @@ class _YarnForm extends State<YarnForm> {
   void initState() {
     super.initState();
     updateDropdownMenuList();
+    setState(() {});
   }
 
   @override
@@ -289,7 +284,7 @@ class _YarnForm extends State<YarnForm> {
           onPressed: () async {
             if (_formKey.currentState!.validate()) {
               _formKey.currentState!.save();
-              await insertYarnInDb(widget.base);
+              await widget.ifValideFunction(widget.base);
             }
             await widget.updateYarn();
             Navigator.pop(context);
