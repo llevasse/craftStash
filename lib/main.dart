@@ -1,3 +1,4 @@
+import 'package:craft_stash/class/brand.dart';
 import 'package:craft_stash/pages/patterns.dart';
 import 'package:craft_stash/pages/yarn_stash.dart';
 import 'package:craft_stash/widgets/yarnButtons/add_yarn_button.dart';
@@ -19,6 +20,7 @@ Future<void> main() async {
   //     nbOfSkeins: 1,
   //   ),
   // );
+  // await removeAllBrand();
   runApp(const MyApp());
 }
 

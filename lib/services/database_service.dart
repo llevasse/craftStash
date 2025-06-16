@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:craft_stash/services/database_versioning.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -23,7 +24,8 @@ class DbService {
     return await openDatabase(
       path,
       onCreate: _onCreate,
-      version: 1,
+      onUpgrade: _onUpgrade,
+      version: 2,
       onConfigure: (db) async => {await db.execute('PRAGMA foreign_keys = ON')},
     );
   }
@@ -32,6 +34,14 @@ class DbService {
     db.execute(
       '''CREATE TABLE IF NOT EXISTS yarn(id INTEGER PRIMARY KEY, color INT, brand TEXT, material TEXT, color_name TEXT, min_hook REAL, max_hook REAL, thickness REAL, number_of_skeins INT)''',
     );
+  }
+
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    Batch batch = db.batch();
+    if (oldVersion < 2) {
+      dbV2(batch);
+    }
+    batch.commit();
   }
 }
 

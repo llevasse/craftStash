@@ -1,6 +1,8 @@
+import 'package:craft_stash/class/brand.dart';
 import 'package:craft_stash/class/yarn.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class YarnForm extends StatefulWidget {
@@ -38,14 +40,10 @@ class _YarnForm extends State<YarnForm> {
   List<MenuEntry> materialMenuEntries = List.empty(growable: true);
 
   Future<List<String>> getAllBrandsAsList() async {
-    final db = (await DbService().database);
-    if (db != null) {
-      final List<Map<String, Object?>> yarnMaps = await db.rawQuery(
-        "SELECT DISTINCT brand FROM yarn",
-      );
-      brandList = [for (final {"brand": brand as String} in yarnMaps) brand];
-    } else {
-      throw DatabaseDoesNotExistException("Could not get database");
+    List<Brand> list = await getAllBrand();
+    brandList.clear();
+    for (Brand element in list) {
+      brandList.add(element.name);
     }
     return brandList;
   }
@@ -128,7 +126,33 @@ class _YarnForm extends State<YarnForm> {
       dropdownMenuEntries: brandMenuEntries,
       initialSelection: widget.base.brand,
       onSelected: (value) {
-        widget.base.brand = value!;
+        if (value == "New") {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: Text("New brand name"),
+              content: TextField(
+                onChanged: (value) {
+                  widget.base.brand = value;
+                },
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () async {
+                    await insertBrandInDb(Brand(name: widget.base.brand));
+
+                    Navigator.pop(context);
+                    //await updateDropdownMenuList();
+                    setState(() {});
+                  },
+                  child: Text("Add"),
+                ),
+              ],
+            ),
+          );
+        } else {
+          widget.base.brand = value!;
+        }
       },
     );
   }
