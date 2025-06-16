@@ -49,6 +49,7 @@ class _EditYarnButton extends State<EditYarnButton> {
           title: "Edit yarn",
           cancel: "Cancel",
           confirm: "Edit",
+          fill: true,
         ),
       ),
       onLongPress: () {

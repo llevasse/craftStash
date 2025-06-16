@@ -10,6 +10,7 @@ class YarnForm extends StatefulWidget {
   String cancel;
   String title;
   Yarn base;
+  bool fill;
 
   YarnForm({
     super.key,
@@ -19,6 +20,7 @@ class YarnForm extends StatefulWidget {
     required this.confirm,
     required this.cancel,
     required this.title,
+    this.fill = false,
   });
 
   @override
@@ -118,6 +120,8 @@ class _YarnForm extends State<YarnForm> {
   }
 
   Widget getBrandDropdownMenu() {
+    if (brandMenuEntries.isEmpty) return Text("");
+
     return DropdownMenu(
       inputDecorationTheme: InputDecorationTheme(border: InputBorder.none),
       expandedInsets: EdgeInsets.all(0),
@@ -130,6 +134,7 @@ class _YarnForm extends State<YarnForm> {
   }
 
   Widget getMaterialDropdownMenu() {
+    if (materialList.isEmpty) return Text("");
     return DropdownMenu(
       inputDecorationTheme: InputDecorationTheme(border: InputBorder.none),
       expandedInsets: EdgeInsets.all(0),
@@ -185,6 +190,9 @@ class _YarnForm extends State<YarnForm> {
 
               TextFormField(
                 decoration: InputDecoration(label: Text("Color name")),
+                initialValue: widget.fill == true
+                    ? widget.base.colorName
+                    : null,
                 validator: (value) {
                   return null;
                 },
@@ -200,6 +208,9 @@ class _YarnForm extends State<YarnForm> {
               TextFormField(
                 keyboardType: TextInputType.numberWithOptions(),
                 decoration: InputDecoration(label: Text("Thickness")),
+                initialValue: widget.fill == true
+                    ? widget.base.thickness.toStringAsFixed(2)
+                    : null,
                 validator: (value) {
                   return null;
                 },
@@ -215,6 +226,9 @@ class _YarnForm extends State<YarnForm> {
               TextFormField(
                 keyboardType: TextInputType.numberWithOptions(),
                 decoration: InputDecoration(label: Text("Min hook size")),
+                initialValue: widget.fill == true
+                    ? widget.base.minHook.toStringAsFixed(2)
+                    : null,
                 validator: (value) {
                   return null;
                 },
@@ -230,6 +244,9 @@ class _YarnForm extends State<YarnForm> {
               TextFormField(
                 keyboardType: TextInputType.numberWithOptions(),
                 decoration: InputDecoration(label: Text("Max hook size")),
+                initialValue: widget.fill == true
+                    ? widget.base.maxHook.toStringAsFixed(2)
+                    : null,
                 validator: (value) {
                   return null;
                 },
@@ -245,6 +262,9 @@ class _YarnForm extends State<YarnForm> {
               TextFormField(
                 keyboardType: TextInputType.numberWithOptions(),
                 decoration: InputDecoration(label: Text("Number of skeins")),
+                initialValue: widget.fill == true
+                    ? widget.base.nbOfSkeins.toString()
+                    : null,
                 validator: (value) {
                   return null;
                 },
