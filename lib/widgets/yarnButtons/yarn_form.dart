@@ -1,4 +1,5 @@
 import 'package:craft_stash/class/brand.dart';
+import 'package:craft_stash/class/material.dart';
 import 'package:craft_stash/class/yarn.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:flutter/material.dart';
@@ -142,7 +143,7 @@ class _YarnForm extends State<YarnForm> {
                     await insertBrandInDb(Brand(name: widget.base.brand));
 
                     Navigator.pop(context);
-                    //await updateDropdownMenuList();
+                    await updateDropdownMenuList();
                     setState(() {});
                   },
                   child: Text("Add"),
@@ -165,7 +166,35 @@ class _YarnForm extends State<YarnForm> {
       dropdownMenuEntries: materialMenuEntries,
       initialSelection: widget.base.material,
       onSelected: (value) {
-        widget.base.material = value!;
+        if (value == "New") {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: Text("New material name"),
+              content: TextField(
+                onChanged: (value) {
+                  widget.base.material = value;
+                },
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () async {
+                    await insertYarnMaterialInDb(
+                      YarnMaterial(name: widget.base.material),
+                    );
+
+                    Navigator.pop(context);
+                    await updateDropdownMenuList();
+                    setState(() {});
+                  },
+                  child: Text("Add"),
+                ),
+              ],
+            ),
+          );
+        } else {
+          widget.base.material = value!;
+        }
       },
     );
   }

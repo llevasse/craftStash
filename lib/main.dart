@@ -8,18 +8,6 @@ import 'package:flutter/material.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // await removeAllYarn();
-  // await insertYarnInDb(
-  //   Yarn(
-  //     color: Colors.pink.toARGB32(),
-  //     brand: "Phildar",
-  //     material: "Coton",
-  //     colorName: "Pink",
-  //     minHook: 2.5,
-  //     maxHook: 3.5,
-  //     thickness: 3,
-  //     nbOfSkeins: 1,
-  //   ),
-  // );
   // await removeAllBrand();
   runApp(const MyApp());
 }

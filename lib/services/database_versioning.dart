@@ -6,3 +6,10 @@ Future<void> dbV2(Batch batch) async {
   );
   await batch.commit();
 }
+
+Future<void> dbV3(Batch batch) async {
+  batch.execute(
+    '''CREATE TABLE IF NOT EXISTS material(id INTEGER PRIMARY KEY, name TEXT UNIQUE)''',
+  );
+  await batch.commit();
+}
