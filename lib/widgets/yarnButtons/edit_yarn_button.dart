@@ -51,6 +51,30 @@ class _EditYarnButton extends State<EditYarnButton> {
           confirm: "Edit",
         ),
       ),
+      onLongPress: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: Text("Do you want to delete this yarn"),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text("Cancel"),
+              ),
+              TextButton(
+                onPressed: () async {
+                  await deleteYarnInDb(widget.currentYarn.id);
+                  await widget.updateYarn();
+                  Navigator.pop(context);
+                },
+                child: Text("Delete"),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

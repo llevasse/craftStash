@@ -59,6 +59,15 @@ Future<void> updateYarnInDb(Yarn yarn) async {
   }
 }
 
+Future<void> deleteYarnInDb(int id) async {
+  final db = (await DbService().database);
+  if (db != null) {
+    db.delete('yarn', where: "id = ?", whereArgs: [id]);
+  } else {
+    throw DatabaseDoesNotExistException("Could not get database");
+  }
+}
+
 Future<List<Yarn>> getAllYarn() async {
   final db = (await DbService().database);
   if (db != null) {
