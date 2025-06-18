@@ -25,7 +25,7 @@ class DbService {
       path,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
-      version: 3,
+      version: 5,
       onConfigure: (db) async => {await db.execute('PRAGMA foreign_keys = ON')},
     );
   }
@@ -43,6 +43,12 @@ class DbService {
     }
     if (oldVersion < 3) {
       dbV3(batch);
+    }
+    if (oldVersion < 4) {
+      dbV4(batch);
+    }
+    if (oldVersion < 5) {
+      dbV5(batch);
     }
     batch.commit();
   }

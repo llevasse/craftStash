@@ -1,4 +1,5 @@
 import 'package:craft_stash/class/brand.dart';
+import 'package:craft_stash/class/yarn_collection.dart';
 import 'package:craft_stash/pages/patterns.dart';
 import 'package:craft_stash/pages/yarn_stash.dart';
 import 'package:craft_stash/widgets/yarnButtons/add_yarn_button.dart';
@@ -9,6 +10,16 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // await removeAllYarn();
   // await removeAllBrand();
+  // await insertYarnCollection(
+  //   YarnCollection(
+  //     name: "Phil coton 3",
+  //     brand: "Phildar",
+  //     material: "Coton",
+  //     thickness: 3,
+  //     minHook: 2.5,
+  //     maxHook: 3.5,
+  //   ),
+  // );
   runApp(const MyApp());
 }
 
@@ -63,6 +74,7 @@ class _MyHomePageState extends State<MyHomePage>
 
   @override
   Widget build(BuildContext context) {
+    ThemeData theme = Theme.of(context);
     List<Widget> actionButtons = [
       AddYarnButton(
         updateYarn: () async {
@@ -72,7 +84,6 @@ class _MyHomePageState extends State<MyHomePage>
       AddItemButton(text: "Add pattern", onPressed: () {}),
     ];
 
-    ThemeData theme = Theme.of(context);
     return DefaultTabController(
       length: 2,
       child: Scaffold(

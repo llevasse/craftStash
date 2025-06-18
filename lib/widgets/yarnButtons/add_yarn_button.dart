@@ -1,4 +1,5 @@
 import 'package:craft_stash/class/yarn.dart';
+import 'package:craft_stash/widgets/yarnButtons/yarn_collection_form.dart';
 import 'package:craft_stash/widgets/yarnButtons/yarn_form.dart';
 import 'package:flutter/material.dart';
 
@@ -23,17 +24,15 @@ class _AddYarnButton extends State<AddYarnButton> {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     return OutlinedButton(
-      onPressed: () => showDialog(
-        context: context,
-        builder: (BuildContext context) => YarnForm(
-          base: Yarn(color: Colors.amber.toARGB32()),
-          updateYarn: widget.updateYarn,
-          ifValideFunction: insertYarnInDb,
-          title: "Add yarn",
-          cancel: "Cancel",
-          confirm: "Add",
-        ),
-      ),
+      onPressed: () async {
+        await showDialog(
+          context: context,
+          builder: (BuildContext context) => YarnCollectionForm(
+            title: "Collections",
+            updateYarn: widget.updateYarn,
+          ),
+        );
+      },
 
       style: ButtonStyle(
         side: WidgetStatePropertyAll(

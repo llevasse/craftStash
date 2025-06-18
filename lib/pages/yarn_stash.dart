@@ -17,7 +17,6 @@ class _YarnStashPageState extends State<YarnStashPage> {
   List<Yarn> yarns = List.empty(growable: true);
 
   Future<void> getAllYarns() async {
-    print("Update yarn");
     yarns = await getAllYarn();
     setState(() {});
   }

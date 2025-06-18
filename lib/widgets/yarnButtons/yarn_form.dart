@@ -4,7 +4,6 @@ import 'package:craft_stash/class/yarn.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:craft_stash/widgets/int_control_button.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class YarnForm extends StatefulWidget {
@@ -15,6 +14,7 @@ class YarnForm extends StatefulWidget {
   String title;
   Yarn base;
   bool fill;
+  bool fromCategory;
 
   YarnForm({
     super.key,
@@ -25,6 +25,7 @@ class YarnForm extends StatefulWidget {
     required this.cancel,
     required this.title,
     this.fill = false,
+    this.fromCategory = true,
   });
 
   @override
@@ -123,12 +124,19 @@ class _YarnForm extends State<YarnForm> {
 
   Widget getBrandDropdownMenu() {
     if (brandMenuEntries.isEmpty) return Text("");
-
+    if (widget.fromCategory == true) {
+      return TextFormField(
+        readOnly: true,
+        initialValue: widget.base.brand,
+        style: TextStyle(color: Colors.grey),
+      );
+    }
     return DropdownMenu(
       inputDecorationTheme: InputDecorationTheme(border: InputBorder.none),
       expandedInsets: EdgeInsets.all(0),
       dropdownMenuEntries: brandMenuEntries,
       initialSelection: widget.base.brand,
+
       onSelected: (value) {
         if (value == "New") {
           showDialog(
@@ -163,6 +171,13 @@ class _YarnForm extends State<YarnForm> {
 
   Widget getMaterialDropdownMenu() {
     if (materialList.isEmpty) return Text("");
+    if (widget.fromCategory == true) {
+      return TextFormField(
+        readOnly: true,
+        initialValue: widget.base.material,
+        style: TextStyle(color: Colors.grey),
+      );
+    }
     return DropdownMenu(
       inputDecorationTheme: InputDecorationTheme(border: InputBorder.none),
       expandedInsets: EdgeInsets.all(0),
@@ -214,8 +229,8 @@ class _YarnForm extends State<YarnForm> {
     return Form(
       key: _formKey,
       child: IntrinsicHeight(
-        child: Container(
-          height: 400,
+        child: SizedBox(
+          height: 410,
           width: 300,
           child: ListView(
             //spacing: spacing,
@@ -271,6 +286,12 @@ class _YarnForm extends State<YarnForm> {
 
               TextFormField(
                 keyboardType: TextInputType.numberWithOptions(),
+                readOnly: widget.fromCategory,
+                style: TextStyle(
+                  color: widget.fromCategory == true
+                      ? Colors.grey
+                      : Colors.black,
+                ),
                 decoration: InputDecoration(label: Text("Thickness")),
                 initialValue: widget.fill == true
                     ? widget.base.thickness.toStringAsFixed(2)
@@ -290,6 +311,12 @@ class _YarnForm extends State<YarnForm> {
               TextFormField(
                 keyboardType: TextInputType.numberWithOptions(),
                 decoration: InputDecoration(label: Text("Min hook size")),
+                readOnly: widget.fromCategory,
+                style: TextStyle(
+                  color: widget.fromCategory == true
+                      ? Colors.grey
+                      : Colors.black,
+                ),
                 initialValue: widget.fill == true
                     ? widget.base.minHook.toStringAsFixed(2)
                     : null,
@@ -308,6 +335,12 @@ class _YarnForm extends State<YarnForm> {
               TextFormField(
                 keyboardType: TextInputType.numberWithOptions(),
                 decoration: InputDecoration(label: Text("Max hook size")),
+                readOnly: widget.fromCategory,
+                style: TextStyle(
+                  color: widget.fromCategory == true
+                      ? Colors.grey
+                      : Colors.black,
+                ),
                 initialValue: widget.fill == true
                     ? widget.base.maxHook.toStringAsFixed(2)
                     : null,
