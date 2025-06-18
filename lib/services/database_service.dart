@@ -1,4 +1,8 @@
 import 'dart:async';
+import 'package:craft_stash/class/brand.dart';
+import 'package:craft_stash/class/material.dart';
+import 'package:craft_stash/class/yarn.dart';
+import 'package:craft_stash/class/yarn_collection.dart';
 import 'package:craft_stash/services/database_versioning.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -25,7 +29,7 @@ class DbService {
       path,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
-      version: 6,
+      version: 7,
       onConfigure: (db) async => {await db.execute('PRAGMA foreign_keys = ON')},
     );
   }
@@ -53,7 +57,17 @@ class DbService {
     if (oldVersion < 6) {
       dbV6(batch);
     }
+    if (oldVersion < 7) {
+      dbV7(batch);
+    }
     batch.commit();
+  }
+
+  Future<void> clearDb() async {
+    await removeAllYarnCollection();
+    await removeAllYarn();
+    await removeAllYarnMaterial();
+    await removeAllBrand();
   }
 }
 

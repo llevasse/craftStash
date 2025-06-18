@@ -36,18 +36,54 @@ class Yarn {
       "max_hook": maxHook,
       "thickness": thickness,
       "number_of_skeins": nbOfSkeins,
+      "hash": hash(),
     };
+  }
+
+  int hash() {
+    return Object.hash(
+      color,
+      brand,
+      collectionId,
+      colorName,
+      material,
+      maxHook,
+      minHook,
+      thickness,
+    );
   }
 }
 
 Future<void> insertYarnInDb(Yarn yarn) async {
   final db = (await DbService().database);
   if (db != null) {
-    db.insert(
+    final list = await db.query(
       'yarn',
-      yarn.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
+      where: "hash = ?",
+      whereArgs: [yarn.hash()],
     );
+    if (list.isEmpty) {
+      db.insert(
+        'yarn',
+        yarn.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    } else {
+      updateYarnInDb(
+        Yarn(
+          id: list[0]['id'] as int,
+          color: list[0]['color'] as int,
+          collectionId: list[0]['collection_id'] as int,
+          brand: list[0]['brand'] as String,
+          material: list[0]['material'] as String,
+          colorName: list[0]['color_name'] as String,
+          minHook: list[0]['min_hook'] as double,
+          maxHook: list[0]['max_hook'] as double,
+          thickness: list[0]['thickness'] as double,
+          nbOfSkeins: (list[0]['number_of_skeins'] as int) + 1,
+        ),
+      );
+    }
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }

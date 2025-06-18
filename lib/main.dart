@@ -1,25 +1,13 @@
 import 'package:craft_stash/pages/patterns.dart';
 import 'package:craft_stash/pages/yarn_stash.dart';
+import 'package:craft_stash/services/database_service.dart';
 import 'package:craft_stash/widgets/yarnButtons/add_yarn_button.dart';
 import 'package:craft_stash/widgets/add_item_button.dart';
 import 'package:flutter/material.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await removeAllYarn();
-  // await removeAllBrand();
-  // await insertYarnCollection(
-  //   YarnCollection(
-  //     name: "Phil coton 3",
-  //     brand: "Phildar",
-  //     material: "Coton",
-  //     thickness: 3,
-  //     minHook: 2.5,
-  //     maxHook: 3.5,
-  //   ),
-  // );
-  // await removeAllYarnCollection();
-  // await removeAllBrand();
+  await DbService().clearDb();
   runApp(const MyApp());
 }
 

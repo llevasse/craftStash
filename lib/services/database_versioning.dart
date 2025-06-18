@@ -30,3 +30,11 @@ Future<void> dbV6(Batch batch) async {
   batch.execute('''ALTER TABLE yarn ADD COLUMN collection_id INT DEFAULT -1''');
   await batch.commit();
 }
+
+Future<void> dbV7(Batch batch) async {
+  batch.execute('''ALTER TABLE yarn ADD COLUMN hash INT''');
+  batch.execute('''ALTER TABLE yarn_collection ADD COLUMN hash INT''');
+  batch.execute('''ALTER TABLE brand ADD COLUMN hash INT''');
+  batch.execute('''ALTER TABLE material ADD COLUMN hash INT''');
+  await batch.commit();
+}

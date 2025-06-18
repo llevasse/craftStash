@@ -37,10 +37,8 @@ class _YarnStashPageState extends State<YarnStashPage> {
     await _getAllCollections();
     yarns = await getAllYarn();
     for (Yarn yarn in yarns) {
-      print(yarn.toMap());
       yarnsByCollection[collectionById[yarn.collectionId]]?.add(yarn);
     }
-    print(yarnsByCollection);
     updateListView();
     setState(() {});
   }
