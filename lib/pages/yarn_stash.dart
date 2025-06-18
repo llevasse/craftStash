@@ -23,6 +23,7 @@ class _YarnStashPageState extends State<YarnStashPage> {
 
   Future<void> _getAllCollections() async {
     yarnCollection = await getAllYarnCollection();
+    yarnsByCollection.clear();
     collectionById.clear();
     collectionById[-1] = "Unique";
     yarnsByCollection["Unique"] = List.empty(growable: true);
@@ -69,6 +70,7 @@ class _YarnStashPageState extends State<YarnStashPage> {
       }
     });
     setState(() {
+      listViewContent.clear();
       listViewContent = tmp;
     });
   }

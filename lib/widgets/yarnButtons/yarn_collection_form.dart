@@ -1,13 +1,8 @@
-import 'package:craft_stash/class/brand.dart';
-import 'package:craft_stash/class/material.dart';
 import 'package:craft_stash/class/yarn.dart';
 import 'package:craft_stash/class/yarn_collection.dart';
-import 'package:craft_stash/services/database_service.dart';
-import 'package:craft_stash/widgets/int_control_button.dart';
 import 'package:craft_stash/widgets/yarnButtons/collection_form.dart';
 import 'package:craft_stash/widgets/yarnButtons/yarn_form.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class YarnCollectionForm extends StatefulWidget {
   String title;
@@ -78,7 +73,6 @@ class _YarnCollectionForm extends State<YarnCollectionForm> {
       ),
     );
     for (YarnCollection element in collectionList) {
-      print(element);
       tmp.add(
         ListTile(
           title: Text(
@@ -112,18 +106,20 @@ class _YarnCollectionForm extends State<YarnCollectionForm> {
           },
           onLongPress: () async {
             Navigator.pop(context);
-            await showDialog(
-              context: context,
-              builder: (BuildContext context) => CollectionForm(
-                base: element,
-                updateYarn: widget.updateYarn,
-                ifValideFunction: updateYarnCollection,
-                title: "Edit collection",
-                cancel: "Cancel",
-                confirm: "Edit",
-                fill: true,
-              ),
-            );
+            if (await showDialog(
+                  context: context,
+                  builder: (BuildContext context) => CollectionForm(
+                    base: element,
+                    updateYarn: widget.updateYarn,
+                    ifValideFunction: updateYarnCollection,
+                    title: "Edit collection",
+                    cancel: "Cancel",
+                    confirm: "Edit",
+                    fill: true,
+                    allowDelete: true,
+                  ),
+                ) ==
+                "Delete") {}
           },
         ),
       );

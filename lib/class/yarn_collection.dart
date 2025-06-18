@@ -72,7 +72,7 @@ Future<void> insertYarnCollection(YarnCollection yarn) async {
 Future<void> updateYarnCollection(YarnCollection yarn) async {
   final db = (await DbService().database);
   if (db != null) {
-    db.update(
+    await db.update(
       'yarn_collection',
       yarn.toMap(),
       where: "id = ?",
@@ -86,7 +86,7 @@ Future<void> updateYarnCollection(YarnCollection yarn) async {
 Future<void> deleteYarnCollection(int id) async {
   final db = (await DbService().database);
   if (db != null) {
-    db.delete('yarn_collection', where: "id = ?", whereArgs: [id]);
+    await db.delete('yarn_collection', where: "id = ?", whereArgs: [id]);
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }

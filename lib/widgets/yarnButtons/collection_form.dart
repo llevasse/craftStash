@@ -1,5 +1,6 @@
 import 'package:craft_stash/class/brand.dart';
 import 'package:craft_stash/class/material.dart';
+import 'package:craft_stash/class/yarn.dart';
 import 'package:craft_stash/class/yarn_collection.dart';
 import 'package:flutter/material.dart';
 
@@ -10,6 +11,7 @@ class CollectionForm extends StatefulWidget {
   String cancel;
   String title;
   bool fill;
+  bool allowDelete;
   YarnCollection base;
 
   CollectionForm({
@@ -21,6 +23,7 @@ class CollectionForm extends StatefulWidget {
     required this.cancel,
     required this.title,
     this.fill = false,
+    this.allowDelete = false,
   });
 
   @override
@@ -276,6 +279,40 @@ class _CollectionForm extends State<CollectionForm> {
       title: Text(widget.title),
       content: _createForm(),
       actions: <Widget>[
+        if (widget.allowDelete)
+          TextButton(
+            onPressed: () async {
+              if (await showDialog(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                      title: Text(
+                        "Do you want to delete this coletion and all it's yarns",
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text("Cancel"),
+                        ),
+                        TextButton(
+                          onPressed: () async {
+                            await deleteYarnsByCollectionId(widget.base.id);
+                            await deleteYarnCollection(widget.base.id);
+                            await widget.updateYarn();
+                            Navigator.pop(context, "delete");
+                          },
+                          child: Text("Delete"),
+                        ),
+                      ],
+                    ),
+                  ) ==
+                  "delete") {
+                Navigator.pop(context);
+              }
+            },
+            child: Text("Delete"),
+          ),
         TextButton(
           onPressed: () => Navigator.pop(context),
           child: Text(widget.cancel),
