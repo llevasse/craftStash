@@ -52,16 +52,10 @@ class _YarnForm extends State<YarnForm> {
   }
 
   Future<List<String>> getAllMaterialsAsList() async {
-    final db = (await DbService().database);
-    if (db != null) {
-      final List<Map<String, Object?>> yarnMaps = await db.rawQuery(
-        "SELECT DISTINCT material FROM yarn",
-      );
-      materialList = [
-        for (final {"material": material as String} in yarnMaps) material,
-      ];
-    } else {
-      throw DatabaseDoesNotExistException("Could not get database");
+    List<YarnMaterial> list = await getAllYarnMaterial();
+    materialList.clear();
+    for (YarnMaterial element in list) {
+      materialList.add(element.name);
     }
     return materialList;
   }
@@ -124,6 +118,13 @@ class _YarnForm extends State<YarnForm> {
 
   Widget getBrandDropdownMenu() {
     if (brandMenuEntries.isEmpty) return Text("");
+    if (widget.fromCategory == true) {
+      return TextFormField(
+        initialValue: widget.base.brand,
+        readOnly: true,
+        style: TextStyle(color: Colors.grey),
+      );
+    }
     return DropdownMenu(
       inputDecorationTheme: InputDecorationTheme(border: InputBorder.none),
       expandedInsets: EdgeInsets.all(0),
@@ -167,6 +168,13 @@ class _YarnForm extends State<YarnForm> {
 
   Widget getMaterialDropdownMenu() {
     if (materialMenuEntries.isEmpty) return Text("");
+    if (widget.fromCategory == true) {
+      return TextFormField(
+        initialValue: widget.base.material,
+        readOnly: true,
+        style: TextStyle(color: Colors.grey),
+      );
+    }
 
     return DropdownMenu(
       inputDecorationTheme: InputDecorationTheme(border: InputBorder.none),
@@ -181,12 +189,14 @@ class _YarnForm extends State<YarnForm> {
               title: Text("New material name"),
               content: TextField(
                 onChanged: (value) {
+                  value = value.trim();
                   widget.base.material = value;
                 },
               ),
               actions: [
                 TextButton(
                   onPressed: () async {
+                    await getAllMaterialsAsList();
                     if (!materialList.contains(widget.base.material)) {
                       await insertYarnMaterialInDb(
                         YarnMaterial(name: widget.base.material),

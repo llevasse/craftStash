@@ -87,6 +87,7 @@ class _YarnCollectionForm extends State<YarnCollectionForm> {
               context: context,
               builder: (BuildContext context) => YarnForm(
                 base: Yarn(
+                  collectionId: element.id,
                   color: Colors.amber.toARGB32(),
                   brand: element.brand,
                   material: element.material,

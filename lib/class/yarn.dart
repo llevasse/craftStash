@@ -4,7 +4,7 @@ import 'package:sqflite/sqflite.dart';
 class Yarn {
   Yarn({
     this.id = 0,
-    this.categoryId = 0,
+    this.collectionId = -1,
     required this.color,
     this.brand = "Unknown",
     this.material = "Unknown",
@@ -15,7 +15,7 @@ class Yarn {
     this.nbOfSkeins = 1,
   });
   int id;
-  int categoryId;
+  int collectionId;
   String brand; // ex : "my brand"
   String material; // ex : "coton"
   String colorName; // ex : "ocean"
@@ -28,6 +28,7 @@ class Yarn {
   Map<String, dynamic> toMap() {
     return {
       "color": color,
+      "collection_id": collectionId,
       "brand": brand,
       "material": material,
       "color_name": colorName,
@@ -77,6 +78,7 @@ Future<List<Yarn>> getAllYarn() async {
     return [
       for (final {
             'id': id as int,
+            "collection_id": collentionId as int,
             "color": color as int,
             "brand": brand as String,
             "material": material as String,
@@ -89,6 +91,7 @@ Future<List<Yarn>> getAllYarn() async {
           in yarnMaps)
         Yarn(
           id: id,
+          collectionId: collentionId,
           color: color,
           brand: brand,
           material: material,

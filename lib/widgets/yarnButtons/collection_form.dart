@@ -142,12 +142,14 @@ class _CollectionForm extends State<CollectionForm> {
               title: Text("New material name"),
               content: TextField(
                 onChanged: (value) {
+                  value = value.trim();
                   widget.base.material = value;
                 },
               ),
               actions: [
                 TextButton(
                   onPressed: () async {
+                    await getAllMaterialsAsList();
                     if (!materialList.contains(widget.base.material)) {
                       await insertYarnMaterialInDb(
                         YarnMaterial(name: widget.base.material),

@@ -1,4 +1,5 @@
 import 'package:craft_stash/class/yarn.dart';
+import 'package:craft_stash/class/yarn_collection.dart';
 import 'package:craft_stash/widgets/yarnButtons/edit_yarn_button.dart';
 import 'package:flutter/material.dart';
 
@@ -14,11 +15,62 @@ class YarnStashPage extends StatefulWidget {
 }
 
 class _YarnStashPageState extends State<YarnStashPage> {
+  List<Widget> listViewContent = List.empty(growable: true);
   List<Yarn> yarns = List.empty(growable: true);
+  List<YarnCollection> yarnCollection = List.empty(growable: true);
+  Map<int, String> collectionById = {};
+  Map<String, List<Yarn>> yarnsByCollection = {};
+
+  Future<void> _getAllCollections() async {
+    yarnCollection = await getAllYarnCollection();
+    collectionById.clear();
+    collectionById[-1] = "Unique";
+    yarnsByCollection["Unique"] = List.empty(growable: true);
+    for (YarnCollection collection in yarnCollection) {
+      collectionById[collection.id] = collection.name;
+      yarnsByCollection[collection.name] = List.empty(growable: true);
+    }
+    setState(() {});
+  }
 
   Future<void> getAllYarns() async {
+    await _getAllCollections();
     yarns = await getAllYarn();
+    for (Yarn yarn in yarns) {
+      print(yarn.toMap());
+      yarnsByCollection[collectionById[yarn.collectionId]]?.add(yarn);
+    }
+    print(yarnsByCollection);
+    updateListView();
     setState(() {});
+  }
+
+  void updateListView() {
+    List<Widget> tmp = List.empty(growable: true);
+
+    yarnsByCollection.forEach((key, yarns) {
+      tmp.add(
+        Row(
+          children: [
+            Expanded(child: Divider(color: Colors.amber)),
+            Expanded(
+              child: Text(
+                key,
+                textAlign: TextAlign.center,
+                textScaler: TextScaler.linear(1.5),
+              ),
+            ),
+            Expanded(child: Divider(color: Colors.amber)),
+          ],
+        ),
+      );
+      yarns.forEach((yarn) {
+        tmp.add(EditYarnButton(updateYarn: getAllYarns, currentYarn: yarn));
+      });
+    });
+    setState(() {
+      listViewContent = tmp;
+    });
   }
 
   @override
@@ -40,17 +92,7 @@ class _YarnStashPageState extends State<YarnStashPage> {
         backgroundColor: theme.colorScheme.primary,
         title: Text("Yarn stash"),
       ),
-      body: ListView.separated(
-        itemBuilder: (context, index) {
-          return EditYarnButton(
-            updateYarn: getAllYarns,
-            currentYarn: yarns[index],
-          );
-        },
-        separatorBuilder: (context, index) =>
-            Divider(color: theme.colorScheme.primary),
-        itemCount: yarns.length,
-      ),
+      body: ListView(children: listViewContent),
     );
   }
 }
