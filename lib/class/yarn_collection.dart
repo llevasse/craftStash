@@ -28,23 +28,42 @@ class YarnCollection {
       "min_hook": minHook,
       "max_hook": maxHook,
       "thickness": thickness,
+      "hash": hashCode,
     };
   }
 
   @override
+  int get hashCode => Object.hash(
+    name.toLowerCase(),
+    brand.toLowerCase(),
+    material.toLowerCase(),
+    thickness,
+    minHook,
+    maxHook,
+  );
+
+  @override
   String toString() {
-    return "${name} | ${brand} | ${material} | ${thickness.toStringAsFixed(2)}mm";
+    return toMap().toString();
   }
 }
 
 Future<void> insertYarnCollection(YarnCollection yarn) async {
   final db = (await DbService().database);
+
   if (db != null) {
-    db.insert(
+    final list = await db.query(
       'yarn_collection',
-      yarn.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
+      where: "hash = ?",
+      whereArgs: [yarn.hashCode],
     );
+    if (list.isEmpty) {
+      db.insert(
+        'yarn_collection',
+        yarn.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }

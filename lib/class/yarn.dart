@@ -36,22 +36,21 @@ class Yarn {
       "max_hook": maxHook,
       "thickness": thickness,
       "number_of_skeins": nbOfSkeins,
-      "hash": hash(),
+      "hash": hashCode,
     };
   }
 
-  int hash() {
-    return Object.hash(
-      color,
-      brand,
-      collectionId,
-      colorName,
-      material,
-      maxHook,
-      minHook,
-      thickness,
-    );
-  }
+  @override
+  int get hashCode => Object.hash(
+    color,
+    brand.toLowerCase(),
+    collectionId,
+    colorName.toLowerCase(),
+    material.toLowerCase(),
+    maxHook,
+    minHook,
+    thickness,
+  );
 }
 
 Future<void> insertYarnInDb(Yarn yarn) async {
@@ -60,7 +59,7 @@ Future<void> insertYarnInDb(Yarn yarn) async {
     final list = await db.query(
       'yarn',
       where: "hash = ?",
-      whereArgs: [yarn.hash()],
+      whereArgs: [yarn.hashCode],
     );
     if (list.isEmpty) {
       db.insert(

@@ -7,18 +7,28 @@ class Brand {
   String name;
 
   Map<String, dynamic> toMap() {
-    return {'name': name};
+    return {'name': name, "hash": hashCode};
   }
+
+  @override
+  int get hashCode => Object.hash(name.toLowerCase(), 0);
 }
 
 Future<void> insertBrandInDb(Brand brand) async {
   final db = (await DbService().database);
   if (db != null) {
-    db.insert(
+    final list = await db.query(
       'brand',
-      brand.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.abort,
+      where: "hash = ?",
+      whereArgs: [brand.hashCode],
     );
+    if (list.isEmpty) {
+      db.insert(
+        'brand',
+        brand.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.abort,
+      );
+    }
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }

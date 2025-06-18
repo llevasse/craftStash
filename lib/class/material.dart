@@ -7,18 +7,28 @@ class YarnMaterial {
   String name;
 
   Map<String, dynamic> toMap() {
-    return {'name': name};
+    return {'name': name, "hash": hashCode};
   }
+
+  @override
+  int get hashCode => Object.hash(name.toLowerCase(), 0);
 }
 
 Future<void> insertYarnMaterialInDb(YarnMaterial yarnMaterial) async {
   final db = (await DbService().database);
   if (db != null) {
-    db.insert(
+    final list = await db.query(
       'material',
-      yarnMaterial.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.abort,
+      where: "hash = ?",
+      whereArgs: [yarnMaterial.hashCode],
     );
+    if (list.isEmpty) {
+      db.insert(
+        'material',
+        yarnMaterial.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.abort,
+      );
+    }
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }
