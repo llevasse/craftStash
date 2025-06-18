@@ -81,7 +81,12 @@ class _YarnCollectionForm extends State<YarnCollectionForm> {
       print(element);
       tmp.add(
         ListTile(
-          title: Text(element.name),
+          title: Text(
+            element.name,
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          subtitle: Text(element.brand),
+          trailing: Text("${element.thickness.toStringAsFixed(2)}mm"),
           onTap: () async {
             Navigator.pop(context);
             await showDialog(

@@ -47,24 +47,26 @@ class _YarnStashPageState extends State<YarnStashPage> {
     List<Widget> tmp = List.empty(growable: true);
 
     yarnsByCollection.forEach((key, yarns) {
-      tmp.add(
-        Row(
-          children: [
-            Expanded(child: Divider(color: Colors.amber)),
-            Expanded(
-              child: Text(
-                key,
-                textAlign: TextAlign.center,
-                textScaler: TextScaler.linear(1.5),
+      if (yarns.isNotEmpty) {
+        tmp.add(
+          Row(
+            children: [
+              Expanded(child: Divider(color: Colors.amber)),
+              Expanded(
+                child: Text(
+                  key,
+                  textAlign: TextAlign.center,
+                  textScaler: TextScaler.linear(1.5),
+                ),
               ),
-            ),
-            Expanded(child: Divider(color: Colors.amber)),
-          ],
-        ),
-      );
-      yarns.forEach((yarn) {
-        tmp.add(EditYarnButton(updateYarn: getAllYarns, currentYarn: yarn));
-      });
+              Expanded(child: Divider(color: Colors.amber)),
+            ],
+          ),
+        );
+        yarns.forEach((yarn) {
+          tmp.add(EditYarnButton(updateYarn: getAllYarns, currentYarn: yarn));
+        });
+      }
     });
     setState(() {
       listViewContent = tmp;
