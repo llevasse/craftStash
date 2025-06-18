@@ -9,6 +9,7 @@ class CollectionForm extends StatefulWidget {
   String confirm;
   String cancel;
   String title;
+  bool fill;
   YarnCollection base;
 
   CollectionForm({
@@ -19,6 +20,7 @@ class CollectionForm extends StatefulWidget {
     required this.confirm,
     required this.cancel,
     required this.title,
+    this.fill = false,
   });
 
   @override
@@ -183,6 +185,7 @@ class _CollectionForm extends State<CollectionForm> {
             //spacing: spacing,
             children: [
               TextFormField(
+                initialValue: widget.fill == true ? widget.base.name : null,
                 decoration: InputDecoration(label: Text("Collection name")),
                 validator: (value) {
                   return null;
@@ -201,6 +204,9 @@ class _CollectionForm extends State<CollectionForm> {
               getMaterialDropdownMenu(),
 
               TextFormField(
+                initialValue: widget.fill == true
+                    ? widget.base.thickness.toStringAsFixed(2)
+                    : null,
                 keyboardType: TextInputType.numberWithOptions(),
                 decoration: InputDecoration(label: Text("Thickness")),
                 validator: (value) {
@@ -216,6 +222,9 @@ class _CollectionForm extends State<CollectionForm> {
               ),
 
               TextFormField(
+                initialValue: widget.fill == true
+                    ? widget.base.minHook.toStringAsFixed(2)
+                    : null,
                 keyboardType: TextInputType.numberWithOptions(),
                 decoration: InputDecoration(label: Text("Min hook size")),
                 validator: (value) {
@@ -231,6 +240,9 @@ class _CollectionForm extends State<CollectionForm> {
               ),
 
               TextFormField(
+                initialValue: widget.fill == true
+                    ? widget.base.maxHook.toStringAsFixed(2)
+                    : null,
                 keyboardType: TextInputType.numberWithOptions(),
                 decoration: InputDecoration(label: Text("Max hook size")),
                 validator: (value) {

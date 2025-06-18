@@ -110,6 +110,21 @@ class _YarnCollectionForm extends State<YarnCollectionForm> {
               ),
             );
           },
+          onLongPress: () async {
+            Navigator.pop(context);
+            await showDialog(
+              context: context,
+              builder: (BuildContext context) => CollectionForm(
+                base: element,
+                updateYarn: widget.updateYarn,
+                ifValideFunction: updateYarnCollection,
+                title: "Edit collection",
+                cancel: "Cancel",
+                confirm: "Edit",
+                fill: true,
+              ),
+            );
+          },
         ),
       );
     }
