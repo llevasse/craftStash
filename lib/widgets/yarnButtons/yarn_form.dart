@@ -363,6 +363,7 @@ class _YarnForm extends State<YarnForm> {
                 text: "Skeins",
                 increase: increaseSkeins,
                 decrease: decreaseSkeins,
+                signed: false,
               ),
             ],
           ),

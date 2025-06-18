@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class IntControlButton extends StatefulWidget {
   int count;
+  bool signed;
   String text;
   void Function() increase;
   void Function() decrease;
@@ -11,6 +12,7 @@ class IntControlButton extends StatefulWidget {
     required this.text,
     required this.increase,
     required this.decrease,
+    this.signed = true,
   });
 
   @override
@@ -39,6 +41,7 @@ class _IntControlButtonState extends State<IntControlButton> {
                   }),
                 ),
                 onPressed: () {
+                  if (widget.signed == false && widget.count == 0) return;
                   widget.decrease();
                   setState(() {
                     widget.count -= 1;
