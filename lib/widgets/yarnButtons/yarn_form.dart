@@ -2,6 +2,7 @@ import 'package:craft_stash/class/brand.dart';
 import 'package:craft_stash/class/material.dart';
 import 'package:craft_stash/class/yarn.dart';
 import 'package:craft_stash/services/database_service.dart';
+import 'package:craft_stash/widgets/int_control_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -70,6 +71,7 @@ class _YarnForm extends State<YarnForm> {
     List<MenuEntry> brandMenuEntriesTmp = List.empty(growable: true);
     List<MenuEntry> materialMenuEntriesTmp = List.empty(growable: true);
     for (String brand in brandList) {
+      if (brand == "Unknown") continue;
       brandMenuEntriesTmp.add(DropdownMenuEntry(value: brand, label: brand));
     }
     brandMenuEntriesTmp.add(
@@ -78,6 +80,7 @@ class _YarnForm extends State<YarnForm> {
     brandMenuEntriesTmp.add(DropdownMenuEntry(value: "New", label: "New"));
 
     for (String material in materialList) {
+      if (material == "Unknown") continue;
       materialMenuEntriesTmp.add(
         DropdownMenuEntry(value: material, label: material),
       );
@@ -199,6 +202,14 @@ class _YarnForm extends State<YarnForm> {
     );
   }
 
+  void increaseSkeins() {
+    widget.base.nbOfSkeins += 1;
+  }
+
+  void decreaseSkeins() {
+    widget.base.nbOfSkeins -= 1;
+  }
+
   Form _createForm() {
     return Form(
       key: _formKey,
@@ -312,22 +323,11 @@ class _YarnForm extends State<YarnForm> {
                 },
               ),
 
-              TextFormField(
-                keyboardType: TextInputType.numberWithOptions(),
-                decoration: InputDecoration(label: Text("Number of skeins")),
-                initialValue: widget.fill == true
-                    ? widget.base.nbOfSkeins.toString()
-                    : null,
-                validator: (value) {
-                  return null;
-                },
-                onSaved: (newValue) {
-                  newValue = newValue?.trim();
-                  if (newValue == null || newValue.isEmpty) {
-                    newValue = "1";
-                  }
-                  widget.base.nbOfSkeins = int.parse(newValue);
-                },
+              IntControlButton(
+                count: widget.base.nbOfSkeins,
+                text: "Skeins",
+                increase: increaseSkeins,
+                decrease: decreaseSkeins,
               ),
             ],
           ),
