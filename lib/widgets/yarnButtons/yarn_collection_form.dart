@@ -4,6 +4,7 @@ import 'package:craft_stash/class/yarn.dart';
 import 'package:craft_stash/class/yarn_collection.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:craft_stash/widgets/int_control_button.dart';
+import 'package:craft_stash/widgets/yarnButtons/collection_form.dart';
 import 'package:craft_stash/widgets/yarnButtons/yarn_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -57,7 +58,25 @@ class _YarnCollectionForm extends State<YarnCollectionForm> {
         },
       ),
     );
-    tmp.add(ListTile(title: Text("New collection"), onTap: () {}));
+    tmp.add(
+      ListTile(
+        title: Text("New collection"),
+        onTap: () async {
+          Navigator.pop(context);
+          await showDialog(
+            context: context,
+            builder: (BuildContext context) => CollectionForm(
+              base: YarnCollection(),
+              updateYarn: widget.updateYarn,
+              ifValideFunction: insertYarnCollection,
+              title: "Add collection",
+              cancel: "Cancel",
+              confirm: "Add",
+            ),
+          );
+        },
+      ),
+    );
     for (YarnCollection element in collectionList) {
       tmp.add(
         ListTile(

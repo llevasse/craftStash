@@ -20,6 +20,8 @@ Future<void> main() async {
   //     maxHook: 3.5,
   //   ),
   // );
+  // await removeAllYarnCollection();
+  // await removeAllBrand();
   runApp(const MyApp());
 }
 

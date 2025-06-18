@@ -1,22 +1,17 @@
 import 'package:craft_stash/class/brand.dart';
 import 'package:craft_stash/class/material.dart';
-import 'package:craft_stash/class/yarn.dart';
-import 'package:craft_stash/services/database_service.dart';
-import 'package:craft_stash/widgets/int_control_button.dart';
+import 'package:craft_stash/class/yarn_collection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
-class YarnForm extends StatefulWidget {
+class CollectionForm extends StatefulWidget {
   final Future<void> Function() updateYarn;
-  final Future<void> Function(Yarn) ifValideFunction;
+  final Future<void> Function(YarnCollection) ifValideFunction;
   String confirm;
   String cancel;
   String title;
-  Yarn base;
-  bool fill;
-  bool fromCategory;
+  YarnCollection base;
 
-  YarnForm({
+  CollectionForm({
     super.key,
     required this.base,
     required this.updateYarn,
@@ -24,17 +19,15 @@ class YarnForm extends StatefulWidget {
     required this.confirm,
     required this.cancel,
     required this.title,
-    this.fill = false,
-    this.fromCategory = true,
   });
 
   @override
-  State<StatefulWidget> createState() => _YarnForm();
+  State<StatefulWidget> createState() => _CollectionForm();
 }
 
 typedef MenuEntry = DropdownMenuEntry<String>;
 
-class _YarnForm extends State<YarnForm> {
+class _CollectionForm extends State<CollectionForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   List<String> brandList = List.empty(growable: true);
@@ -52,16 +45,10 @@ class _YarnForm extends State<YarnForm> {
   }
 
   Future<List<String>> getAllMaterialsAsList() async {
-    final db = (await DbService().database);
-    if (db != null) {
-      final List<Map<String, Object?>> yarnMaps = await db.rawQuery(
-        "SELECT DISTINCT material FROM yarn",
-      );
-      materialList = [
-        for (final {"material": material as String} in yarnMaps) material,
-      ];
-    } else {
-      throw DatabaseDoesNotExistException("Could not get database");
+    List<YarnMaterial> list = await getAllYarnMaterial();
+    materialList.clear();
+    for (YarnMaterial element in list) {
+      materialList.add(element.name);
     }
     return materialList;
   }
@@ -94,32 +81,6 @@ class _YarnForm extends State<YarnForm> {
       brandMenuEntries = brandMenuEntriesTmp;
       materialMenuEntries = materialMenuEntriesTmp;
     });
-  }
-
-  void changeColor(Color color) {
-    setState(() => widget.base.color = color.toARGB32());
-  }
-
-  Future<dynamic> _createColorPickerPopup(BuildContext context) {
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-        title: const Text("Pick a color"),
-        content: ColorPicker(
-          pickerColor: Color(widget.base.color),
-          onColorChanged: changeColor,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              setState(() {});
-            },
-            child: Text("Select"),
-          ),
-        ],
-      ),
-    );
   }
 
   Widget getBrandDropdownMenu() {
@@ -209,14 +170,6 @@ class _YarnForm extends State<YarnForm> {
     );
   }
 
-  void increaseSkeins() {
-    widget.base.nbOfSkeins += 1;
-  }
-
-  void decreaseSkeins() {
-    widget.base.nbOfSkeins -= 1;
-  }
-
   Form _createForm() {
     return Form(
       key: _formKey,
@@ -227,43 +180,8 @@ class _YarnForm extends State<YarnForm> {
           child: ListView(
             //spacing: spacing,
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      height: 20,
-                      color: Color(widget.base.color),
-                    ),
-                  ),
-
-                  TextButton(
-                    onPressed: () {
-                      _createColorPickerPopup(context);
-                    },
-                    child: const Text(
-                      "Pick a color",
-                      softWrap: false,
-                      overflow: TextOverflow.visible,
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      height: 20,
-                      color: Color(widget.base.color),
-                    ),
-                  ),
-                ],
-              ),
-
-              getBrandDropdownMenu(),
-
-              getMaterialDropdownMenu(),
-
               TextFormField(
-                decoration: InputDecoration(label: Text("Color name")),
-                initialValue: widget.fill == true
-                    ? widget.base.colorName
-                    : null,
+                decoration: InputDecoration(label: Text("Collection name")),
                 validator: (value) {
                   return null;
                 },
@@ -272,22 +190,17 @@ class _YarnForm extends State<YarnForm> {
                   if (newValue == null || newValue.isEmpty) {
                     newValue = "Unknown";
                   }
-                  widget.base.colorName = newValue;
+                  widget.base.name = newValue;
                 },
               ),
 
+              getBrandDropdownMenu(),
+
+              getMaterialDropdownMenu(),
+
               TextFormField(
                 keyboardType: TextInputType.numberWithOptions(),
-                readOnly: widget.fromCategory,
-                style: TextStyle(
-                  color: widget.fromCategory == true
-                      ? Colors.grey
-                      : Colors.black,
-                ),
                 decoration: InputDecoration(label: Text("Thickness")),
-                initialValue: widget.fill == true
-                    ? widget.base.thickness.toStringAsFixed(2)
-                    : null,
                 validator: (value) {
                   return null;
                 },
@@ -303,15 +216,6 @@ class _YarnForm extends State<YarnForm> {
               TextFormField(
                 keyboardType: TextInputType.numberWithOptions(),
                 decoration: InputDecoration(label: Text("Min hook size")),
-                readOnly: widget.fromCategory,
-                style: TextStyle(
-                  color: widget.fromCategory == true
-                      ? Colors.grey
-                      : Colors.black,
-                ),
-                initialValue: widget.fill == true
-                    ? widget.base.minHook.toStringAsFixed(2)
-                    : null,
                 validator: (value) {
                   return null;
                 },
@@ -327,15 +231,6 @@ class _YarnForm extends State<YarnForm> {
               TextFormField(
                 keyboardType: TextInputType.numberWithOptions(),
                 decoration: InputDecoration(label: Text("Max hook size")),
-                readOnly: widget.fromCategory,
-                style: TextStyle(
-                  color: widget.fromCategory == true
-                      ? Colors.grey
-                      : Colors.black,
-                ),
-                initialValue: widget.fill == true
-                    ? widget.base.maxHook.toStringAsFixed(2)
-                    : null,
                 validator: (value) {
                   return null;
                 },
@@ -346,13 +241,6 @@ class _YarnForm extends State<YarnForm> {
                   }
                   widget.base.maxHook = double.parse(newValue);
                 },
-              ),
-
-              IntControlButton(
-                count: widget.base.nbOfSkeins,
-                text: "Skeins",
-                increase: increaseSkeins,
-                decrease: decreaseSkeins,
               ),
             ],
           ),

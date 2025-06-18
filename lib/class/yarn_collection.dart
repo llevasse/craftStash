@@ -108,7 +108,7 @@ Future<List<YarnCollection>> getAllYarnCollection() async {
 Future<void> removeAllYarnCollection() async {
   final db = (await DbService().database);
   if (db != null) {
-    db.rawDelete('DELETE FROM yarn');
+    db.rawDelete('DELETE FROM yarn_collection');
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }
