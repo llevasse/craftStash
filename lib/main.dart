@@ -1,6 +1,5 @@
 import 'package:craft_stash/pages/patterns.dart';
 import 'package:craft_stash/pages/yarn_stash.dart';
-import 'package:craft_stash/services/database_service.dart';
 import 'package:craft_stash/widgets/yarnButtons/add_yarn_button.dart';
 import 'package:craft_stash/widgets/add_item_button.dart';
 import 'package:flutter/material.dart';

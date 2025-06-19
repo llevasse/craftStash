@@ -1,4 +1,3 @@
-import 'package:craft_stash/class/yarn.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';
 

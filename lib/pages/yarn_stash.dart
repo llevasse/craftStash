@@ -64,9 +64,9 @@ class _YarnStashPageState extends State<YarnStashPage> {
             ],
           ),
         );
-        yarns.forEach((yarn) {
+        for (var yarn in yarns) {
           tmp.add(EditYarnButton(updateYarn: getAllYarns, currentYarn: yarn));
-        });
+        }
       }
     });
     setState(() {
