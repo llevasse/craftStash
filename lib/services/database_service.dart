@@ -36,7 +36,31 @@ class DbService {
 
   Future<void> _onCreate(Database db, int version) async {
     db.execute(
-      '''CREATE TABLE IF NOT EXISTS yarn(id INTEGER PRIMARY KEY, color INT, brand TEXT, material TEXT, color_name TEXT, min_hook REAL, max_hook REAL, thickness REAL, number_of_skeins INT)''',
+      '''CREATE TABLE IF NOT EXISTS yarn(id INTEGER PRIMARY KEY, color INT, brand TEXT, material TEXT, color_name TEXT, min_hook REAL, max_hook REAL, thickness REAL, number_of_skeins INT, collection_id INT DEFAULT -1, hash INT)''',
+    );
+
+    db.execute(
+      '''CREATE TABLE IF NOT EXISTS brand(id INTEGER PRIMARY KEY, name TEXT UNIQUE, hash INT)''',
+    );
+
+    db.execute(
+      '''CREATE TABLE IF NOT EXISTS material(id INTEGER PRIMARY KEY, name TEXT UNIQUE, hash INT)''',
+    );
+    db.execute(
+      '''CREATE TABLE IF NOT EXISTS yarn_collection(id INTEGER PRIMARY KEY, brand TEXT, material TEXT, min_hook REAL, max_hook REAL, thickness REAL, name TEXT, hash INT)''',
+    );
+
+    db.execute(
+      '''CREATE TABLE IF NOT EXISTS pattern(pattern_id INTEGER PRIMARY KEY, name TEXT, hash INT UNIQUE)''',
+    );
+    db.execute(
+      '''CREATE TABLE IF NOT EXISTS pattern_part(part_id INTEGER PRIMARY KEY, name TEXT, numbers_to_make INT, pattern_id INT, FOREIGN KEY (pattern_id) REFERENCES pattern(pattern_id))''',
+    );
+    db.execute(
+      '''CREATE TABLE IF NOT EXISTS pattern_row(row_id INTEGER PRIMARY KEY, part_id INT, part_detail_id INT, start_row INT, end_row INT, stitches_count_per_row INT, FOREIGN KEY (part_id) REFERENCES pattern_part(part_id), FOREIGN KEY (part_detail_id) REFERENCES patteren_row_detail(row_detail_id))''',
+    );
+    db.execute(
+      '''CREATE TABLE IF NOT EXISTS pattern_row_detail(row_detail_id INTEGER PRIMARY KEY, row_id INT, stitch TEXT, color INT, has_subrow INT, FOREIGN KEY (row_id) REFERENCES pattern_row(row_id))''',
     );
   }
 
