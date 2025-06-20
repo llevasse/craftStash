@@ -1,8 +1,8 @@
 import 'dart:async';
-import 'package:craft_stash/class/brand.dart';
-import 'package:craft_stash/class/material.dart';
-import 'package:craft_stash/class/yarn.dart';
-import 'package:craft_stash/class/yarn_collection.dart';
+import 'package:craft_stash/class/yarns/brand.dart';
+import 'package:craft_stash/class/yarns/material.dart';
+import 'package:craft_stash/class/yarns/yarn.dart';
+import 'package:craft_stash/class/yarns/yarn_collection.dart';
 import 'package:craft_stash/services/database_versioning.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -29,7 +29,7 @@ class DbService {
       path,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
-      version: 7,
+      version: 8,
       onConfigure: (db) async => {await db.execute('PRAGMA foreign_keys = ON')},
     );
   }
@@ -43,22 +43,25 @@ class DbService {
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     Batch batch = db.batch();
     if (oldVersion < 2) {
-      dbV2(batch);
+      await dbV2(batch);
     }
     if (oldVersion < 3) {
-      dbV3(batch);
+      await dbV3(batch);
     }
     if (oldVersion < 4) {
-      dbV4(batch);
+      await dbV4(batch);
     }
     if (oldVersion < 5) {
-      dbV5(batch);
+      await dbV5(batch);
     }
     if (oldVersion < 6) {
-      dbV6(batch);
+      await dbV6(batch);
     }
     if (oldVersion < 7) {
-      dbV7(batch);
+      await dbV7(batch);
+    }
+    if (oldVersion < 8) {
+      await dbV8(batch);
     }
     batch.commit();
   }
@@ -68,6 +71,14 @@ class DbService {
     await removeAllYarn();
     await removeAllYarnMaterial();
     await removeAllBrand();
+  }
+
+  Future<void> recreateDb() async {
+    final databasePath = await getDatabasesPath();
+    final path = join(databasePath, 'db.db');
+    print(path);
+    await deleteDatabase(path);
+    await _initDb();
   }
 }
 

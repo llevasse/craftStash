@@ -1,7 +1,7 @@
-import 'package:craft_stash/class/brand.dart';
-import 'package:craft_stash/class/material.dart';
-import 'package:craft_stash/class/yarn.dart';
-import 'package:craft_stash/class/yarn_collection.dart';
+import 'package:craft_stash/class/yarns/brand.dart';
+import 'package:craft_stash/class/yarns/material.dart';
+import 'package:craft_stash/class/yarns/yarn.dart';
+import 'package:craft_stash/class/yarns/yarn_collection.dart';
 import 'package:flutter/material.dart';
 
 class CollectionForm extends StatefulWidget {
