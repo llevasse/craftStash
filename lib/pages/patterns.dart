@@ -10,6 +10,7 @@ class PatternsPage extends StatefulWidget {
 
 class _PatternsPageState extends State<PatternsPage> {
   List<Yarn> yarns = List.empty(growable: true);
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);

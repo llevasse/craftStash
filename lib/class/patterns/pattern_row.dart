@@ -1,3 +1,4 @@
+import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -9,6 +10,7 @@ class PatternRow {
   int partDetailId;
   int startRow, endRow;
   int stitchesPerRow;
+  List<PatternRowDetail> details = List.empty(growable: true);
   PatternRow({
     this.rowId = 0,
     this.partDetailId =
@@ -29,6 +31,25 @@ class PatternRow {
       'stitches_count_per_row': stitchesPerRow,
       'hash': hashCode,
     };
+  }
+
+  @override
+  String toString() {
+    if (partDetailId == -1) {
+      String tmp = "$startRow-$endRow :\n";
+      for (PatternRowDetail detail in details) {
+        tmp += "\t\t${detail.toString()}";
+      }
+
+      return tmp;
+    } else {
+      String tmp = "(";
+      for (PatternRowDetail detail in details) {
+        tmp += "${detail.toString()}, ";
+      }
+      tmp += ")";
+      return tmp;
+    }
   }
 
   @override

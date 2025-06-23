@@ -1,3 +1,4 @@
+import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -6,6 +7,7 @@ class PatternPart {
   int patternId;
   int numbersToMake;
   String name;
+  List<PatternRow> rows = List.empty(growable: true);
   PatternPart({
     this.partId = 0,
     required this.name,
@@ -21,6 +23,16 @@ class PatternPart {
       'name': name,
       'hash': hashCode,
     };
+  }
+
+  @override
+  String toString() {
+    String tmp = "$name x$numbersToMake:\n";
+    for (PatternRow row in rows) {
+      tmp += "\t\t${row.toString()}";
+    }
+
+    return tmp;
   }
 
   @override

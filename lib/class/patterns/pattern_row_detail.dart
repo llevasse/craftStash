@@ -1,3 +1,4 @@
+import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -7,11 +8,14 @@ class PatternRowDetail {
   int rowId;
   int rowDetailId;
   String stitch;
+  int repeatXTime;
   int color;
   bool hasSubrow;
+  PatternRow? subRow;
   PatternRowDetail({
     required this.rowId,
     this.rowDetailId = 0,
+    this.repeatXTime = 1,
     this.stitch = "empty",
     this.color = 0xFFFFC107,
     this.hasSubrow = false,
@@ -26,6 +30,14 @@ class PatternRowDetail {
       'has_subrow': hasSubrow,
       'hash': hashCode,
     };
+  }
+
+  @override
+  String toString() {
+    if (subRow != null) {
+      return "${repeatXTime == 1 ? "" : repeatXTime.toString()}$stitch";
+    }
+    return "${subRow.toString()} ${repeatXTime == 1 ? "" : "x${repeatXTime.toString()}"}";
   }
 
   @override

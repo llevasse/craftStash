@@ -1,6 +1,7 @@
 import 'package:craft_stash/pages/patterns.dart';
 import 'package:craft_stash/pages/yarn_stash.dart';
 import 'package:craft_stash/services/database_service.dart';
+import 'package:craft_stash/widgets/patternButtons/add_pattern_button.dart';
 import 'package:craft_stash/widgets/yarnButtons/add_yarn_button.dart';
 import 'package:craft_stash/widgets/add_item_button.dart';
 import 'package:flutter/material.dart';
@@ -70,7 +71,11 @@ class _MyHomePageState extends State<MyHomePage>
           updateYarn.call();
         },
       ),
-      AddItemButton(text: "Add pattern", onPressed: () {}),
+      AddPatternButton(
+        updateYarn: () async {
+          updateYarn.call();
+        },
+      ),
     ];
 
     return DefaultTabController(

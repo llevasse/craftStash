@@ -1,13 +1,25 @@
+import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';
 
 class Pattern {
   int patternId;
   String name;
-  Pattern({this.patternId = 0, required this.name});
+  List<PatternPart> parts = List.empty(growable: true);
+  Pattern({this.patternId = 0, this.name = "New pattern"});
 
   Map<String, dynamic> toMap() {
     return {'pattern_id': patternId, 'name': name, 'hash': hashCode};
+  }
+
+  @override
+  String toString() {
+    String tmp = "$name :\n";
+    for (PatternPart part in parts) {
+      tmp += "\t${part.toString()}";
+    }
+
+    return tmp;
   }
 
   @override
