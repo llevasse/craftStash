@@ -105,12 +105,30 @@ class _RowFormState extends State<RowForm> {
     ThemeData theme = Theme.of(context);
     return OutlinedButton(
       onPressed: () async {
+        if (row.details.isNotEmpty && row.details.last.stitch == stitch) {
+          row.details.last.repeatXTime += 1;
+          int length = row.details.length;
+          details[length - 1] = StitchCountButton(
+            text: stitch,
+            count: row.details[length - 1].repeatXTime,
+            increase: () {
+              row.details[length - 1].repeatXTime += 1;
+              setState(() {});
+            },
+            decrease: () {
+              row.details[length - 1].repeatXTime -= 1;
+              setState(() {});
+            },
+          );
+          setState(() {});
+          return;
+        }
         row.details.add(PatternRowDetail(rowId: 0, stitch: stitch));
         int length = row.details.length;
         details.add(
           StitchCountButton(
             text: stitch,
-            count: 1,
+            count: row.details[length - 1].repeatXTime,
             increase: () {
               row.details[length - 1].repeatXTime += 1;
               setState(() {});
@@ -198,11 +216,14 @@ class _RowFormState extends State<RowForm> {
             //   },
             // ),
             Text(detailsString),
-            SizedBox(height: 200,
-            child: 
-            SingleChildScrollView(
-              child: Wrap(spacing: 10, children: [for (Widget e in details) e]),
-            ),
+            SizedBox(
+              height: 200,
+              child: SingleChildScrollView(
+                child: Wrap(
+                  spacing: 10,
+                  children: [for (Widget e in details) e],
+                ),
+              ),
             ),
             Wrap(
               spacing: 10,
