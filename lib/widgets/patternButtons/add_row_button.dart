@@ -82,6 +82,7 @@ class _RowFormState extends State<RowForm> {
   String detailsString = "";
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   PatternRow row = PatternRow(startRow: 0, endRow: 0, stitchesPerRow: 0);
+  TextEditingController previewControler = TextEditingController();
   @override
   void initState() {
     row.startRow = widget.startRow;
@@ -98,6 +99,7 @@ class _RowFormState extends State<RowForm> {
       }
       detailsString += "${detail.stitch}, ";
     });
+    previewControler.text = detailsString;
     super.setState(fn);
   }
 
@@ -162,6 +164,64 @@ class _RowFormState extends State<RowForm> {
     );
   }
 
+  Widget _rowNumberInput() {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      spacing: 10,
+      children: [
+        Expanded(
+          child: TextFormField(
+            keyboardType: TextInputType.numberWithOptions(),
+            decoration: InputDecoration(label: Text("Start row")),
+            initialValue: row.startRow.toString(),
+            validator: (value) {
+              if (value == null || value.trim().isEmpty) {
+                return ("Can't be empty");
+              }
+              int val = int.parse(value.trim());
+              if (val < 0) {
+                return ("Row number can't be negative");
+              }
+              if (val < row.endRow) {
+                return ("Start row number can't be inferior to end row number");
+              }
+              return null;
+            },
+            onSaved: (newValue) {
+              if (newValue == null) return;
+              row.startRow = int.parse(newValue.trim());
+              row.endRow = row.startRow;
+            },
+          ),
+        ),
+        Expanded(
+          child: TextFormField(
+            keyboardType: TextInputType.numberWithOptions(),
+            decoration: InputDecoration(label: Text("Number of rows")),
+            initialValue: row.endRow.toString(),
+            validator: (value) {
+              if (value == null || value.trim().isEmpty) {
+                return ("Can't be empty");
+              }
+              int val = int.parse(value.trim());
+              if (val < 0) {
+                return ("Row number can't be negative");
+              }
+              if (val > row.startRow) {
+                return ("Start row number can't be inferior to end row number");
+              }
+              return null;
+            },
+            onSaved: (newValue) {
+              if (newValue == null) return;
+              row.endRow = int.parse(newValue.trim());
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -170,54 +230,17 @@ class _RowFormState extends State<RowForm> {
         key: _formKey,
         child: Column(
           children: [
+            _rowNumberInput(),
+
             TextFormField(
-              keyboardType: TextInputType.numberWithOptions(),
-              decoration: InputDecoration(label: Text("Start row")),
-              initialValue: row.startRow.toString(),
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return ("Can't be empty");
-                }
-                int val = int.parse(value.trim());
-                if (val < 0) {
-                  return ("Row number can't be negative");
-                }
-                if (val < row.endRow) {
-                  return ("Start row number can't be inferior to end row number");
-                }
-                return null;
-              },
-              onSaved: (newValue) {
-                if (newValue == null) return;
-                row.startRow = int.parse(newValue.trim());
-                row.endRow = row.startRow;
-              },
+              controller: previewControler,
+              //initialValue: detailsString,
+              readOnly: true,
+              decoration: InputDecoration(label: Text("Preview")),
             ),
-            // TextFormField(
-            //   keyboardType: TextInputType.numberWithOptions(),
-            //   decoration: InputDecoration(label: Text("End row")),
-            //   initialValue: row.endRow.toString(),
-            //   validator: (value) {
-            //     if (value == null || value.trim().isEmpty) {
-            //       return ("Can't be empty");
-            //     }
-            //     int val = int.parse(value.trim());
-            //     if (val < 0) {
-            //       return ("Row number can't be negative");
-            //     }
-            //     if (val > row.startRow) {
-            //       return ("Start row number can't be inferior to end row number");
-            //     }
-            //     return null;
-            //   },
-            //   onSaved: (newValue) {
-            //     if (newValue == null) return;
-            //     row.endRow = int.parse(newValue.trim());
-            //   },
-            // ),
-            Text(detailsString),
-            SizedBox(
-              height: 200,
+            Container(
+              constraints: BoxConstraints(maxHeight: 150),
+              padding: EdgeInsets.only(top: 10),
               child: SingleChildScrollView(
                 child: Wrap(
                   spacing: 10,
