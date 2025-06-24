@@ -10,7 +10,7 @@ class PatternRowDetail {
   String stitch;
   int repeatXTime;
   int color;
-  bool hasSubrow;
+  int hasSubrow;
   PatternRow? subRow;
   PatternRowDetail({
     required this.rowId,
@@ -18,7 +18,7 @@ class PatternRowDetail {
     this.repeatXTime = 1,
     this.stitch = "empty",
     this.color = 0xFFFFC107,
-    this.hasSubrow = false,
+    this.hasSubrow = 0,
   });
 
   Map<String, dynamic> toMap() {
@@ -28,7 +28,6 @@ class PatternRowDetail {
       'stitch': stitch,
       'color': color,
       'has_subrow': hasSubrow,
-      'hash': hashCode,
     };
   }
 
@@ -49,18 +48,11 @@ Future<void> insertPatternRowDetailInDb(
 ) async {
   final db = (await DbService().database);
   if (db != null) {
-    final list = await db.query(
+    db.insert(
       _tableName,
-      where: "hash = ?",
-      whereArgs: [patternRowDetail.hashCode],
+      patternRowDetail.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
     );
-    if (list.isEmpty) {
-      db.insert(
-        _tableName,
-        patternRowDetail.toMap(),
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
-    }
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }
@@ -103,7 +95,7 @@ Future<List<PatternRowDetail>> getAllPatternRowDetail() async {
             'row_id': rowId as int,
             'stitch': stitch as String,
             'color': color as int,
-            'has_subrow': hasSubrow as bool,
+            'has_subrow': hasSubrow as int,
           }
           in patternRowDetailMaps)
         PatternRowDetail(

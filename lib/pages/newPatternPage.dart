@@ -15,6 +15,21 @@ class _NewPatternPageState extends State<NewPatternPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String title = "New pattern";
   craft.Pattern pattern = craft.Pattern();
+  PatternPart part = PatternPart(name: "Main", patternId: 0);
+
+  void _insertPattern() async {
+    int patternId = await craft.insertPatternInDb(pattern);
+    pattern.patternId = patternId;
+    part.patternId = pattern.patternId;
+    int partId = await insertPatternPartInDb(part);
+    part.partId = partId;
+  }
+
+  @override
+  void initState() {
+    _insertPattern();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +59,10 @@ class _NewPatternPageState extends State<NewPatternPage> {
           ],
         ),
       ),
-      floatingActionButton: AddRowButton(updatePattern: () async {}),
+      floatingActionButton: AddRowButton(
+        part: part,
+        updatePattern: () async {},
+      ),
     );
   }
 }

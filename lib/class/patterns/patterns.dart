@@ -9,7 +9,7 @@ class Pattern {
   Pattern({this.patternId = 0, this.name = "New pattern"});
 
   Map<String, dynamic> toMap() {
-    return {'pattern_id': patternId, 'name': name, 'hash': hashCode};
+    return {'pattern_id': patternId, 'name': name};
   }
 
   @override
@@ -26,7 +26,7 @@ class Pattern {
   int get hashCode => Object.hash(name, 0);
 }
 
-Future<void> insertPatternInDb(Pattern pattern) async {
+Future<int> insertPatternInDb(Pattern pattern) async {
   final db = (await DbService().database);
   if (db != null) {
     final list = await db.query(
@@ -35,7 +35,7 @@ Future<void> insertPatternInDb(Pattern pattern) async {
       whereArgs: [pattern.hashCode],
     );
     if (list.isEmpty) {
-      db.insert(
+      return db.insert(
         'pattern',
         pattern.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
@@ -44,6 +44,7 @@ Future<void> insertPatternInDb(Pattern pattern) async {
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }
+  return (-1);
 }
 
 Future<void> updatePatternInDb(Pattern pattern) async {

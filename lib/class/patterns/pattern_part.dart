@@ -21,7 +21,6 @@ class PatternPart {
       'pattern_id': patternId,
       'numbers_to_make': numbersToMake,
       'name': name,
-      'hash': hashCode,
     };
   }
 
@@ -39,21 +38,14 @@ class PatternPart {
   int get hashCode => Object.hash(name, patternId, numbersToMake);
 }
 
-Future<void> insertPatternPartInDb(PatternPart patternPart) async {
+Future<int> insertPatternPartInDb(PatternPart patternPart) async {
   final db = (await DbService().database);
   if (db != null) {
-    final list = await db.query(
+    return db.insert(
       'pattern_part',
-      where: "hash = ?",
-      whereArgs: [patternPart.hashCode],
+      patternPart.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
     );
-    if (list.isEmpty) {
-      db.insert(
-        'pattern_part',
-        patternPart.toMap(),
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
-    }
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }

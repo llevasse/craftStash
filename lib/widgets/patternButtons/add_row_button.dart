@@ -1,16 +1,20 @@
+import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/pages/newPatternPage.dart';
 import 'package:craft_stash/widgets/int_control_button.dart';
 import 'package:craft_stash/widgets/patternButtons/stitch_count_button.dart';
 import 'package:flutter/material.dart';
+import 'package:craft_stash/class/patterns/patterns.dart' as craft;
 
 class AddRowButton extends StatefulWidget {
   final Future<void> Function() updatePattern;
+  PatternPart part;
   int startRow;
   int endRow;
   AddRowButton({
     super.key,
+    required this.part,
     required this.updatePattern,
     this.startRow = 0,
     this.endRow = 0,
@@ -34,6 +38,7 @@ class _AddRowButton extends State<AddRowButton> {
         await showDialog(
           context: context,
           builder: (BuildContext context) => RowForm(
+            part: widget.part,
             updatePattern: widget.updatePattern,
             startRow: widget.startRow,
             endRow: widget.endRow,
@@ -63,10 +68,12 @@ class _AddRowButton extends State<AddRowButton> {
 
 class RowForm extends StatefulWidget {
   final Future<void> Function() updatePattern;
+  PatternPart part;
   int startRow;
   int endRow;
   RowForm({
     super.key,
+    required this.part,
     required this.updatePattern,
     this.startRow = 0,
     this.endRow = 0,
@@ -115,10 +122,12 @@ class _RowFormState extends State<RowForm> {
             count: row.details[length - 1].repeatXTime,
             increase: () {
               row.details[length - 1].repeatXTime += 1;
+              row.stitchesPerRow += 1;
               setState(() {});
             },
             decrease: () {
               row.details[length - 1].repeatXTime -= 1;
+              row.stitchesPerRow -= 1;
               setState(() {});
             },
           );
@@ -255,7 +264,26 @@ class _RowFormState extends State<RowForm> {
           ],
         ),
       ),
-      actions: [TextButton(onPressed: () {}, child: Text("Add"))],
+      actions: [
+        TextButton(
+          onPressed: () async {
+            row.partId = widget.part.partId;
+            print(row);
+            int rowId = await insertPatternRowInDb(row);
+            for (StitchCountButton e in details) {
+              await insertPatternRowDetailInDb(
+                PatternRowDetail(
+                  rowId: rowId,
+                  stitch: e.text.toString(),
+                  repeatXTime: e.count,
+                ),
+              );
+            }
+            Navigator.pop(context);
+          },
+          child: Text("Add"),
+        ),
+      ],
     );
   }
 }

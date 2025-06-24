@@ -7,14 +7,13 @@ final String _tableName = "pattern_row";
 class PatternRow {
   int rowId;
   int partId;
-  int partDetailId;
+  int? partDetailId;
   int startRow, endRow;
   int stitchesPerRow;
   List<PatternRowDetail> details = List.empty(growable: true);
   PatternRow({
     this.rowId = 0,
-    this.partDetailId =
-        -1, // non negative if is a 'subrow' (i.e repetetive instruction with different stitches)
+    this.partDetailId, // non null if is a 'subrow' (i.e repetetive instruction with different stitches)
     this.partId = -1,
     required this.startRow,
     required this.endRow,
@@ -29,7 +28,7 @@ class PatternRow {
       'start_row': startRow,
       'end_row': endRow,
       'stitches_count_per_row': stitchesPerRow,
-      'hash': hashCode,
+      // 'hash': hashCode,
     };
   }
 
@@ -63,21 +62,15 @@ class PatternRow {
   );
 }
 
-Future<void> insertPatternRowInDb(PatternRow patternRow) async {
+Future<int> insertPatternRowInDb(PatternRow patternRow) async {
   final db = (await DbService().database);
   if (db != null) {
-    final list = await db.query(
+    print(_tableName);
+    return db.insert(
       _tableName,
-      where: "hash = ?",
-      whereArgs: [patternRow.hashCode],
+      patternRow.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
     );
-    if (list.isEmpty) {
-      db.insert(
-        _tableName,
-        patternRow.toMap(),
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
-    }
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }

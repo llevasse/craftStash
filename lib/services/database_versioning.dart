@@ -47,7 +47,7 @@ Future<void> dbV8(Batch batch) async {
     '''CREATE TABLE IF NOT EXISTS pattern_part(part_id INTEGER PRIMARY KEY, pattern_id INT, name TEXT, numbers_to_make INT, FOREIGN KEY (pattern_id) REFERENCES pattern(pattern_id))''',
   );
   batch.execute(
-    '''CREATE TABLE IF NOT EXISTS pattern_row(row_id INTEGER PRIMARY KEY, part_id INT, part_detail_id INT, start_row INT, end_row INT, stitches_count_per_row INT, FOREIGN KEY (part_id) REFERENCES pattern_part(part_id), FOREIGN KEY (part_detail_id) REFERENCES patteren_row_detail(row_detail_id))''',
+    '''CREATE TABLE IF NOT EXISTS pattern_row(row_id INTEGER PRIMARY KEY, part_id INT, part_detail_id INT, start_row INT, end_row INT, stitches_count_per_row INT, FOREIGN KEY (part_id) REFERENCES pattern_part(part_id), FOREIGN KEY (part_detail_id) REFERENCES pattern_row_detail(row_detail_id))''',
   );
   batch.execute(
     '''CREATE TABLE IF NOT EXISTS pattern_row_detail(row_detail_id INTEGER PRIMARY KEY, row_id INT, stitch TEXT, color INT, has_subrow INT, FOREIGN KEY (row_id) REFERENCES pattern_row(row_id))''',
