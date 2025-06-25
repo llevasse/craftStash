@@ -114,6 +114,7 @@ class _RowFormState extends State<RowForm> {
     ThemeData theme = Theme.of(context);
     return OutlinedButton(
       onPressed: () async {
+        print(stitch);
         if (row.details.isNotEmpty && row.details.last.stitch == stitch) {
           row.details.last.repeatXTime += 1;
           int length = row.details.length;
@@ -268,17 +269,13 @@ class _RowFormState extends State<RowForm> {
         TextButton(
           onPressed: () async {
             row.partId = widget.part.partId;
-            print(row);
             int rowId = await insertPatternRowInDb(row);
-            for (StitchCountButton e in details) {
-              await insertPatternRowDetailInDb(
-                PatternRowDetail(
-                  rowId: rowId,
-                  stitch: e.text.toString(),
-                  repeatXTime: e.count,
-                ),
-              );
+            for (PatternRowDetail e in row.details) {
+              print(e);
+              await insertPatternRowDetailInDb(e);
             }
+            print(row);
+            await widget.updatePattern();
             Navigator.pop(context);
           },
           child: Text("Add"),

@@ -33,7 +33,7 @@ class PatternRowDetail {
 
   @override
   String toString() {
-    if (subRow != null) {
+    if (hasSubrow == 0) {
       return "${repeatXTime == 1 ? "" : repeatXTime.toString()}$stitch";
     }
     return "${subRow.toString()} ${repeatXTime == 1 ? "" : "x${repeatXTime.toString()}"}";
@@ -88,6 +88,36 @@ Future<List<PatternRowDetail>> getAllPatternRowDetail() async {
   if (db != null) {
     final List<Map<String, Object?>> patternRowDetailMaps = await db.query(
       _tableName,
+    );
+    return [
+      for (final {
+            'row_detail_id': rowDetailId as int,
+            'row_id': rowId as int,
+            'stitch': stitch as String,
+            'color': color as int,
+            'has_subrow': hasSubrow as int,
+          }
+          in patternRowDetailMaps)
+        PatternRowDetail(
+          rowDetailId: rowDetailId,
+          rowId: rowId,
+          stitch: stitch,
+          color: color,
+          hasSubrow: hasSubrow,
+        ),
+    ];
+  } else {
+    throw DatabaseDoesNotExistException("Could not get database");
+  }
+}
+
+Future<List<PatternRowDetail>> getAllPatternRowDetailByRowId(int id) async {
+  final db = (await DbService().database);
+  if (db != null) {
+    final List<Map<String, Object?>> patternRowDetailMaps = await db.query(
+      _tableName,
+      where: "row_id = ?",
+      whereArgs: [id],
     );
     return [
       for (final {

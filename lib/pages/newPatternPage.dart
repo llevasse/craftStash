@@ -61,7 +61,10 @@ class _NewPatternPageState extends State<NewPatternPage> {
       ),
       floatingActionButton: AddRowButton(
         part: part,
-        updatePattern: () async {},
+        updatePattern: () async {
+          pattern = await craft.getPatternById(pattern.patternId);
+          print(pattern.toString());
+        },
       ),
     );
   }

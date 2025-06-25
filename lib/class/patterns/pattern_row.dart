@@ -129,6 +129,36 @@ Future<List<PatternRow>> getAllPatternRow() async {
   }
 }
 
+Future<List<PatternRow>> getAllPatternRowByPartId(int id) async {
+  final db = (await DbService().database);
+  if (db != null) {
+    final List<Map<String, Object?>> patternRowMaps = await db.query(
+      _tableName,
+      where: "part_id = ?",
+      whereArgs: [id],
+    );
+    List<PatternRow> l = List.empty(growable: true);
+    for (Map<String, Object?> map in patternRowMaps) {
+      PatternRow tmp = PatternRow(
+        rowId: map['row_id'] as int,
+        partId: map['part_id'] as int,
+        partDetailId: -1,
+        startRow: map['start_row'] as int,
+        endRow: map['end_row'] as int,
+        stitchesPerRow: map['stitches_count_per_row'] as int,
+      );
+      if (map['part_detail_id'] != null) {
+        tmp.partDetailId = map['part_detail_id'] as int;
+      }
+      tmp.details = await getAllPatternRowDetailByRowId(tmp.rowId);
+      l.add(tmp);
+    }
+    return (l);
+  } else {
+    throw DatabaseDoesNotExistException("Could not get database");
+  }
+}
+
 Future<void> removeAllPatternRow() async {
   final db = (await DbService().database);
   if (db != null) {
