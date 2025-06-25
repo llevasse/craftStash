@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // await DbService().clearDb();
-//  await DbService().recreateDb();
+  //  await DbService().recreateDb();
   runApp(const MyApp());
 }
 
@@ -41,6 +41,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
   late Future<void> Function() updateYarn;
+  late Future<void> Function() updatePattern;
   late TabController _tabController;
 
   void update() {
@@ -72,8 +73,8 @@ class _MyHomePageState extends State<MyHomePage>
         },
       ),
       AddPatternButton(
-        updateYarn: () async {
-          updateYarn.call();
+        updatePattern: () async {
+          updatePattern.call();
         },
       ),
     ];
@@ -89,7 +90,11 @@ class _MyHomePageState extends State<MyHomePage>
                 updateYarn = method;
               },
             ),
-            PatternsPage(),
+            PatternsPage(
+              builder: (BuildContext context, Future<void> Function() method) {
+                updatePattern = method;
+              },
+            ),
           ],
         ),
         floatingActionButton: actionButtons[_tabController.index],

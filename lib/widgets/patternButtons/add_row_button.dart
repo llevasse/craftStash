@@ -271,10 +271,10 @@ class _RowFormState extends State<RowForm> {
             row.partId = widget.part.partId;
             int rowId = await insertPatternRowInDb(row);
             for (PatternRowDetail e in row.details) {
-              print(e);
+              //print(e);
               await insertPatternRowDetailInDb(e);
             }
-            print(row);
+            //print(row);
             await widget.updatePattern();
             Navigator.pop(context);
           },

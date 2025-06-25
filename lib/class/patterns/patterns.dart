@@ -9,7 +9,8 @@ class Pattern {
   Pattern({this.patternId = 0, this.name = "New pattern"});
 
   Map<String, dynamic> toMap() {
-    return {'pattern_id': patternId, 'name': name};
+    // return {'pattern_id': patternId, 'name': name};
+    return {'name': name};
   }
 
   @override
@@ -29,18 +30,19 @@ class Pattern {
 Future<int> insertPatternInDb(Pattern pattern) async {
   final db = (await DbService().database);
   if (db != null) {
-    final list = await db.query(
+    // final list = await db.query(
+    //   'pattern',
+    //   where: "hash = ?",
+    //   whereArgs: [pattern.hashCode],
+    // );
+    // if (list.isEmpty) {
+    // }
+    Map<String, dynamic> m = pattern.toMap();
+    return db.insert(
       'pattern',
-      where: "hash = ?",
-      whereArgs: [pattern.hashCode],
+      m,
+      conflictAlgorithm: ConflictAlgorithm.replace,
     );
-    if (list.isEmpty) {
-      return db.insert(
-        'pattern',
-        pattern.toMap(),
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
-    }
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }
@@ -74,11 +76,15 @@ Future<List<Pattern>> getAllPattern() async {
   final db = (await DbService().database);
   if (db != null) {
     final List<Map<String, Object?>> patternMaps = await db.query('pattern');
-    return [
-      for (final {'pattern_id': patternId as int, "name": name as String}
+    List<Pattern> p = [
+      for (final {'pattern_id': patternId as int, 'name': name as String}
           in patternMaps)
         Pattern(patternId: patternId, name: name),
     ];
+    for (Pattern pattern in p) {
+      pattern.parts = await getAllPatternPartsByPatternId(pattern.patternId);
+    }
+    return (p);
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }

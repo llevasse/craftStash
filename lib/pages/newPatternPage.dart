@@ -5,7 +5,8 @@ import 'package:craft_stash/widgets/patternButtons/add_row_button.dart';
 import 'package:flutter/material.dart';
 
 class NewPatternPage extends StatefulWidget {
-  const NewPatternPage();
+  final Future<void> Function() updatePattern;
+  const NewPatternPage({super.key, required this.updatePattern});
 
   @override
   State<StatefulWidget> createState() => _NewPatternPageState();
@@ -19,6 +20,7 @@ class _NewPatternPageState extends State<NewPatternPage> {
 
   void _insertPattern() async {
     int patternId = await craft.insertPatternInDb(pattern);
+    print(patternId);
     pattern.patternId = patternId;
     part.patternId = pattern.patternId;
     int partId = await insertPatternPartInDb(part);
@@ -38,6 +40,19 @@ class _NewPatternPageState extends State<NewPatternPage> {
       appBar: AppBar(
         title: Text("New pattern"),
         backgroundColor: theme.colorScheme.primary,
+        actions: [
+          IconButton(
+            onPressed: () async {
+              if (_formKey.currentState!.validate()) {
+                _formKey.currentState!.save();
+                await craft.updatePatternInDb(pattern);
+                await widget.updatePattern();
+                Navigator.pop(context);
+              }
+            },
+            icon: Icon(Icons.save),
+          ),
+        ],
       ),
       body: Form(
         key: _formKey,
