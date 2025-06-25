@@ -22,7 +22,6 @@ class PatternRow {
 
   Map<String, dynamic> toMap() {
     return {
-      'row_id': rowId,
       'part_detail_id': partDetailId,
       'part_id': partId,
       'start_row': startRow,

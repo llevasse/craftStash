@@ -23,9 +23,9 @@ class PatternRowDetail {
 
   Map<String, dynamic> toMap() {
     return {
-      'row_detail_id': rowDetailId,
       'row_id': rowId,
       'stitch': stitch,
+      'repeat_x_time': repeatXTime,
       'color': color,
       'has_subrow': hasSubrow,
     };
@@ -94,6 +94,7 @@ Future<List<PatternRowDetail>> getAllPatternRowDetail() async {
             'row_detail_id': rowDetailId as int,
             'row_id': rowId as int,
             'stitch': stitch as String,
+            'repeat_x_time': repeatXTime as int,
             'color': color as int,
             'has_subrow': hasSubrow as int,
           }
@@ -102,6 +103,7 @@ Future<List<PatternRowDetail>> getAllPatternRowDetail() async {
           rowDetailId: rowDetailId,
           rowId: rowId,
           stitch: stitch,
+          repeatXTime: repeatXTime,
           color: color,
           hasSubrow: hasSubrow,
         ),
@@ -124,6 +126,7 @@ Future<List<PatternRowDetail>> getAllPatternRowDetailByRowId(int id) async {
             'row_detail_id': rowDetailId as int,
             'row_id': rowId as int,
             'stitch': stitch as String,
+            'repeat_x_time': repeatXTime as int,
             'color': color as int,
             'has_subrow': hasSubrow as int,
           }
@@ -132,6 +135,7 @@ Future<List<PatternRowDetail>> getAllPatternRowDetailByRowId(int id) async {
           rowDetailId: rowDetailId,
           rowId: rowId,
           stitch: stitch,
+          repeatXTime: repeatXTime,
           color: color,
           hasSubrow: hasSubrow,
         ),

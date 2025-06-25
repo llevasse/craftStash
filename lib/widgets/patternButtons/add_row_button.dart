@@ -272,6 +272,7 @@ class _RowFormState extends State<RowForm> {
             int rowId = await insertPatternRowInDb(row);
             for (PatternRowDetail e in row.details) {
               //print(e);
+              e.rowId = rowId;
               await insertPatternRowDetailInDb(e);
             }
             //print(row);
