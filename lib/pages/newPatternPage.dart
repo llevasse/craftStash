@@ -59,6 +59,7 @@ class _NewPatternPageState extends State<NewPatternPage> {
         ),
       );
       for (PatternRow row in part.rows) {
+        print(row.endRow);
         patternListView.add(_patternRowTile(row));
       }
     }

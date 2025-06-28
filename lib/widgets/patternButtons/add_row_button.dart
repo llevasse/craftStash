@@ -17,7 +17,7 @@ class AddRowButton extends StatefulWidget {
     required this.part,
     required this.updatePattern,
     this.startRow = 0,
-    this.endRow = 0,
+    this.endRow = 1,
   });
 
   @override
@@ -76,7 +76,7 @@ class RowForm extends StatefulWidget {
     required this.part,
     required this.updatePattern,
     this.startRow = 0,
-    this.endRow = 0,
+    this.endRow = 1,
   });
 
   @override
@@ -197,10 +197,17 @@ class _RowFormState extends State<RowForm> {
               }
               return null;
             },
-            onSaved: (newValue) {
-              if (newValue == null) return;
+            onChanged: (newValue) {
+              if (newValue == null || newValue.trim().isEmpty) {
+                return;
+              }
               row.startRow = int.parse(newValue.trim());
-              row.endRow = row.startRow;
+            },
+            onSaved: (newValue) {
+              if (newValue == null || newValue.trim().isEmpty) {
+                return;
+              }
+              row.startRow = int.parse(newValue.trim());
             },
           ),
         ),
@@ -214,17 +221,14 @@ class _RowFormState extends State<RowForm> {
                 return ("Can't be empty");
               }
               int val = int.parse(value.trim());
-              if (val < 0) {
-                return ("Row number can't be negative");
-              }
-              if (val > row.startRow) {
-                return ("Start row number can't be inferior to end row number");
+              if (val < 1) {
+                return ("Row number can't be inferior to one");
               }
               return null;
             },
             onSaved: (newValue) {
               if (newValue == null) return;
-              row.endRow = int.parse(newValue.trim());
+              row.endRow = int.parse(newValue.trim()) - 1;
             },
           ),
         ),
@@ -268,16 +272,18 @@ class _RowFormState extends State<RowForm> {
       actions: [
         TextButton(
           onPressed: () async {
-            row.partId = widget.part.partId;
-            int rowId = await insertPatternRowInDb(row);
-            for (PatternRowDetail e in row.details) {
-              //print(e);
-              e.rowId = rowId;
-              await insertPatternRowDetailInDb(e);
+            if (_formKey.currentState!.validate()) {
+              _formKey.currentState!.save();
+              row.endRow += row.startRow;
+              row.partId = widget.part.partId;
+              int rowId = await insertPatternRowInDb(row);
+              for (PatternRowDetail e in row.details) {
+                e.rowId = rowId;
+                await insertPatternRowDetailInDb(e);
+              }
+              await widget.updatePattern();
+              Navigator.pop(context);
             }
-            //print(row);
-            await widget.updatePattern();
-            Navigator.pop(context);
           },
           child: Text("Add"),
         ),
