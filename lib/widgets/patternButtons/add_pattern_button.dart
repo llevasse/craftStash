@@ -2,9 +2,9 @@ import 'package:craft_stash/pages/newPatternPage.dart';
 import 'package:flutter/material.dart';
 
 class AddPatternButton extends StatefulWidget {
-  final Future<void> Function() updatePattern;
+  final Future<void> Function() updatePatternListView;
 
-  const AddPatternButton({super.key, required this.updatePattern});
+  const AddPatternButton({super.key, required this.updatePatternListView});
 
   @override
   State<StatefulWidget> createState() => _AddPatternButton();
@@ -25,7 +25,7 @@ class _AddPatternButton extends State<AddPatternButton> {
           context,
           MaterialPageRoute<void>(
             builder: (BuildContext context) =>
-                NewPatternPage(updatePattern: widget.updatePattern),
+                NewPatternPage(updatePatternListView: widget.updatePatternListView),
           ),
         );
       },

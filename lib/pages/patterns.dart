@@ -1,5 +1,6 @@
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
 import 'package:craft_stash/class/yarns/yarn.dart';
+import 'package:craft_stash/pages/newPatternPage.dart';
 import 'package:flutter/material.dart';
 
 typedef MyBuilder =
@@ -18,25 +19,32 @@ class _PatternsPageState extends State<PatternsPage> {
   List<craft.Pattern> patterns = List.empty(growable: true);
   Future<void> getAllPatterns() async {
     patterns = await craft.getAllPattern();
-    updateListView();
+    await updateListView();
     setState(() {});
   }
 
-  void updateListView() {
+  Future<void> updateListView() async {
     List<Widget> tmp = List.empty(growable: true);
     for (craft.Pattern pattern in patterns) {
       tmp.add(
         ListTile(
           title: Text(pattern.name),
           onTap: () {
-            print(pattern);
+            Navigator.push(
+              context,
+              MaterialPageRoute<void>(
+                builder: (BuildContext context) => NewPatternPage(
+                  updatePatternListView: updateListView,
+                  pattern: pattern,
+                ),
+              ),
+            );
           },
         ),
       );
     }
     ;
     setState(() {
-      listViewContent.clear();
       listViewContent = tmp;
     });
   }

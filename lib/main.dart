@@ -41,7 +41,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
   late Future<void> Function() updateYarn;
-  late Future<void> Function() updatePattern;
+  late Future<void> Function() updatePatternListView;
   late TabController _tabController;
 
   void update() {
@@ -73,8 +73,8 @@ class _MyHomePageState extends State<MyHomePage>
         },
       ),
       AddPatternButton(
-        updatePattern: () async {
-          updatePattern.call();
+        updatePatternListView: () async {
+          updatePatternListView.call();
         },
       ),
     ];
@@ -92,7 +92,7 @@ class _MyHomePageState extends State<MyHomePage>
             ),
             PatternsPage(
               builder: (BuildContext context, Future<void> Function() method) {
-                updatePattern = method;
+                updatePatternListView = method;
               },
             ),
           ],

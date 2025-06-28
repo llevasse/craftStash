@@ -59,6 +59,14 @@ class PatternRow {
     endRow,
     stitchesPerRow,
   );
+
+  String detailsAsString() {
+    String tmp = "";
+    for (PatternRowDetail detail in details) {
+      tmp += "${detail.toString()}, ";
+    }
+    return tmp;
+  }
 }
 
 Future<int> insertPatternRowInDb(PatternRow patternRow) async {
