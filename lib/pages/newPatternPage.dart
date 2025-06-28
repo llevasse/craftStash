@@ -39,6 +39,7 @@ class _NewPatternPageState extends State<NewPatternPage> {
       _insertPattern();
     } else {
       pattern = widget.pattern!;
+      part = widget.pattern!.parts[0];
     }
     patternListView.add(_titleInput());
     for (PatternPart part in pattern.parts) {
