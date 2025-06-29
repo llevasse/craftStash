@@ -76,6 +76,30 @@ class _PatternPartPageState extends State<PatternPartPage> {
               RowForm(part: part, updatePattern: updateListView, row: row),
         );
       },
+      onLongPress: () async {
+        await showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: Text("Do you want to delete this row"),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text("Cancel"),
+              ),
+              TextButton(
+                onPressed: () async {
+                  await deletePatternRowInDb(row.rowId);
+                  await updateListView();
+                  Navigator.pop(context);
+                },
+                child: Text("Delete"),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 

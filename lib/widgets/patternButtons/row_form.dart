@@ -36,10 +36,8 @@ class _RowFormState extends State<RowForm> {
     row.endRow = widget.endRow;
     if (widget.row != null) {
       row = widget.row!;
-      // print(row.rowId);
       detailsString = "";
       row.details.forEach((detail) {
-        print("detail id : ${detail.rowDetailId}");
         if (detail.repeatXTime != 0) {
           if (detail.repeatXTime > 1) {
             detailsString += detail.repeatXTime.toString();
@@ -252,11 +250,9 @@ class _RowFormState extends State<RowForm> {
                   }
                 }
               } else {
-                print(row.getSpecAsString());
                 await updatePatternRowInDb(row);
                 int rowId = row.rowId;
                 for (PatternRowDetail e in row.details) {
-                  print("save detail id : ${e.rowDetailId}");
 
                   if (e.repeatXTime != 0) {
                     e.rowId = rowId;

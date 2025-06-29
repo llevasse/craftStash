@@ -105,6 +105,7 @@ Future<void> updatePatternRowInDb(PatternRow patternRow) async {
 Future<void> deletePatternRowInDb(int id) async {
   final db = (await DbService().database);
   if (db != null) {
+    await deletePatternRowDetailInDbByRowId(id);
     await db.delete(_tableName, where: "row_id = ?", whereArgs: [id]);
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
@@ -148,7 +149,7 @@ Future<List<PatternRow>> getAllPatternRowByPartId(int id) async {
       _tableName,
       where: "part_id = ?",
       whereArgs: [id],
-      orderBy: "start_row ASC"
+      orderBy: "start_row ASC",
     );
     List<PatternRow> l = List.empty(growable: true);
     for (Map<String, Object?> map in patternRowMaps) {
