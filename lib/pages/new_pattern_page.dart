@@ -1,6 +1,8 @@
+import 'package:craft_stash/add_part_button.dart';
 import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
+import 'package:craft_stash/pages/pattern_part_page.dart';
 import 'package:craft_stash/widgets/patternButtons/add_row_button.dart';
 import 'package:flutter/material.dart';
 
@@ -21,16 +23,12 @@ class _NewPatternPageState extends State<NewPatternPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String title = "New pattern";
   craft.Pattern pattern = craft.Pattern();
-  PatternPart part = PatternPart(name: "Main", patternId: 0);
   List<Widget> patternListView = List.empty(growable: true);
 
   void _insertPattern() async {
     int patternId = await craft.insertPatternInDb(pattern);
     //    print(patternId);
     pattern.patternId = patternId;
-    part.patternId = pattern.patternId;
-    int partId = await insertPatternPartInDb(part);
-    part.partId = partId;
   }
 
   @override
@@ -39,29 +37,28 @@ class _NewPatternPageState extends State<NewPatternPage> {
       _insertPattern();
     } else {
       pattern = widget.pattern!;
-      part = widget.pattern!.parts[0];
+      title = pattern.name;
     }
     patternListView.add(_titleInput());
     for (PatternPart part in pattern.parts) {
       patternListView.add(
-        Row(
-          children: [
-            Expanded(child: Divider(color: Colors.amber)),
-            Expanded(
-              child: Text(
-                part.name,
-                textAlign: TextAlign.center,
-                textScaler: TextScaler.linear(1.5),
+        ListTile(
+          title: Text(part.name),
+          onTap: () async {
+            await Navigator.push(
+              context,
+              MaterialPageRoute<void>(
+                builder: (BuildContext context) => PatternPartPage(
+                  updatePatternListView: updateListView,
+                  pattern: pattern,
+                  part: part,
+                ),
               ),
-            ),
-            Expanded(child: Divider(color: Colors.amber)),
-          ],
+            );
+            await updateListView();
+          },
         ),
       );
-      for (PatternRow row in part.rows) {
-        print(row.endRow);
-        patternListView.add(_patternRowTile(row));
-      }
     }
     super.initState();
   }
@@ -83,36 +80,29 @@ class _NewPatternPageState extends State<NewPatternPage> {
     );
   }
 
-  Widget _patternRowTile(PatternRow row) {
-    return ListTile(
-      title: Text("row ${row.startRow}"),
-      subtitle: Text(row.detailsAsString()),
-    );
-  }
-
   Future<void> updateListView() async {
     List<Widget> tmp = List.empty(growable: true);
     pattern = await craft.getPatternById(pattern.patternId);
     tmp.add(_titleInput());
     for (PatternPart part in pattern.parts) {
       tmp.add(
-        Row(
-          children: [
-            Expanded(child: Divider(color: Colors.amber)),
-            Expanded(
-              child: Text(
-                part.name,
-                textAlign: TextAlign.center,
-                textScaler: TextScaler.linear(1.5),
+        ListTile(
+          title: Text(part.name),
+          onTap: () async {
+            await Navigator.push(
+              context,
+              MaterialPageRoute<void>(
+                builder: (BuildContext context) => PatternPartPage(
+                  updatePatternListView: updateListView,
+                  pattern: pattern,
+                  part: part,
+                ),
               ),
-            ),
-            Expanded(child: Divider(color: Colors.amber)),
-          ],
+            );
+            await updateListView();
+          },
         ),
       );
-      for (PatternRow row in part.rows) {
-        tmp.add(_patternRowTile(row));
-      }
     }
     setState(() {
       patternListView = tmp;
@@ -124,7 +114,7 @@ class _NewPatternPageState extends State<NewPatternPage> {
     ThemeData theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text("New pattern"),
+        title: Text(title),
         backgroundColor: theme.colorScheme.primary,
         actions: [
           IconButton(
@@ -144,9 +134,9 @@ class _NewPatternPageState extends State<NewPatternPage> {
         key: _formKey,
         child: ListView(children: patternListView),
       ),
-      floatingActionButton: AddRowButton(
-        part: part,
-        updatePattern: updateListView,
+      floatingActionButton: AddPartButton(
+        updatePatternListView: updateListView,
+        pattern: pattern,
       ),
     );
   }

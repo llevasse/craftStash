@@ -1,20 +1,20 @@
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
 import 'package:craft_stash/class/yarns/yarn.dart';
-import 'package:craft_stash/pages/newPatternPage.dart';
+import 'package:craft_stash/pages/new_pattern_page.dart';
 import 'package:flutter/material.dart';
 
 typedef MyBuilder =
     void Function(BuildContext context, Future<void> Function() updateYarn);
 
-class PatternsPage extends StatefulWidget {
+class PatternsStashPage extends StatefulWidget {
   final MyBuilder builder;
-  const PatternsPage({super.key, required this.builder});
+  const PatternsStashPage({super.key, required this.builder});
 
   @override
-  State<PatternsPage> createState() => _PatternsPageState();
+  State<PatternsStashPage> createState() => _PatternsStashPageState();
 }
 
-class _PatternsPageState extends State<PatternsPage> {
+class _PatternsStashPageState extends State<PatternsStashPage> {
   List<Widget> listViewContent = List.empty(growable: true);
   List<craft.Pattern> patterns = List.empty(growable: true);
   Future<void> getAllPatterns() async {
@@ -29,7 +29,7 @@ class _PatternsPageState extends State<PatternsPage> {
       tmp.add(
         ListTile(
           title: Text(pattern.name),
-          onTap: () {
+          onTap: () async {
             Navigator.push(
               context,
               MaterialPageRoute<void>(
@@ -39,6 +39,7 @@ class _PatternsPageState extends State<PatternsPage> {
                 ),
               ),
             );
+            await updateListView();
           },
         ),
       );

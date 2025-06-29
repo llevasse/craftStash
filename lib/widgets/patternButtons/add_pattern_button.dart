@@ -1,4 +1,4 @@
-import 'package:craft_stash/pages/newPatternPage.dart';
+import 'package:craft_stash/pages/new_pattern_page.dart';
 import 'package:flutter/material.dart';
 
 class AddPatternButton extends StatefulWidget {

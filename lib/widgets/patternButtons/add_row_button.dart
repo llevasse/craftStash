@@ -1,7 +1,7 @@
 import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
-import 'package:craft_stash/pages/newPatternPage.dart';
+import 'package:craft_stash/pages/new_pattern_page.dart';
 import 'package:craft_stash/widgets/int_control_button.dart';
 import 'package:craft_stash/widgets/patternButtons/stitch_count_button.dart';
 import 'package:flutter/material.dart';
@@ -192,9 +192,9 @@ class _RowFormState extends State<RowForm> {
               if (val < 0) {
                 return ("Row number can't be negative");
               }
-              if (val < row.endRow) {
-                return ("Start row number can't be inferior to end row number");
-              }
+              // if (val < row.endRow) {
+              //   return ("Start row number can't be inferior to end row number");
+              // }
               return null;
             },
             onChanged: (newValue) {

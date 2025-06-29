@@ -1,4 +1,4 @@
-import 'package:craft_stash/pages/patterns.dart';
+import 'package:craft_stash/pages/patterns_stash.dart';
 import 'package:craft_stash/pages/yarn_stash.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:craft_stash/widgets/patternButtons/add_pattern_button.dart';
@@ -90,7 +90,7 @@ class _MyHomePageState extends State<MyHomePage>
                 updateYarn = method;
               },
             ),
-            PatternsPage(
+            PatternsStashPage(
               builder: (BuildContext context, Future<void> Function() method) {
                 updatePatternListView = method;
               },
