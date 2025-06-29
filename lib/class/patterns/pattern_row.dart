@@ -148,6 +148,7 @@ Future<List<PatternRow>> getAllPatternRowByPartId(int id) async {
       _tableName,
       where: "part_id = ?",
       whereArgs: [id],
+      orderBy: "start_row ASC"
     );
     List<PatternRow> l = List.empty(growable: true);
     for (Map<String, Object?> map in patternRowMaps) {
