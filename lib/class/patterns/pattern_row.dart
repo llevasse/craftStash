@@ -105,8 +105,17 @@ Future<void> updatePatternRowInDb(PatternRow patternRow) async {
 Future<void> deletePatternRowInDb(int id) async {
   final db = (await DbService().database);
   if (db != null) {
-    await deletePatternRowDetailInDbByRowId(id);
+    // await deletePatternRowDetailInDbByRowId(id);
     await db.delete(_tableName, where: "row_id = ?", whereArgs: [id]);
+  } else {
+    throw DatabaseDoesNotExistException("Could not get database");
+  }
+}
+
+Future<void> deletePatternRowInDbByPartId(int id) async {
+  final db = (await DbService().database);
+  if (db != null) {
+    await db.delete(_tableName, where: "part_id = ?", whereArgs: [id]);
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }

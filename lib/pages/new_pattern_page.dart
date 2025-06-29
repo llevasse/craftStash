@@ -57,6 +57,30 @@ class _NewPatternPageState extends State<NewPatternPage> {
             );
             await updateListView();
           },
+          onLongPress: () async {
+            await showDialog(
+              context: context,
+              builder: (BuildContext context) => AlertDialog(
+                title: Text("Do you want to delete this part"),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text("Cancel"),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      await deletePatternPartInDb(part.partId);
+                      await updateListView();
+                      Navigator.pop(context);
+                    },
+                    child: Text("Delete"),
+                  ),
+                ],
+              ),
+            );
+          },
         ),
       );
     }
@@ -100,6 +124,30 @@ class _NewPatternPageState extends State<NewPatternPage> {
               ),
             );
             await updateListView();
+          },
+          onLongPress: () async {
+            await showDialog(
+              context: context,
+              builder: (BuildContext context) => AlertDialog(
+                title: Text("Do you want to delete this part"),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text("Cancel"),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      await deletePatternPartInDb(part.partId);
+                      await updateListView();
+                      Navigator.pop(context);
+                    },
+                    child: Text("Delete"),
+                  ),
+                ],
+              ),
+            );
           },
         ),
       );

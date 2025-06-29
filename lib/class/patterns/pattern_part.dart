@@ -67,6 +67,7 @@ Future<void> updatePatternPartInDb(PatternPart patternPart) async {
 Future<void> deletePatternPartInDb(int id) async {
   final db = (await DbService().database);
   if (db != null) {
+    await deletePatternRowInDbByPartId(id);
     await db.delete('pattern_part', where: "part_id = ?", whereArgs: [id]);
   } else {
     throw DatabaseDoesNotExistException("Could not get database");

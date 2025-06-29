@@ -41,6 +41,30 @@ class _PatternsStashPageState extends State<PatternsStashPage> {
             );
             await updateListView();
           },
+          onLongPress: () async {
+            await showDialog(
+              context: context,
+              builder: (BuildContext context) => AlertDialog(
+                title: Text("Do you want to delete this pattern"),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text("Cancel"),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      await craft.deletePatternInDb(pattern.patternId);
+                      await updateListView();
+                      Navigator.pop(context);
+                    },
+                    child: Text("Delete"),
+                  ),
+                ],
+              ),
+            );
+          },
         ),
       );
     }
