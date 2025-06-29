@@ -68,6 +68,9 @@ class _PatternPartPageState extends State<PatternPartPage> {
     return ListTile(
       title: Text("row ${row.startRow}"),
       subtitle: Text(row.detailsAsString()),
+      onTap: () {
+        print(row);
+      },
     );
   }
 
@@ -111,6 +114,10 @@ class _PatternPartPageState extends State<PatternPartPage> {
       floatingActionButton: AddRowButton(
         part: part,
         updatePattern: updateListView,
+        startRow: part.rows.isEmpty
+            ? 1
+            : part.rows.last.startRow + part.rows.last.endRow,
+        endRow: 1,
       ),
     );
   }
