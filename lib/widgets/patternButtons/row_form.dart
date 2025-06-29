@@ -40,10 +40,12 @@ class _RowFormState extends State<RowForm> {
       detailsString = "";
       row.details.forEach((detail) {
         print("detail id : ${detail.rowDetailId}");
-        if (detail.repeatXTime > 1) {
-          detailsString += detail.repeatXTime.toString();
+        if (detail.repeatXTime != 0) {
+          if (detail.repeatXTime > 1) {
+            detailsString += detail.repeatXTime.toString();
+          }
+          detailsString += "${detail.stitch}, ";
         }
-        detailsString += "${detail.stitch}, ";
         details.add(
           StitchCountButton(
             signed: false,
@@ -71,10 +73,12 @@ class _RowFormState extends State<RowForm> {
   void setState(VoidCallback fn) {
     detailsString = "";
     row.details.forEach((detail) {
-      if (detail.repeatXTime > 1) {
-        detailsString += detail.repeatXTime.toString();
+      if (detail.repeatXTime != 0) {
+        if (detail.repeatXTime > 1) {
+          detailsString += detail.repeatXTime.toString();
+        }
+        detailsString += "${detail.stitch}, ";
       }
-      detailsString += "${detail.stitch}, ";
     });
     previewControler.text = detailsString;
     super.setState(fn);
