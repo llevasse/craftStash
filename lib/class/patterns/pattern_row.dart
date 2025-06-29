@@ -22,13 +22,17 @@ class PatternRow {
 
   Map<String, dynamic> toMap() {
     return {
-      'part_detail_id': partDetailId,
+      // 'part_detail_id': partDetailId,
       'part_id': partId,
       'start_row': startRow,
       'end_row': endRow,
       'stitches_count_per_row': stitchesPerRow,
       // 'hash': hashCode,
     };
+  }
+
+  String getSpecAsString() {
+    return "rowId : $rowId | partId : $partId | startRow : $startRow | endRow : $endRow";
   }
 
   @override
@@ -86,6 +90,7 @@ Future<int> insertPatternRowInDb(PatternRow patternRow) async {
 Future<void> updatePatternRowInDb(PatternRow patternRow) async {
   final db = (await DbService().database);
   if (db != null) {
+    print(patternRow.rowId);
     await db.update(
       _tableName,
       patternRow.toMap(),

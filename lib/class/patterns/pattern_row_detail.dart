@@ -67,7 +67,7 @@ Future<void> updatePatternRowDetailInDb(
       _tableName,
       patternRowDetail.toMap(),
       where: "row_detail_id = ?",
-      whereArgs: [patternRowDetail.rowId],
+      whereArgs: [patternRowDetail.rowDetailId],
     );
   } else {
     throw DatabaseDoesNotExistException("Could not get database");

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 class RowForm extends StatefulWidget {
   final Future<void> Function() updatePattern;
   PatternPart part;
+  PatternRow? row;
   int startRow;
   int endRow;
   RowForm({
@@ -15,6 +16,7 @@ class RowForm extends StatefulWidget {
     required this.updatePattern,
     this.startRow = 0,
     this.endRow = 1,
+    this.row,
   });
 
   @override
@@ -32,6 +34,36 @@ class _RowFormState extends State<RowForm> {
   void initState() {
     row.startRow = widget.startRow;
     row.endRow = widget.endRow;
+    if (widget.row != null) {
+      row = widget.row!;
+      // print(row.rowId);
+      detailsString = "";
+      row.details.forEach((detail) {
+        print("detail id : ${detail.rowDetailId}");
+        if (detail.repeatXTime > 1) {
+          detailsString += detail.repeatXTime.toString();
+        }
+        detailsString += "${detail.stitch}, ";
+        details.add(
+          StitchCountButton(
+            signed: false,
+            text: detail.stitch,
+            count: detail.repeatXTime,
+            increase: () {
+              detail.repeatXTime += 1;
+              row.stitchesPerRow += 1;
+              setState(() {});
+            },
+            decrease: () {
+              detail.repeatXTime -= 1;
+              row.stitchesPerRow -= 1;
+              setState(() {});
+            },
+          ),
+        );
+      });
+      previewControler.text = detailsString;
+    }
     super.initState();
   }
 
@@ -56,7 +88,7 @@ class _RowFormState extends State<RowForm> {
           row.details.last.repeatXTime += 1;
           details.removeLast();
         } else {
-          row.details.add(PatternRowDetail(rowId: 0, stitch: stitch));
+          row.details.add(PatternRowDetail(rowId: -1, stitch: stitch));
         }
         int length = row.details.length;
         details.add(
@@ -170,7 +202,6 @@ class _RowFormState extends State<RowForm> {
 
             TextFormField(
               controller: previewControler,
-              //initialValue: detailsString,
               readOnly: true,
               decoration: InputDecoration(label: Text("Preview")),
             ),
@@ -197,18 +228,40 @@ class _RowFormState extends State<RowForm> {
             if (_formKey.currentState!.validate()) {
               _formKey.currentState!.save();
               row.partId = widget.part.partId;
-              int rowId = await insertPatternRowInDb(row);
-              for (PatternRowDetail e in row.details) {
-                if (e.repeatXTime != 0) {
-                  e.rowId = rowId;
-                  await insertPatternRowDetailInDb(e);
+              if (widget.row == null) {
+                int rowId = await insertPatternRowInDb(row);
+                for (PatternRowDetail e in row.details) {
+                  if (e.repeatXTime != 0) {
+                    e.rowId = rowId;
+                    await insertPatternRowDetailInDb(e);
+                  }
+                }
+              } else {
+                print(row.getSpecAsString());
+                await updatePatternRowInDb(row);
+                int rowId = row.rowId;
+                for (PatternRowDetail e in row.details) {
+                  print("save detail id : ${e.rowDetailId}");
+
+                  if (e.repeatXTime != 0) {
+                    e.rowId = rowId;
+                    if (e.rowDetailId == 0) {
+                      await insertPatternRowDetailInDb(e);
+                    } else {
+                      await updatePatternRowDetailInDb(e);
+                    }
+                  } else {
+                    if (e.rowDetailId != 0) {
+                      await deletePatternRowDetailInDb(e.rowDetailId);
+                    }
+                  }
                 }
               }
               await widget.updatePattern();
               Navigator.pop(context);
             }
           },
-          child: Text("Add"),
+          child: Text(widget.row == null ? "Add" : "Edit"),
         ),
       ],
     );

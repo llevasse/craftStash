@@ -2,6 +2,7 @@ import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
 import 'package:craft_stash/widgets/patternButtons/add_row_button.dart';
+import 'package:craft_stash/widgets/patternButtons/row_form.dart';
 import 'package:flutter/material.dart';
 
 class PatternPartPage extends StatefulWidget {
@@ -68,8 +69,12 @@ class _PatternPartPageState extends State<PatternPartPage> {
     return ListTile(
       title: Text("row ${row.startRow}"),
       subtitle: Text(row.detailsAsString()),
-      onTap: () {
-        print(row);
+      onTap: () async {
+        await showDialog(
+          context: context,
+          builder: (BuildContext context) =>
+              RowForm(part: part, updatePattern: updateListView, row: row),
+        );
       },
     );
   }
