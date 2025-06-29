@@ -52,11 +52,15 @@ class _RowFormState extends State<RowForm> {
     ThemeData theme = Theme.of(context);
     return OutlinedButton(
       onPressed: () async {
-        print(stitch);
         if (row.details.isNotEmpty && row.details.last.stitch == stitch) {
           row.details.last.repeatXTime += 1;
-          int length = row.details.length;
-          details[length - 1] = StitchCountButton(
+          details.removeLast();
+        } else {
+          row.details.add(PatternRowDetail(rowId: 0, stitch: stitch));
+        }
+        int length = row.details.length;
+        details.add(
+          StitchCountButton(
             signed: false,
             text: stitch,
             count: row.details[length - 1].repeatXTime,
@@ -68,25 +72,6 @@ class _RowFormState extends State<RowForm> {
             decrease: () {
               row.details[length - 1].repeatXTime -= 1;
               row.stitchesPerRow -= 1;
-              setState(() {});
-            },
-          );
-          setState(() {});
-          return;
-        }
-        row.details.add(PatternRowDetail(rowId: 0, stitch: stitch));
-        int length = row.details.length;
-        details.add(
-          StitchCountButton(
-            signed: false,
-            text: stitch,
-            count: row.details[length - 1].repeatXTime,
-            increase: () {
-              row.details[length - 1].repeatXTime += 1;
-              setState(() {});
-            },
-            decrease: () {
-              row.details[length - 1].repeatXTime -= 1;
               setState(() {});
             },
           ),
@@ -214,8 +199,10 @@ class _RowFormState extends State<RowForm> {
               row.partId = widget.part.partId;
               int rowId = await insertPatternRowInDb(row);
               for (PatternRowDetail e in row.details) {
-                e.rowId = rowId;
-                await insertPatternRowDetailInDb(e);
+                if (e.repeatXTime != 0) {
+                  e.rowId = rowId;
+                  await insertPatternRowDetailInDb(e);
+                }
               }
               await widget.updatePattern();
               Navigator.pop(context);
