@@ -149,9 +149,13 @@ class _RowFormState extends State<RowForm> {
               if (value == null || value.trim().isEmpty) {
                 return ("Can't be empty");
               }
-              int val = int.parse(value.trim());
-              if (val < 0) {
-                return ("Row number can't be negative");
+              try {
+                int val = int.parse(value.trim());
+                if (val < 0) {
+                  return ("Row number can't be negative");
+                }
+              } catch (e) {
+                return ("Only digits allowed");
               }
               return null;
             },
@@ -159,7 +163,10 @@ class _RowFormState extends State<RowForm> {
               if (newValue == null || newValue.trim().isEmpty) {
                 return;
               }
-              row.startRow = int.parse(newValue.trim());
+
+              try {
+                row.startRow = int.parse(newValue.trim());
+              } catch (e) {}
             },
             onSaved: (newValue) {
               if (newValue == null || newValue.trim().isEmpty) {
@@ -178,9 +185,13 @@ class _RowFormState extends State<RowForm> {
               if (value == null || value.trim().isEmpty) {
                 return ("Can't be empty");
               }
-              int val = int.parse(value.trim());
-              if (val < 1) {
-                return ("Row number can't be inferior to one");
+              try {
+                int val = int.parse(value.trim());
+                if (val < 1) {
+                  return ("Row number can't be inferior to one");
+                }
+              } catch (e) {
+                return ("Only digits allowed");
               }
               return null;
             },
