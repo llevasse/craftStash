@@ -88,9 +88,30 @@ class _NewPatternPageState extends State<NewPatternPage> {
   Widget _deleteButton() {
     return IconButton(
       onPressed: () async {
-        await craft.deletePatternInDb(pattern.patternId);
-        await widget.updatePatternListView();
-        Navigator.pop(context);
+        await showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: Text("Do you want to delete this pattern"),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text("Cancel"),
+              ),
+              TextButton(
+                onPressed: () async {
+                  await craft.deletePatternInDb(pattern.patternId);
+                  await widget.updatePatternListView();
+                  while (Navigator.canPop(context)) {
+                    Navigator.pop(context);
+                  }
+                },
+                child: Text("Delete"),
+              ),
+            ],
+          ),
+        );
       },
       icon: Icon(LucideIcons.trash),
     );
