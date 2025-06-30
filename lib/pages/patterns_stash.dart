@@ -17,13 +17,9 @@ class PatternsStashPage extends StatefulWidget {
 class _PatternsStashPageState extends State<PatternsStashPage> {
   List<Widget> listViewContent = List.empty(growable: true);
   List<craft.Pattern> patterns = List.empty(growable: true);
-  Future<void> getAllPatterns() async {
-    patterns = await craft.getAllPattern();
-    await updateListView();
-    setState(() {});
-  }
 
   Future<void> updateListView() async {
+    patterns = await craft.getAllPattern();
     List<Widget> tmp = List.empty(growable: true);
     for (craft.Pattern pattern in patterns) {
       tmp.add(
@@ -77,7 +73,7 @@ class _PatternsStashPageState extends State<PatternsStashPage> {
   @override
   void initState() {
     try {
-      getAllPatterns();
+      updateListView();
     } catch (e) {
       print(e);
     }
@@ -86,7 +82,7 @@ class _PatternsStashPageState extends State<PatternsStashPage> {
 
   @override
   Widget build(BuildContext context) {
-    widget.builder.call(context, getAllPatterns);
+    widget.builder.call(context, updateListView);
     ThemeData theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
