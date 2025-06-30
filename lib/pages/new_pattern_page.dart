@@ -37,51 +37,7 @@ class _NewPatternPageState extends State<NewPatternPage> {
       pattern = widget.pattern!;
       title = pattern.name;
     }
-    patternListView.add(_titleInput());
-    for (PatternPart part in pattern.parts) {
-      patternListView.add(
-        ListTile(
-          title: Text(part.name),
-          onTap: () async {
-            await Navigator.push(
-              context,
-              MaterialPageRoute<void>(
-                builder: (BuildContext context) => PatternPartPage(
-                  updatePatternListView: updateListView,
-                  pattern: pattern,
-                  part: part,
-                ),
-              ),
-            );
-            await updateListView();
-          },
-          onLongPress: () async {
-            await showDialog(
-              context: context,
-              builder: (BuildContext context) => AlertDialog(
-                title: Text("Do you want to delete this part"),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text("Cancel"),
-                  ),
-                  TextButton(
-                    onPressed: () async {
-                      await deletePatternPartInDb(part.partId);
-                      await updateListView();
-                      Navigator.pop(context);
-                    },
-                    child: Text("Delete"),
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
-      );
-    }
+    updateListView();
     super.initState();
   }
 
@@ -134,9 +90,13 @@ class _NewPatternPageState extends State<NewPatternPage> {
     );
   }
 
+  Future<void> updatePattern() async {
+    pattern = await craft.getPatternById(pattern.patternId);
+    await updateListView();
+  }
+
   Future<void> updateListView() async {
     List<Widget> tmp = List.empty(growable: true);
-    pattern = await craft.getPatternById(pattern.patternId);
     tmp.add(_titleInput());
     for (PatternPart part in pattern.parts) {
       tmp.add(
@@ -146,8 +106,9 @@ class _NewPatternPageState extends State<NewPatternPage> {
             await Navigator.push(
               context,
               MaterialPageRoute<void>(
+                settings: RouteSettings(name: "part"),
                 builder: (BuildContext context) => PatternPartPage(
-                  updatePatternListView: updateListView,
+                  updatePatternListView: updatePattern,
                   pattern: pattern,
                   part: part,
                 ),
@@ -224,7 +185,7 @@ class _NewPatternPageState extends State<NewPatternPage> {
         child: ListView(children: patternListView),
       ),
       floatingActionButton: AddPartButton(
-        updatePatternListView: updateListView,
+        updatePatternListView: updatePattern,
         pattern: pattern,
       ),
     );

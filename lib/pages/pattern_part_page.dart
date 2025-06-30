@@ -4,6 +4,7 @@ import 'package:craft_stash/class/patterns/patterns.dart' as craft;
 import 'package:craft_stash/widgets/patternButtons/add_row_button.dart';
 import 'package:craft_stash/widgets/patternButtons/row_form.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class PatternPartPage extends StatefulWidget {
   final Future<void> Function() updatePatternListView;
@@ -115,6 +116,36 @@ class _PatternPartPageState extends State<PatternPartPage> {
     });
   }
 
+  Widget _deleteButton() {
+    return IconButton(
+      onPressed: () async {
+        await showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: Text("Do you want to delete this pattern"),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text("Cancel"),
+              ),
+              TextButton(
+                onPressed: () async {
+                  await deletePatternPartInDb(part.partId);
+                  await widget.updatePatternListView();
+                  Navigator.popUntil(context, ModalRoute.withName("/pattern"));
+                },
+                child: Text("Delete"),
+              ),
+            ],
+          ),
+        );
+      },
+      icon: Icon(LucideIcons.trash),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
@@ -123,6 +154,7 @@ class _PatternPartPageState extends State<PatternPartPage> {
         title: Text("${widget.pattern.name}/$title"),
         backgroundColor: theme.colorScheme.primary,
         actions: [
+          _deleteButton(),
           IconButton(
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
