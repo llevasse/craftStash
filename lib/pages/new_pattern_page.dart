@@ -1,10 +1,9 @@
 import 'package:craft_stash/add_part_button.dart';
 import 'package:craft_stash/class/patterns/pattern_part.dart';
-import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
 import 'package:craft_stash/pages/pattern_part_page.dart';
-import 'package:craft_stash/widgets/patternButtons/add_row_button.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class NewPatternPage extends StatefulWidget {
   final Future<void> Function() updatePatternListView;
@@ -27,7 +26,6 @@ class _NewPatternPageState extends State<NewPatternPage> {
 
   void _insertPattern() async {
     int patternId = await craft.insertPatternInDb(pattern);
-    //    print(patternId);
     pattern.patternId = patternId;
   }
 
@@ -85,6 +83,17 @@ class _NewPatternPageState extends State<NewPatternPage> {
       );
     }
     super.initState();
+  }
+
+  Widget _deleteButton() {
+    return IconButton(
+      onPressed: () async {
+        await craft.deletePatternInDb(pattern.patternId);
+        await widget.updatePatternListView();
+        Navigator.pop(context);
+      },
+      icon: Icon(LucideIcons.trash),
+    );
   }
 
   Widget _titleInput() {
@@ -164,7 +173,18 @@ class _NewPatternPageState extends State<NewPatternPage> {
       appBar: AppBar(
         title: Text(title),
         backgroundColor: theme.colorScheme.primary,
+        leading: IconButton(
+          onPressed: () async {
+            if (widget.pattern == null) {
+              await craft.deletePatternInDb(pattern.patternId);
+            }
+            await widget.updatePatternListView();
+            Navigator.pop(context);
+          },
+          icon: Icon(Icons.arrow_back),
+        ),
         actions: [
+          widget.pattern == null ? Container() : _deleteButton(),
           IconButton(
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
