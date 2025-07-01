@@ -41,10 +41,11 @@ class _PatternPartPageState extends State<PatternPartPage> {
       part = widget.part!;
       title = part.name;
     }
-    print(part);
     patternListView.add(_titleInput());
     for (PatternRow row in part.rows) {
-      patternListView.add(_patternRowTile(row));
+      if (row.startRow != 0) {
+        patternListView.add(_patternRowTile(row));
+      }
     }
     super.initState();
   }
@@ -67,8 +68,12 @@ class _PatternPartPageState extends State<PatternPartPage> {
   }
 
   Widget _patternRowTile(PatternRow row) {
+    String title = "row ${row.startRow}";
+    if (row.endRow > 1) {
+      title += "-${row.startRow + row.endRow - 1} (${row.endRow} rows)";
+    }
     return ListTile(
-      title: Text("row ${row.startRow}"),
+      title: Text(title),
       subtitle: Text(row.detailsAsString()),
       onTap: () async {
         await showDialog(
@@ -109,7 +114,9 @@ class _PatternPartPageState extends State<PatternPartPage> {
     part = await getPatternPartByPartId(part.partId);
     tmp.add(_titleInput());
     for (PatternRow row in part.rows) {
-      tmp.add(_patternRowTile(row));
+      if (row.startRow != 0) {
+        tmp.add(_patternRowTile(row));
+      }
     }
     setState(() {
       patternListView = tmp;

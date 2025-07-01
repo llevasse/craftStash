@@ -20,30 +20,40 @@ Future<PatternPart> _createHeadPart(int patternId) async {
 
   PatternRow r2 = PatternRow(
     partId: head.partId,
-    startRow: 2,
+    startRow: 1,
     endRow: 1,
     stitchesPerRow: 12,
   );
   r2.rowId = await insertPatternRowInDb(r2);
-  PatternRowDetail dr2 = PatternRowDetail(
-    rowId: r2.rowId,
+  await insertPatternRowDetailInDb(
+    PatternRowDetail(rowId: r2.rowId, repeatXTime: 6, stitch: "inc"),
+  );
+
+  PatternRow r3 = PatternRow(
+    partId: head.partId,
+    startRow: 3,
+    endRow: 1,
+    stitchesPerRow: 18,
+  );
+  r3.rowId = await insertPatternRowInDb(r3);
+  PatternRowDetail dr3 = PatternRowDetail(
+    rowId: r3.rowId,
     repeatXTime: 3,
     stitch: "(1sc, inc)",
     hasSubrow: 1,
   );
-  dr2.rowDetailId = await insertPatternRowDetailInDb(dr2);
-  print("Row detail id ${dr2.rowDetailId}");
-  PatternRow r2Subrow = PatternRow(
+  dr3.rowDetailId = await insertPatternRowDetailInDb(dr3);
+  PatternRow r3Subrow = PatternRow(
     partId: head.partId,
     startRow: 0,
     endRow: 0,
     stitchesPerRow: 3,
-    partDetailId: dr2.rowDetailId,
+    partDetailId: dr3.rowDetailId,
   );
-  r2Subrow.rowId = await insertPatternRowInDb(r2Subrow);
+  r3Subrow.rowId = await insertPatternRowInDb(r3Subrow);
   await insertPatternRowDetailInDb(
     PatternRowDetail(
-      rowId: r2Subrow.rowId,
+      rowId: r3Subrow.rowId,
       repeatXTime: 1,
       stitch: "sc",
       hasSubrow: 0,
@@ -51,11 +61,33 @@ Future<PatternPart> _createHeadPart(int patternId) async {
   );
   await insertPatternRowDetailInDb(
     PatternRowDetail(
-      rowId: r2Subrow.rowId,
+      rowId: r3Subrow.rowId,
       repeatXTime: 1,
       stitch: "inc",
       hasSubrow: 0,
     ),
+  );
+
+  PatternRow r4 = PatternRow(
+    partId: head.partId,
+    startRow: 4,
+    endRow: 2,
+    stitchesPerRow: 18,
+  );
+  r4.rowId = await insertPatternRowInDb(r4);
+  await insertPatternRowDetailInDb(
+    PatternRowDetail(rowId: r4.rowId, repeatXTime: 18, stitch: "sc"),
+  );
+
+  PatternRow r6 = PatternRow(
+    partId: head.partId,
+    startRow: 6,
+    endRow: 1,
+    stitchesPerRow: 9,
+  );
+  r6.rowId = await insertPatternRowInDb(r6);
+  await insertPatternRowDetailInDb(
+    PatternRowDetail(rowId: r6.rowId, repeatXTime: 9, stitch: "dec"),
   );
 
   return head;
