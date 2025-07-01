@@ -74,19 +74,22 @@ class _NewPatternPageState extends State<NewPatternPage> {
   }
 
   Widget _titleInput() {
-    return TextFormField(
-      initialValue: widget.pattern?.name,
-      decoration: InputDecoration(label: Text("Pattern title")),
-      validator: (value) {
-        if (value == null || value.trim().isEmpty) {
-          return ("Pattern title can't be empty");
-        }
-        return null;
-      },
-      onSaved: (newValue) {
-        title = newValue!.trim();
-        pattern.name = title;
-      },
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      child: TextFormField(
+        initialValue: widget.pattern?.name,
+        decoration: InputDecoration(label: Text("Pattern title")),
+        validator: (value) {
+          if (value == null || value.trim().isEmpty) {
+            return ("Pattern title can't be empty");
+          }
+          return null;
+        },
+        onSaved: (newValue) {
+          title = newValue!.trim();
+          pattern.name = title;
+        },
+      ),
     );
   }
 
@@ -97,7 +100,6 @@ class _NewPatternPageState extends State<NewPatternPage> {
 
   Future<void> updateListView() async {
     List<Widget> tmp = List.empty(growable: true);
-    tmp.add(_titleInput());
     for (PatternPart part in pattern.parts) {
       tmp.add(
         ListTile(
@@ -143,9 +145,10 @@ class _NewPatternPageState extends State<NewPatternPage> {
         ),
       );
     }
-    setState(() {
-      patternListView = tmp;
-    });
+    patternListView.clear();
+    patternListView.add(_titleInput());
+    patternListView.add(Expanded(child: ListView(children: tmp)));
+    setState(() {});
   }
 
   @override
@@ -182,7 +185,7 @@ class _NewPatternPageState extends State<NewPatternPage> {
       ),
       body: Form(
         key: _formKey,
-        child: ListView(children: patternListView),
+        child: Column(children: patternListView),
       ),
       floatingActionButton: AddPartButton(
         updatePatternListView: updatePattern,
