@@ -22,10 +22,10 @@ class PatternRow {
 
   Map<String, dynamic> toMap() {
     return {
-      // 'part_detail_id': partDetailId,
+      'part_detail_id': partDetailId,
       'part_id': partId,
       'start_row': startRow,
-      'end_row': endRow,
+      'number_of_rows': endRow,
       'stitches_count_per_row': stitchesPerRow,
       // 'hash': hashCode,
     };
@@ -46,8 +46,13 @@ class PatternRow {
       return tmp;
     } else {
       String tmp = "(";
+      int lastId = details.last.rowDetailId;
       for (PatternRowDetail detail in details) {
-        tmp += "${detail.toString()}, ";
+        if (detail.rowDetailId != lastId) {
+          tmp += "${detail.toString()}, ";
+        } else {
+          tmp += detail.toString();
+        }
       }
       tmp += ")";
       return tmp;
@@ -66,8 +71,15 @@ class PatternRow {
 
   String detailsAsString() {
     String tmp = "";
-    for (PatternRowDetail detail in details) {
-      tmp += "${detail.toString()}, ";
+    if (details.isNotEmpty) {
+      int lastId = details.last.rowDetailId;
+      for (PatternRowDetail detail in details) {
+        if (detail.rowDetailId != lastId) {
+          tmp += "${detail.toString()}, ";
+        } else {
+          tmp += detail.toString();
+        }
+      }
     }
     return tmp;
   }
@@ -133,7 +145,7 @@ Future<List<PatternRow>> getAllPatternRow() async {
             'part_detail_id': partDetailId as int,
             'part_id': partId as int,
             'start_row': startRow as int,
-            'end_row': endRow as int,
+            'number_of_rows': endRow as int,
             'stitches_count_per_row': stitchesPerRow as int,
           }
           in patternRowMaps)
@@ -167,7 +179,7 @@ Future<List<PatternRow>> getAllPatternRowByPartId(int id) async {
         partId: map['part_id'] as int,
         partDetailId: -1,
         startRow: map['start_row'] as int,
-        endRow: map['end_row'] as int,
+        endRow: map['number_of_rows'] as int,
         stitchesPerRow: map['stitches_count_per_row'] as int,
       );
       if (map['part_detail_id'] != null) {
@@ -177,6 +189,35 @@ Future<List<PatternRow>> getAllPatternRowByPartId(int id) async {
       l.add(tmp);
     }
     return (l);
+  } else {
+    throw DatabaseDoesNotExistException("Could not get database");
+  }
+}
+
+Future<PatternRow> getPatternRowByDetailId(int id) async {
+  final db = (await DbService().database);
+  if (db != null) {
+    final List<Map<String, Object?>> patternRowMaps = await db.query(
+      _tableName,
+      where: "part_detail_id = ?",
+      whereArgs: [id],
+      orderBy: "start_row ASC",
+      limit: 1,
+    );
+    List<PatternRow> l = List.empty(growable: true);
+    for (Map<String, Object?> map in patternRowMaps) {
+      PatternRow tmp = PatternRow(
+        rowId: map['row_id'] as int,
+        partId: map['part_id'] as int,
+        partDetailId: map['part_detail_id'] as int,
+        startRow: map['start_row'] as int,
+        endRow: map['number_of_rows'] as int,
+        stitchesPerRow: map['stitches_count_per_row'] as int,
+      );
+      tmp.details = await getAllPatternRowDetailByRowId(tmp.rowId);
+      l.add(tmp);
+    }
+    return (l[0]);
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }

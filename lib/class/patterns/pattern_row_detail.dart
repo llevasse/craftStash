@@ -43,12 +43,12 @@ class PatternRowDetail {
   int get hashCode => Object.hash(rowDetailId, rowId, stitch, color, hasSubrow);
 }
 
-Future<void> insertPatternRowDetailInDb(
+Future<int> insertPatternRowDetailInDb(
   PatternRowDetail patternRowDetail,
 ) async {
   final db = (await DbService().database);
   if (db != null) {
-    db.insert(
+    return await db.insert(
       _tableName,
       patternRowDetail.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
@@ -130,7 +130,7 @@ Future<List<PatternRowDetail>> getAllPatternRowDetailByRowId(int id) async {
       where: "row_id = ?",
       whereArgs: [id],
     );
-    return [
+    List<PatternRowDetail> l = [
       for (final {
             'row_detail_id': rowDetailId as int,
             'row_id': rowId as int,
@@ -149,6 +149,12 @@ Future<List<PatternRowDetail>> getAllPatternRowDetailByRowId(int id) async {
           hasSubrow: hasSubrow,
         ),
     ];
+    for (PatternRowDetail detail in l) {
+      if (detail.hasSubrow == 1) {
+        detail.subRow = await getPatternRowByDetailId(detail.rowDetailId);
+      }
+    }
+    return l;
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }

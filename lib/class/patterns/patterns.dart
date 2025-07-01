@@ -30,23 +30,14 @@ class Pattern {
 Future<int> insertPatternInDb(Pattern pattern) async {
   final db = (await DbService().database);
   if (db != null) {
-    // final list = await db.query(
-    //   'pattern',
-    //   where: "hash = ?",
-    //   whereArgs: [pattern.hashCode],
-    // );
-    // if (list.isEmpty) {
-    // }
-    Map<String, dynamic> m = pattern.toMap();
     return db.insert(
       'pattern',
-      m,
+      pattern.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }
-  return (-1);
 }
 
 Future<void> updatePatternInDb(Pattern pattern) async {

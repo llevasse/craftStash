@@ -158,7 +158,7 @@ class _RowFormState extends State<RowForm> {
               return null;
             },
             onChanged: (newValue) {
-              if (newValue == null || newValue.trim().isEmpty) {
+              if (newValue.trim().isEmpty) {
                 return;
               }
 
@@ -253,7 +253,6 @@ class _RowFormState extends State<RowForm> {
                 await updatePatternRowInDb(row);
                 int rowId = row.rowId;
                 for (PatternRowDetail e in row.details) {
-
                   if (e.repeatXTime != 0) {
                     e.rowId = rowId;
                     if (e.rowDetailId == 0) {
