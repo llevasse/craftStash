@@ -88,7 +88,6 @@ class PatternRow {
 Future<int> insertPatternRowInDb(PatternRow patternRow) async {
   final db = (await DbService().database);
   if (db != null) {
-    print(_tableName);
     return db.insert(
       _tableName,
       patternRow.toMap(),

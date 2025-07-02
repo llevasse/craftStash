@@ -100,7 +100,6 @@ class DbService {
   Future<void> recreateDb() async {
     final databasePath = await getDatabasesPath();
     final path = join(databasePath, 'db.db');
-    print(path);
     await deleteDatabase(path);
     await _initDb();
   }
