@@ -42,6 +42,7 @@ class _PatternPartPageState extends State<PatternPartPage> {
       title = part.name;
     }
     patternListView.add(_titleInput());
+    patternListView.add(_numbersToMakeInput());
     for (PatternRow row in part.rows) {
       if (row.startRow != 0) {
         patternListView.add(_patternRowTile(row));
@@ -63,6 +64,26 @@ class _PatternPartPageState extends State<PatternPartPage> {
       onSaved: (newValue) {
         title = newValue!.trim();
         part.name = title;
+      },
+    );
+  }
+
+  Widget _numbersToMakeInput() {
+    return TextFormField(
+      keyboardType: TextInputType.numberWithOptions(),
+      initialValue: part.numbersToMake.toString(),
+      decoration: InputDecoration(label: Text("Numbers to make")),
+      validator: (value) {
+        if (value == null || value.trim().isEmpty) {
+          return ("Can't be empty");
+        }
+        if (int.parse(value.trim()) < 1) {
+          return ("Can't be lower than one");
+        }
+        return null;
+      },
+      onSaved: (newValue) {
+        part.numbersToMake = int.parse(newValue!.trim());
       },
     );
   }
@@ -113,6 +134,7 @@ class _PatternPartPageState extends State<PatternPartPage> {
     List<Widget> tmp = List.empty(growable: true);
     part = await getPatternPartByPartId(part.partId);
     tmp.add(_titleInput());
+    tmp.add(_numbersToMakeInput());
     for (PatternRow row in part.rows) {
       if (row.startRow != 0) {
         tmp.add(_patternRowTile(row));

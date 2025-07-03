@@ -104,6 +104,7 @@ class _NewPatternPageState extends State<NewPatternPage> {
       tmp.add(
         ListTile(
           title: Text(part.name),
+          subtitle: Text("Make ${part.numbersToMake}"),
           onTap: () async {
             await Navigator.push(
               context,
