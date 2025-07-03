@@ -98,9 +98,11 @@ class _YarnForm extends State<YarnForm> {
       context: context,
       builder: (BuildContext context) => AlertDialog(
         title: const Text("Pick a color"),
-        content: ColorPicker(
-          pickerColor: Color(widget.base.color),
-          onColorChanged: changeColor,
+        content: SingleChildScrollView(
+          child: ColorPicker(
+            pickerColor: Color(widget.base.color),
+            onColorChanged: changeColor,
+          ),
         ),
         actions: [
           TextButton(
