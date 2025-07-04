@@ -1,6 +1,7 @@
 import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
+import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/widgets/patternButtons/stitch_count_button.dart';
 import 'package:flutter/material.dart';
 
@@ -24,7 +25,7 @@ class RowForm extends StatefulWidget {
 }
 
 class _RowFormState extends State<RowForm> {
-  List<String> stitches = ["ch", "sl", "sc", "hdc", "dc", "tr"];
+  List<String> stitches = [];
   List<StitchCountButton> details = List.empty(growable: true);
   String detailsString = "";
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -32,6 +33,7 @@ class _RowFormState extends State<RowForm> {
   TextEditingController previewControler = TextEditingController();
   @override
   void initState() {
+    getAllStitches();
     row.startRow = widget.startRow;
     row.endRow = widget.endRow;
     if (widget.row != null) {
@@ -65,6 +67,15 @@ class _RowFormState extends State<RowForm> {
       previewControler.text = detailsString;
     }
     super.initState();
+  }
+
+  Future<void> getAllStitches() async {
+    List<Stitch> l = await getAllStitchesInDb();
+    for (Stitch stitch in l) {
+      // print(stitch.abreviation);
+      stitches.add(stitch.abreviation);
+    }
+    setState(() {});
   }
 
   @override

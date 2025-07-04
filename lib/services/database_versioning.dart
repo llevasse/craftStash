@@ -1,3 +1,4 @@
+import 'package:craft_stash/class/stitch.dart';
 import 'package:sqflite/sqflite.dart';
 
 Future<void> dbV2(Batch batch) async {
@@ -53,4 +54,12 @@ Future<void> dbV8(Batch batch) async {
     '''CREATE TABLE IF NOT EXISTS pattern_row_detail(row_detail_id INTEGER PRIMARY KEY, row_id INT, stitch TEXT, repeat_x_time INT, color INT, has_subrow INT, FOREIGN KEY (row_id) REFERENCES pattern_row(row_id) ON DELETE CASCADE)''',
   );
   await batch.commit();
+}
+
+Future<void> dbV9(Batch batch) async {
+  batch.execute(
+    '''CREATE TABLE IF NOT EXISTS stitch(id INTEGER PRIMARY KEY, abreviation TEXT, name TEXT, description TEXT, hash INT)''',
+  );
+  await batch.commit();
+  await insertDefaultStitchesInDb();
 }

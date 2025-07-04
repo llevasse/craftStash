@@ -1,0 +1,93 @@
+import 'package:craft_stash/services/database_service.dart';
+import 'package:sqflite/sqflite.dart';
+
+final String _tableName = "stitch";
+
+class Stitch {
+  Stitch({this.id = 0, required this.abreviation, this.name, this.description});
+  int id;
+  String abreviation;
+  String? name;
+  String? description;
+
+  Map<String, dynamic> toMap() {
+    return {
+      "abreviation": abreviation,
+      "name": name,
+      "description": description,
+      "hash": hashCode,
+    };
+  }
+
+  @override
+  int get hashCode => Object.hash(abreviation, name, description);
+}
+
+Future<void> insertDefaultStitchesInDb() async {
+  List<String> stitches = ["ch", "sl", "sc", "hdc", "dc", "tr", "inc"];
+  stitches.forEach((stitch) async {
+    await insertStitchInDb(Stitch(abreviation: stitch));
+  });
+}
+
+Future<void> insertStitchInDb(Stitch stitch) async {
+  final db = (await DbService().database);
+  if (db != null) {
+    final list = await db.query(
+      _tableName,
+      where: "hash = ?",
+      whereArgs: [stitch.hashCode],
+    );
+    if (list.isEmpty) {
+      db.insert(
+        _tableName,
+        stitch.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
+  } else {
+    throw DatabaseDoesNotExistException("Could not get database");
+  }
+}
+
+Future<void> deleteStitchInDb(int id) async {
+  final db = (await DbService().database);
+  if (db != null) {
+    await db.delete(_tableName, where: "id = ?", whereArgs: [id]);
+  } else {
+    throw DatabaseDoesNotExistException("Could not get database");
+  }
+}
+
+Future<List<Stitch>> getAllStitchesInDb() async {
+  final db = (await DbService().database);
+  if (db != null) {
+    final List<Map<String, Object?>> stitchMaps = await db.query(_tableName);
+    return [
+      for (final {
+            'id': id as int,
+            'abreviation': abreviation as String,
+            'name': name as String?,
+            'description': description as String?,
+          }
+          in stitchMaps)
+        Stitch(
+          id: id,
+          abreviation: abreviation,
+          name: name,
+          description: description,
+        ),
+    ];
+  } else {
+    throw DatabaseDoesNotExistException("Could not get database");
+  }
+}
+
+Future<void> removeAllStitch() async {
+  final db = (await DbService().database);
+  if (db != null) {
+    db.rawDelete('DELETE FROM stitch');
+  } else {
+    throw DatabaseDoesNotExistException("Could not get database");
+  }
+}

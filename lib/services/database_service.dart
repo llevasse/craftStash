@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/class/yarns/brand.dart';
 import 'package:craft_stash/class/yarns/material.dart';
 import 'package:craft_stash/class/yarns/yarn.dart';
@@ -29,7 +30,7 @@ class DbService {
       path,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
-      version: 8,
+      version: 9,
       onConfigure: (db) async => {await db.execute('PRAGMA foreign_keys = ON')},
     );
   }
@@ -62,6 +63,10 @@ class DbService {
     db.execute(
       '''CREATE TABLE IF NOT EXISTS pattern_row_detail(row_detail_id INTEGER PRIMARY KEY, row_id INT, stitch TEXT, repeat_x_time INT, color INT, has_subrow INT, FOREIGN KEY (row_id) REFERENCES pattern_row(row_id) ON DELETE CASCADE)''',
     );
+    await db.execute(
+      '''CREATE TABLE IF NOT EXISTS stitch(id INTEGER PRIMARY KEY, abreviation TEXT, name TEXT, description TEXT, hash INT)''',
+    );
+    await insertDefaultStitchesInDb();
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
@@ -86,6 +91,9 @@ class DbService {
     }
     if (oldVersion < 8) {
       await dbV8(batch);
+    }
+    if (oldVersion < 9) {
+      await dbV9(batch);
     }
     batch.commit();
   }
