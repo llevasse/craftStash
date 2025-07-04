@@ -77,13 +77,17 @@ class _NewPatternPageState extends State<NewPatternPage> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10),
       child: TextFormField(
-        initialValue: widget.pattern?.name,
+        initialValue: widget.pattern != null ? widget.pattern!.name : title,
         decoration: InputDecoration(label: Text("Pattern title")),
         validator: (value) {
           if (value == null || value.trim().isEmpty) {
             return ("Pattern title can't be empty");
           }
           return null;
+        },
+        onChanged: (value) {
+          title = value.trim();
+          setState(() {});
         },
         onSaved: (newValue) {
           title = newValue!.trim();

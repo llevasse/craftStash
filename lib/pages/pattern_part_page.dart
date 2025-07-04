@@ -52,39 +52,45 @@ class _PatternPartPageState extends State<PatternPartPage> {
   }
 
   Widget _titleInput() {
-    return TextFormField(
-      initialValue: part.name,
-      decoration: InputDecoration(label: Text("Pattern title")),
-      validator: (value) {
-        if (value == null || value.trim().isEmpty) {
-          return ("Part title can't be empty");
-        }
-        return null;
-      },
-      onSaved: (newValue) {
-        title = newValue!.trim();
-        part.name = title;
-      },
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      child: TextFormField(
+        initialValue: part.name,
+        decoration: InputDecoration(label: Text("Pattern title")),
+        validator: (value) {
+          if (value == null || value.trim().isEmpty) {
+            return ("Part title can't be empty");
+          }
+          return null;
+        },
+        onSaved: (newValue) {
+          title = newValue!.trim();
+          part.name = title;
+        },
+      ),
     );
   }
 
   Widget _numbersToMakeInput() {
-    return TextFormField(
-      keyboardType: TextInputType.numberWithOptions(),
-      initialValue: part.numbersToMake.toString(),
-      decoration: InputDecoration(label: Text("Numbers to make")),
-      validator: (value) {
-        if (value == null || value.trim().isEmpty) {
-          return ("Can't be empty");
-        }
-        if (int.parse(value.trim()) < 1) {
-          return ("Can't be lower than one");
-        }
-        return null;
-      },
-      onSaved: (newValue) {
-        part.numbersToMake = int.parse(newValue!.trim());
-      },
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      child: TextFormField(
+        keyboardType: TextInputType.numberWithOptions(),
+        initialValue: part.numbersToMake.toString(),
+        decoration: InputDecoration(label: Text("Numbers to make")),
+        validator: (value) {
+          if (value == null || value.trim().isEmpty) {
+            return ("Can't be empty");
+          }
+          if (int.parse(value.trim()) < 1) {
+            return ("Can't be lower than one");
+          }
+          return null;
+        },
+        onSaved: (newValue) {
+          part.numbersToMake = int.parse(newValue!.trim());
+        },
+      ),
     );
   }
 
