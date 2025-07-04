@@ -14,10 +14,10 @@ class AddPartButton extends StatefulWidget {
   });
 
   @override
-  State<StatefulWidget> createState() => _AddRowButton();
+  State<StatefulWidget> createState() => _AddPartButton();
 }
 
-class _AddRowButton extends State<AddPartButton> {
+class _AddPartButton extends State<AddPartButton> {
   @override
   void initState() {
     super.initState();
@@ -28,12 +28,15 @@ class _AddRowButton extends State<AddPartButton> {
     ThemeData theme = Theme.of(context);
     return TextButton(
       onPressed: () async {
-        await showDialog(
-          context: context,
-          builder: (BuildContext context) => PatternPartPage(
-            updatePatternListView: widget.updatePatternListView,
-            pattern: widget.pattern,
-            part: widget.part,
+        await Navigator.push(
+          context,
+          MaterialPageRoute<void>(
+            settings: RouteSettings(name: "part"),
+            builder: (BuildContext context) => PatternPartPage(
+              updatePatternListView: widget.updatePatternListView,
+              pattern: widget.pattern,
+              part: widget.part,
+            ),
           ),
         );
       },

@@ -1,5 +1,5 @@
 import 'package:craft_stash/class/patterns/pattern_part.dart';
-import 'package:craft_stash/widgets/patternButtons/row_form.dart';
+import 'package:craft_stash/pages/row_page.dart';
 
 import 'package:flutter/material.dart';
 
@@ -31,13 +31,16 @@ class _AddRowButton extends State<AddRowButton> {
     ThemeData theme = Theme.of(context);
     return TextButton(
       onPressed: () async {
-        await showDialog(
-          context: context,
-          builder: (BuildContext context) => RowForm(
-            part: widget.part,
-            updatePattern: widget.updatePattern,
-            startRow: widget.startRow,
-            endRow: widget.endRow,
+        await Navigator.push(
+          context,
+          MaterialPageRoute<void>(
+            settings: RouteSettings(name: "row"),
+            builder: (BuildContext context) => rowPage(
+              part: widget.part,
+              updatePattern: widget.updatePattern,
+              startRow: widget.startRow,
+              endRow: widget.endRow,
+            ),
           ),
         );
       },

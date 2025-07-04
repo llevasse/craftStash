@@ -13,7 +13,7 @@ class PatternRow {
   List<PatternRowDetail> details = List.empty(growable: true);
   PatternRow({
     this.rowId = 0,
-    this.partDetailId, // non null if is a 'subrow' (i.e repetetive instruction with different stitches)
+    this.partDetailId, // non zero if is a 'subrow' (i.e repetetive instruction with different stitches)
     this.partId = -1,
     required this.startRow,
     required this.endRow,
@@ -37,7 +37,7 @@ class PatternRow {
 
   @override
   String toString() {
-    if (partDetailId == -1) {
+    if (partDetailId == null) {
       String tmp = "$startRow-$endRow :\n";
       for (PatternRowDetail detail in details) {
         tmp += "\t\t${detail.toString()}";
@@ -141,7 +141,7 @@ Future<List<PatternRow>> getAllPatternRow() async {
     return [
       for (final {
             'row_id': rowId as int,
-            'part_detail_id': partDetailId as int,
+            'part_detail_id': partDetailId as int?,
             'part_id': partId as int,
             'start_row': startRow as int,
             'number_of_rows': endRow as int,
@@ -176,7 +176,7 @@ Future<List<PatternRow>> getAllPatternRowByPartId(int id) async {
       PatternRow tmp = PatternRow(
         rowId: map['row_id'] as int,
         partId: map['part_id'] as int,
-        partDetailId: -1,
+        partDetailId: null,
         startRow: map['start_row'] as int,
         endRow: map['number_of_rows'] as int,
         stitchesPerRow: map['stitches_count_per_row'] as int,
@@ -208,7 +208,7 @@ Future<PatternRow> getPatternRowByDetailId(int id) async {
       PatternRow tmp = PatternRow(
         rowId: map['row_id'] as int,
         partId: map['part_id'] as int,
-        partDetailId: map['part_detail_id'] as int,
+        partDetailId: map['part_detail_id'] as int, 
         startRow: map['start_row'] as int,
         endRow: map['number_of_rows'] as int,
         stitchesPerRow: map['stitches_count_per_row'] as int,

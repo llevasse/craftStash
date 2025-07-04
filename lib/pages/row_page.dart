@@ -5,13 +5,13 @@ import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/widgets/patternButtons/stitch_count_button.dart';
 import 'package:flutter/material.dart';
 
-class RowForm extends StatefulWidget {
+class rowPage extends StatefulWidget {
   final Future<void> Function() updatePattern;
   PatternPart part;
   PatternRow? row;
   int startRow;
   int endRow;
-  RowForm({
+  rowPage({
     super.key,
     required this.part,
     required this.updatePattern,
@@ -21,10 +21,10 @@ class RowForm extends StatefulWidget {
   });
 
   @override
-  State<StatefulWidget> createState() => _RowFormState();
+  State<StatefulWidget> createState() => _rowPageState();
 }
 
-class _RowFormState extends State<RowForm> {
+class _rowPageState extends State<rowPage> {
   List<Stitch> stitches = [];
   String stitchSearch = "";
   double buttonHeight = 50;
@@ -220,88 +220,96 @@ class _RowFormState extends State<RowForm> {
         list.add(_createStichButton(e.abreviation));
       }
     }
-    return Container(
-      constraints: BoxConstraints(maxHeight: buttonHeight * 2.5),
+    return Expanded(
       child: SingleChildScrollView(child: Wrap(spacing: 10, children: list)),
+    );
+  }
+
+  Widget _saveButton() {
+    return IconButton(
+      onPressed: () async {
+        if (_formKey.currentState!.validate()) {
+          _formKey.currentState!.save();
+          row.partId = widget.part.partId;
+          if (widget.row == null) {
+            int rowId = await insertPatternRowInDb(row);
+            for (PatternRowDetail e in row.details) {
+              if (e.repeatXTime != 0) {
+                e.rowId = rowId;
+                await insertPatternRowDetailInDb(e);
+              }
+            }
+          } else {
+            await updatePatternRowInDb(row);
+            int rowId = row.rowId;
+            for (PatternRowDetail e in row.details) {
+              if (e.repeatXTime != 0) {
+                e.rowId = rowId;
+                if (e.rowDetailId == 0) {
+                  await insertPatternRowDetailInDb(e);
+                } else {
+                  await updatePatternRowDetailInDb(e);
+                }
+              } else {
+                if (e.rowDetailId != 0) {
+                  await deletePatternRowDetailInDb(e.rowDetailId);
+                }
+              }
+            }
+          }
+          await widget.updatePattern();
+          Navigator.pop(context);
+        }
+      },
+      icon: Icon(Icons.save),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text("Row ${row.startRow}"),
-      content: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            _rowNumberInput(),
+    ThemeData theme = Theme.of(context);
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Row ${row.startRow}"),
+        backgroundColor: theme.colorScheme.primary,
+        actions: [_saveButton()],
+      ),
+      body: Container(
+        padding: EdgeInsets.symmetric(horizontal: 10),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              _rowNumberInput(),
 
-            TextFormField(
-              controller: previewControler,
-              readOnly: true,
-              decoration: InputDecoration(label: Text("Preview")),
-            ),
-            Container(
-              constraints: BoxConstraints(maxHeight: buttonHeight * 1.5),
-              padding: EdgeInsets.only(top: 10),
-              child: SingleChildScrollView(
-                child: Wrap(
-                  spacing: 10,
-                  children: [for (Widget e in details) e],
+              TextFormField(
+                controller: previewControler,
+                readOnly: true,
+                decoration: InputDecoration(label: Text("Preview")),
+              ),
+              Container(
+                constraints: BoxConstraints(maxHeight: buttonHeight * 2.5),
+                padding: EdgeInsets.only(top: 10),
+                child: SingleChildScrollView(
+                  child: Wrap(
+                    spacing: 10,
+                    children: [for (Widget e in details) e],
+                  ),
                 ),
               ),
-            ),
 
-            TextFormField(
-              decoration: InputDecoration(label: Text("Search a stitch")),
-              onChanged: (value) {
-                stitchSearch = value.trim();
-                setState(() {});
-              },
-            ),
-            _stichesList(),
-          ],
+              TextFormField(
+                decoration: InputDecoration(label: Text("Search a stitch")),
+                onChanged: (value) {
+                  stitchSearch = value.trim();
+                  setState(() {});
+                },
+              ),
+              _stichesList(),
+            ],
+          ),
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () async {
-            if (_formKey.currentState!.validate()) {
-              _formKey.currentState!.save();
-              row.partId = widget.part.partId;
-              if (widget.row == null) {
-                int rowId = await insertPatternRowInDb(row);
-                for (PatternRowDetail e in row.details) {
-                  if (e.repeatXTime != 0) {
-                    e.rowId = rowId;
-                    await insertPatternRowDetailInDb(e);
-                  }
-                }
-              } else {
-                await updatePatternRowInDb(row);
-                int rowId = row.rowId;
-                for (PatternRowDetail e in row.details) {
-                  if (e.repeatXTime != 0) {
-                    e.rowId = rowId;
-                    if (e.rowDetailId == 0) {
-                      await insertPatternRowDetailInDb(e);
-                    } else {
-                      await updatePatternRowDetailInDb(e);
-                    }
-                  } else {
-                    if (e.rowDetailId != 0) {
-                      await deletePatternRowDetailInDb(e.rowDetailId);
-                    }
-                  }
-                }
-              }
-              await widget.updatePattern();
-              Navigator.pop(context);
-            }
-          },
-          child: Text(widget.row == null ? "Add" : "Edit"),
-        ),
-      ],
     );
   }
 }

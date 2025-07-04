@@ -1,4 +1,8 @@
 import 'dart:async';
+import 'package:craft_stash/class/patterns/pattern_part.dart';
+import 'package:craft_stash/class/patterns/pattern_row.dart';
+import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
+import 'package:craft_stash/class/patterns/patterns.dart' as craft;
 import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/class/yarns/brand.dart';
 import 'package:craft_stash/class/yarns/material.dart';
@@ -66,6 +70,12 @@ class DbService {
     await db.execute(
       '''CREATE TABLE IF NOT EXISTS stitch(id INTEGER PRIMARY KEY, abreviation TEXT, name TEXT, description TEXT, hash INT)''',
     );
+    // await craft.insertPatternInDb(craft.Pattern());
+    // await insertPatternPartInDb(PatternPart(name: "zero", patternId: 0));
+    // await insertPatternRowInDb(
+    //   PatternRow(startRow: 0, endRow: 0, stitchesPerRow: 0, partId: 0, partDetailId: null),
+    // );
+    // await insertPatternRowDetailInDb(PatternRowDetail(rowId: 0));
     await insertDefaultStitchesInDb();
   }
 

@@ -2,7 +2,7 @@ import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
 import 'package:craft_stash/widgets/patternButtons/add_row_button.dart';
-import 'package:craft_stash/widgets/patternButtons/row_form.dart';
+import 'package:craft_stash/pages/row_page.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
@@ -103,10 +103,13 @@ class _PatternPartPageState extends State<PatternPartPage> {
       title: Text(title),
       subtitle: Text(row.detailsAsString()),
       onTap: () async {
-        await showDialog(
-          context: context,
-          builder: (BuildContext context) =>
-              RowForm(part: part, updatePattern: updateListView, row: row),
+        await Navigator.push(
+          context,
+          MaterialPageRoute<void>(
+            settings: RouteSettings(name: "row"),
+            builder: (BuildContext context) =>
+                rowPage(part: part, updatePattern: updateListView, row: row),
+          ),
         );
       },
       onLongPress: () async {
