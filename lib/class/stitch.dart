@@ -24,9 +24,25 @@ class Stitch {
 }
 
 Future<void> insertDefaultStitchesInDb() async {
-  List<String> stitches = ["ch", "sl", "sc", "hdc", "dc", "tr", "inc"];
+  List<Stitch> stitches = [
+    Stitch(abreviation: "ch", name: "chain", description: null),
+    Stitch(abreviation: "sl st", name: "slip stitch", description: null),
+    Stitch(abreviation: "sc", name: "single crochet", description: null),
+    Stitch(abreviation: "hdc", name: "half double crochet", description: null),
+    Stitch(abreviation: "dc", name: "double crochet", description: null),
+    Stitch(abreviation: "tr", name: "treble crochet", description: null),
+    Stitch(abreviation: "inc", name: "increase", description: null),
+    Stitch(abreviation: "dec", name: "decrease", description: null),
+    Stitch(abreviation: "sk", name: "skip", description: null),
+  ];
+  for (int i = 0; i < 50; i++) {
+    stitches.add(
+      Stitch(abreviation: "$i", name: "bogus $i", description: null),
+    );
+  }
   stitches.forEach((stitch) async {
-    await insertStitchInDb(Stitch(abreviation: stitch));
+    // print(stitch.abreviation);
+    await insertStitchInDb(stitch);
   });
 }
 

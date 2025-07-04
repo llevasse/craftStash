@@ -25,7 +25,9 @@ class RowForm extends StatefulWidget {
 }
 
 class _RowFormState extends State<RowForm> {
-  List<String> stitches = [];
+  List<Stitch> stitches = [];
+  String stitchSearch = "";
+  double buttonHeight = 50;
   List<StitchCountButton> details = List.empty(growable: true);
   String detailsString = "";
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -70,11 +72,7 @@ class _RowFormState extends State<RowForm> {
   }
 
   Future<void> getAllStitches() async {
-    List<Stitch> l = await getAllStitchesInDb();
-    for (Stitch stitch in l) {
-      // print(stitch.abreviation);
-      stitches.add(stitch.abreviation);
-    }
+    stitches = await getAllStitchesInDb();
     setState(() {});
   }
 
@@ -214,6 +212,20 @@ class _RowFormState extends State<RowForm> {
     );
   }
 
+  Widget _stichesList() {
+    List<Widget> list = List.empty(growable: true);
+    for (Stitch e in stitches) {
+      if (e.abreviation.contains(stitchSearch) ||
+          e.name!.contains(stitchSearch)) {
+        list.add(_createStichButton(e.abreviation));
+      }
+    }
+    return Container(
+      constraints: BoxConstraints(maxHeight: buttonHeight * 2.5),
+      child: SingleChildScrollView(child: Wrap(spacing: 10, children: list)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -230,7 +242,7 @@ class _RowFormState extends State<RowForm> {
               decoration: InputDecoration(label: Text("Preview")),
             ),
             Container(
-              constraints: BoxConstraints(maxHeight: 150),
+              constraints: BoxConstraints(maxHeight: buttonHeight * 1.5),
               padding: EdgeInsets.only(top: 10),
               child: SingleChildScrollView(
                 child: Wrap(
@@ -239,10 +251,15 @@ class _RowFormState extends State<RowForm> {
                 ),
               ),
             ),
-            Wrap(
-              spacing: 10,
-              children: [for (String e in stitches) _createStichButton(e)],
+
+            TextFormField(
+              decoration: InputDecoration(label: Text("Search a stitch")),
+              onChanged: (value) {
+                stitchSearch = value.trim();
+                setState(() {});
+              },
             ),
+            _stichesList(),
           ],
         ),
       ),
