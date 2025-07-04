@@ -90,6 +90,9 @@ class _rowPageState extends State<rowPage> {
       }
     });
     previewControler.text = detailsString;
+    stitchDetailsScrollController.jumpTo(
+      stitchDetailsScrollController.position.maxScrollExtent,
+    );
     super.setState(fn);
   }
 
