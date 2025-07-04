@@ -28,6 +28,7 @@ class _rowPageState extends State<rowPage> {
   List<Stitch> stitches = [];
   String stitchSearch = "";
   double buttonHeight = 50;
+  ScrollController stitchDetailsScrollController = ScrollController();
   List<StitchCountButton> details = List.empty(growable: true);
   String detailsString = "";
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -119,7 +120,11 @@ class _rowPageState extends State<rowPage> {
             },
           ),
         );
-        setState(() {});
+        stitchDetailsScrollController.animateTo(
+          stitchDetailsScrollController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 500),
+          curve: Curves.linear,
+        );
       },
 
       style: ButtonStyle(
@@ -225,6 +230,17 @@ class _rowPageState extends State<rowPage> {
     );
   }
 
+  Widget _stitchDetailsList() {
+    return Container(
+      constraints: BoxConstraints(maxHeight: buttonHeight * 2.5),
+      padding: EdgeInsets.only(top: 10),
+      child: SingleChildScrollView(
+        controller: stitchDetailsScrollController,
+        child: Wrap(spacing: 10, children: [for (Widget e in details) e]),
+      ),
+    );
+  }
+
   Widget _saveButton() {
     return IconButton(
       onPressed: () async {
@@ -279,6 +295,7 @@ class _rowPageState extends State<rowPage> {
         child: Form(
           key: _formKey,
           child: Column(
+            spacing: 10,
             children: [
               _rowNumberInput(),
 
@@ -287,16 +304,7 @@ class _rowPageState extends State<rowPage> {
                 readOnly: true,
                 decoration: InputDecoration(label: Text("Preview")),
               ),
-              Container(
-                constraints: BoxConstraints(maxHeight: buttonHeight * 2.5),
-                padding: EdgeInsets.only(top: 10),
-                child: SingleChildScrollView(
-                  child: Wrap(
-                    spacing: 10,
-                    children: [for (Widget e in details) e],
-                  ),
-                ),
-              ),
+              _stitchDetailsList(),
 
               TextFormField(
                 decoration: InputDecoration(label: Text("Search a stitch")),
