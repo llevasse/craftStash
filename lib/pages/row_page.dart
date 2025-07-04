@@ -28,6 +28,7 @@ class _rowPageState extends State<rowPage> {
   List<Stitch> stitches = [];
   String stitchSearch = "";
   double buttonHeight = 50;
+  bool needScroll = false;
   ScrollController stitchDetailsScrollController = ScrollController();
   List<StitchCountButton> details = List.empty(growable: true);
   String detailsString = "";
@@ -120,11 +121,8 @@ class _rowPageState extends State<rowPage> {
             },
           ),
         );
-        stitchDetailsScrollController.animateTo(
-          stitchDetailsScrollController.position.maxScrollExtent,
-          duration: Duration(milliseconds: 500),
-          curve: Curves.linear,
-        );
+        needScroll = true;
+        setState(() {});
       },
 
       style: ButtonStyle(
@@ -284,6 +282,16 @@ class _rowPageState extends State<rowPage> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+    if (needScroll) {
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => stitchDetailsScrollController.animateTo(
+          stitchDetailsScrollController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 500),
+          curve: Curves.linear,
+        ),
+      );
+      needScroll = false;
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text("Row ${row.startRow}"),
