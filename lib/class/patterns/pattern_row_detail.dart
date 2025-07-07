@@ -152,6 +152,7 @@ Future<List<PatternRowDetail>> getAllPatternRowDetailByRowId(int id) async {
     for (PatternRowDetail detail in l) {
       if (detail.hasSubrow == 1) {
         detail.subRow = await getPatternRowByDetailId(detail.rowDetailId);
+        print(detail.subRow);
       }
     }
     return l;

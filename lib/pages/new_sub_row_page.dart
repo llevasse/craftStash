@@ -1,30 +1,26 @@
-import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/class/stitch.dart';
+import 'package:craft_stash/widgets/patternButtons/add_detail_button.dart';
 import 'package:craft_stash/widgets/patternButtons/stitch_count_button.dart';
 import 'package:flutter/material.dart';
 
-class rowPage extends StatefulWidget {
-  final Future<void> Function() updatePattern;
-  PatternPart part;
-  PatternRow? row;
-  int startRow;
-  int endRow;
-  rowPage({
+class NewSubRowPage extends StatefulWidget {
+  final PatternRow? subrow;
+  final int rowId;
+  final int partId;
+  const NewSubRowPage({
     super.key,
-    required this.part,
-    required this.updatePattern,
-    this.startRow = 0,
-    this.endRow = 1,
-    this.row,
+    this.subrow,
+    required this.rowId,
+    required this.partId,
   });
 
   @override
-  State<StatefulWidget> createState() => _rowPageState();
+  State<StatefulWidget> createState() => _NewSubRowPageState();
 }
 
-class _rowPageState extends State<rowPage> {
+class _NewSubRowPageState extends State<NewSubRowPage> {
   List<Stitch> stitches = [];
   String stitchSearch = "";
   double buttonHeight = 50;
@@ -38,10 +34,10 @@ class _rowPageState extends State<rowPage> {
   @override
   void initState() {
     getAllStitches();
-    row.startRow = widget.startRow;
-    row.endRow = widget.endRow;
-    if (widget.row != null) {
-      row = widget.row!;
+    row.startRow = 0;
+    row.endRow = 0;
+    if (widget.subrow != null) {
+      row = widget.subrow!;
       detailsString = "";
       row.details.forEach((detail) {
         if (detail.repeatXTime != 0) {
@@ -97,8 +93,8 @@ class _rowPageState extends State<rowPage> {
   }
 
   Widget _createStichButton(String stitch) {
-    ThemeData theme = Theme.of(context);
-    return OutlinedButton(
+    return AddDetailButton(
+      text: stitch,
       onPressed: () async {
         if (row.details.isNotEmpty && row.details.last.stitch == stitch) {
           row.details.last.repeatXTime += 1;
@@ -127,94 +123,6 @@ class _rowPageState extends State<rowPage> {
         needScroll = true;
         setState(() {});
       },
-
-      style: ButtonStyle(
-        side: WidgetStatePropertyAll(
-          BorderSide(color: theme.colorScheme.primary, width: 5),
-        ),
-        shape: WidgetStatePropertyAll(
-          RoundedSuperellipseBorder(
-            borderRadius: BorderRadiusGeometry.all(Radius.circular(18)),
-          ),
-        ),
-
-        backgroundColor: WidgetStateProperty.all(theme.colorScheme.primary),
-      ),
-      child: Text(
-        stitch,
-        style: TextStyle(color: theme.colorScheme.secondary),
-        textScaler: TextScaler.linear(1.25),
-      ),
-    );
-  }
-
-  Widget _rowNumberInput() {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      spacing: 10,
-      children: [
-        Expanded(
-          child: TextFormField(
-            keyboardType: TextInputType.numberWithOptions(),
-            decoration: InputDecoration(label: Text("Start row")),
-            initialValue: row.startRow.toString(),
-            validator: (value) {
-              if (value == null || value.trim().isEmpty) {
-                return ("Can't be empty");
-              }
-              try {
-                int val = int.parse(value.trim());
-                if (val < 0) {
-                  return ("Row number can't be negative");
-                }
-              } catch (e) {
-                return ("Only digits allowed");
-              }
-              return null;
-            },
-            onChanged: (newValue) {
-              if (newValue.trim().isEmpty) {
-                return;
-              }
-
-              try {
-                row.startRow = int.parse(newValue.trim());
-              } catch (e) {}
-            },
-            onSaved: (newValue) {
-              if (newValue == null || newValue.trim().isEmpty) {
-                return;
-              }
-              row.startRow = int.parse(newValue.trim());
-            },
-          ),
-        ),
-        Expanded(
-          child: TextFormField(
-            keyboardType: TextInputType.numberWithOptions(),
-            decoration: InputDecoration(label: Text("Number of rows")),
-            initialValue: row.endRow.toString(),
-            validator: (value) {
-              if (value == null || value.trim().isEmpty) {
-                return ("Can't be empty");
-              }
-              try {
-                int val = int.parse(value.trim());
-                if (val < 1) {
-                  return ("Row number can't be inferior to one");
-                }
-              } catch (e) {
-                return ("Only digits allowed");
-              }
-              return null;
-            },
-            onSaved: (newValue) {
-              if (newValue == null) return;
-              row.endRow = int.parse(newValue.trim());
-            },
-          ),
-        ),
-      ],
     );
   }
 
@@ -247,12 +155,16 @@ class _rowPageState extends State<rowPage> {
       onPressed: () async {
         if (_formKey.currentState!.validate()) {
           _formKey.currentState!.save();
-          row.partId = widget.part.partId;
-          if (widget.row == null) {
-            int rowId = await insertPatternRowInDb(row);
+          row.partId = widget.partId;
+          row.partDetailId = await insertPatternRowDetailInDb(
+            PatternRowDetail(rowId: widget.rowId, hasSubrow: 1),
+          );
+          if (widget.subrow == null) {
+            print("Insert row ${row.toString()}");
+            row.rowId = await insertPatternRowInDb(row);
             for (PatternRowDetail e in row.details) {
               if (e.repeatXTime != 0) {
-                e.rowId = rowId;
+                e.rowId = row.rowId;
                 await insertPatternRowDetailInDb(e);
               }
             }
@@ -274,8 +186,7 @@ class _rowPageState extends State<rowPage> {
               }
             }
           }
-          await widget.updatePattern();
-          Navigator.pop(context);
+          Navigator.pop(context, row);
         }
       },
       icon: Icon(Icons.save),
@@ -297,7 +208,7 @@ class _rowPageState extends State<rowPage> {
     }
     return Scaffold(
       appBar: AppBar(
-        title: Text("Row ${row.startRow}"),
+        title: Text("Create sequence"),
         backgroundColor: theme.colorScheme.primary,
         actions: [_saveButton()],
       ),
@@ -308,8 +219,6 @@ class _rowPageState extends State<rowPage> {
           child: Column(
             spacing: 10,
             children: [
-              _rowNumberInput(),
-
               TextFormField(
                 controller: previewControler,
                 readOnly: true,

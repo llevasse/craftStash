@@ -1,7 +1,7 @@
 import 'package:craft_stash/add_part_button.dart';
 import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
-import 'package:craft_stash/pages/pattern_part_page.dart';
+import 'package:craft_stash/pages/new_pattern_part_page.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
@@ -114,7 +114,7 @@ class _NewPatternPageState extends State<NewPatternPage> {
               context,
               MaterialPageRoute<void>(
                 settings: RouteSettings(name: "part"),
-                builder: (BuildContext context) => PatternPartPage(
+                builder: (BuildContext context) => NewPatternPartPage(
                   updatePatternListView: updatePattern,
                   pattern: pattern,
                   part: part,

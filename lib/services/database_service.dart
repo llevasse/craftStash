@@ -70,12 +70,6 @@ class DbService {
     await db.execute(
       '''CREATE TABLE IF NOT EXISTS stitch(id INTEGER PRIMARY KEY, abreviation TEXT, name TEXT, description TEXT, hash INT)''',
     );
-    // await craft.insertPatternInDb(craft.Pattern());
-    // await insertPatternPartInDb(PatternPart(name: "zero", patternId: 0));
-    // await insertPatternRowInDb(
-    //   PatternRow(startRow: 0, endRow: 0, stitchesPerRow: 0, partId: 0, partDetailId: null),
-    // );
-    // await insertPatternRowDetailInDb(PatternRowDetail(rowId: 0));
     await insertDefaultStitchesInDb();
   }
 
