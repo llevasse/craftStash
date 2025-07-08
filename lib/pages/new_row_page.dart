@@ -196,7 +196,6 @@ class _NewRowPageState extends State<NewRowPage> {
         } else {
           row.details.add(PatternRowDetail(rowId: -1, stitch: stitch));
         }
-        int length = row.details.length;
         details.add(_createStitchCountButton(stitch));
         needScroll = true;
         setState(() {});
@@ -205,6 +204,7 @@ class _NewRowPageState extends State<NewRowPage> {
   }
 
   Widget _createSubRowButton() {
+    ThemeData theme = Theme.of(context);
     return AddDetailButton(
       text: "New sequence",
       onPressed: () async {
@@ -222,6 +222,18 @@ class _NewRowPageState extends State<NewRowPage> {
         details.add(_createStitchCountButton(t.subRow.toString()));
         setState(() {});
       },
+      style: ButtonStyle(
+            side: WidgetStatePropertyAll(
+              BorderSide(color: theme.colorScheme.primary, width: 1),
+            ),
+            shape: WidgetStatePropertyAll(
+              RoundedSuperellipseBorder(
+                borderRadius: BorderRadiusGeometry.all(Radius.circular(18)),
+              ),
+            ),
+
+            backgroundColor: WidgetStateProperty.all(theme.colorScheme.tertiary),
+          ),
     );
   }
 
