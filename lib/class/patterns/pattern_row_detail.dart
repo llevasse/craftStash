@@ -39,6 +39,13 @@ class PatternRowDetail {
     return "${subRow.toString()} ${repeatXTime == 1 ? "" : "x${repeatXTime.toString()}"}";
   }
 
+  String toStringWithoutNumber() {
+    if (hasSubrow == 0) {
+      return stitch;
+    }
+    return subRow.toString();
+  }
+
   @override
   int get hashCode => Object.hash(rowDetailId, rowId, stitch, color, hasSubrow);
 }
@@ -152,7 +159,6 @@ Future<List<PatternRowDetail>> getAllPatternRowDetailByRowId(int id) async {
     for (PatternRowDetail detail in l) {
       if (detail.hasSubrow == 1) {
         detail.subRow = await getPatternRowByDetailId(detail.rowDetailId);
-        print(detail.subRow);
       }
     }
     return l;

@@ -8,12 +8,14 @@ class PatternRow {
   int rowId;
   int partId;
   int? partDetailId;
+  int inSameStitch;
   int startRow, endRow;
   int stitchesPerRow;
   List<PatternRowDetail> details = List.empty(growable: true);
   PatternRow({
     this.rowId = 0,
     this.partDetailId, // non zero if is a 'subrow' (i.e repetetive instruction with different stitches)
+    this.inSameStitch = 0, // non zero if is a subrow in done in the same stitch
     this.partId = -1,
     required this.startRow,
     required this.endRow,
@@ -26,6 +28,7 @@ class PatternRow {
       'part_id': partId,
       'start_row': startRow,
       'number_of_rows': endRow,
+      'in_same_stitch': inSameStitch,
       'stitches_count_per_row': stitchesPerRow,
       // 'hash': hashCode,
     };
@@ -45,7 +48,7 @@ class PatternRow {
 
       return tmp;
     } else {
-      String tmp = "(";
+      String tmp = inSameStitch == 0 ? "(" : "[";
       int lastId = details.last.rowDetailId;
       for (PatternRowDetail detail in details) {
         if (detail.rowDetailId != lastId) {
@@ -54,7 +57,7 @@ class PatternRow {
           tmp += detail.toString();
         }
       }
-      tmp += ")";
+      tmp += inSameStitch == 0 ? ")" : "]";
       return tmp;
     }
   }
@@ -66,6 +69,7 @@ class PatternRow {
     partId,
     startRow,
     endRow,
+    inSameStitch,
     stitchesPerRow,
   );
 
@@ -101,7 +105,6 @@ Future<int> insertPatternRowInDb(PatternRow patternRow) async {
 Future<void> updatePatternRowInDb(PatternRow patternRow) async {
   final db = (await DbService().database);
   if (db != null) {
-    print(patternRow.rowId);
     await db.update(
       _tableName,
       patternRow.toMap(),
@@ -145,6 +148,7 @@ Future<List<PatternRow>> getAllPatternRow() async {
             'part_id': partId as int,
             'start_row': startRow as int,
             'number_of_rows': endRow as int,
+            'in_same_stitch': inSameStitch as int,
             'stitches_count_per_row': stitchesPerRow as int,
           }
           in patternRowMaps)
@@ -153,7 +157,9 @@ Future<List<PatternRow>> getAllPatternRow() async {
           partDetailId: partDetailId,
           partId: partId,
           startRow: startRow,
+          inSameStitch: inSameStitch,
           endRow: endRow,
+
           stitchesPerRow: stitchesPerRow,
         ),
     ];
@@ -208,9 +214,10 @@ Future<PatternRow> getPatternRowByDetailId(int id) async {
       PatternRow tmp = PatternRow(
         rowId: map['row_id'] as int,
         partId: map['part_id'] as int,
-        partDetailId: map['part_detail_id'] as int, 
+        partDetailId: map['part_detail_id'] as int,
         startRow: map['start_row'] as int,
         endRow: map['number_of_rows'] as int,
+        inSameStitch: map['in_same_stitch'] as int,
         stitchesPerRow: map['stitches_count_per_row'] as int,
       );
       tmp.details = await getAllPatternRowDetailByRowId(tmp.rowId);

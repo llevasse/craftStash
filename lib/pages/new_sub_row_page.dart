@@ -156,11 +156,14 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
         if (_formKey.currentState!.validate()) {
           _formKey.currentState!.save();
           row.partId = widget.partId;
-          row.partDetailId = await insertPatternRowDetailInDb(
-            PatternRowDetail(rowId: widget.rowId, hasSubrow: 1),
+          PatternRowDetail detail = PatternRowDetail(
+            rowId: widget.rowId,
+            hasSubrow: 1,
           );
+          row.partDetailId = await insertPatternRowDetailInDb(detail);
+          detail.rowDetailId = row.partDetailId!;
           if (widget.subrow == null) {
-            print("Insert row ${row.toString()}");
+            // print("Insert row ${row.toString()}");
             row.rowId = await insertPatternRowInDb(row);
             for (PatternRowDetail e in row.details) {
               if (e.repeatXTime != 0) {
@@ -186,7 +189,8 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
               }
             }
           }
-          Navigator.pop(context, row);
+          detail.subRow = row;
+          Navigator.pop(context, detail);
         }
       },
       icon: Icon(Icons.save),
@@ -219,13 +223,28 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
           child: Column(
             spacing: 10,
             children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                spacing: 10,
+                children: [
+                  Text("In the same stitch"),
+
+                  Switch(
+                    value: row.inSameStitch == 0 ? false : true,
+                    onChanged: (value) {
+                      setState(() {
+                        row.inSameStitch = value == false ? 0 : 1;
+                      });
+                    },
+                  ),
+                ],
+              ),
               TextFormField(
                 controller: previewControler,
                 readOnly: true,
                 decoration: InputDecoration(label: Text("Preview")),
               ),
               _stitchDetailsList(),
-
               TextFormField(
                 decoration: InputDecoration(label: Text("Search a stitch")),
                 onChanged: (value) {

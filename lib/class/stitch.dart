@@ -35,13 +35,7 @@ Future<void> insertDefaultStitchesInDb() async {
     Stitch(abreviation: "dec", name: "decrease", description: null),
     Stitch(abreviation: "sk", name: "skip", description: null),
   ];
-  // for (int i = 0; i < 50; i++) {
-  //   stitches.add(
-  //     Stitch(abreviation: "$i", name: "bogus $i", description: null),
-  //   );
-  // }
   stitches.forEach((stitch) async {
-    // print(stitch.abreviation);
     await insertStitchInDb(stitch);
   });
 }

@@ -46,13 +46,10 @@ class _NewRowPageState extends State<NewRowPage> {
       row = widget.row!;
       detailsString = "";
       for (PatternRowDetail detail in row.details) {
-        if (detail.repeatXTime != 0) {
-          detailsString += "${detail.toString()}, ";
-        }
         details.add(
           StitchCountButton(
             signed: false,
-            text: detail.toString(),
+            text: detail.toStringWithoutNumber(),
             count: detail.repeatXTime,
             increase: () {
               detail.repeatXTime += 1;
@@ -67,7 +64,6 @@ class _NewRowPageState extends State<NewRowPage> {
           ),
         );
       }
-      previewControler.text = detailsString;
     } else {
       _insertRowInDb();
     }
@@ -91,10 +87,10 @@ class _NewRowPageState extends State<NewRowPage> {
     detailsString = "";
     row.details.forEach((detail) {
       if (detail.repeatXTime != 0) {
-        if (detail.repeatXTime > 1) {
-          detailsString += detail.repeatXTime.toString();
-        }
-        detailsString += "${detail.stitch}, ";
+        // if (detail.repeatXTime > 1) {
+        //   detailsString += detail.repeatXTime.toString();
+        // }
+        detailsString += "${detail.toString()}, ";
       }
     });
     previewControler.text = detailsString;
@@ -171,6 +167,25 @@ class _NewRowPageState extends State<NewRowPage> {
     );
   }
 
+  StitchCountButton _createStitchCountButton(String stitch) {
+    int length = row.details.length;
+    return StitchCountButton(
+      signed: false,
+      text: stitch,
+      count: row.details[length - 1].repeatXTime,
+      increase: () {
+        row.details[length - 1].repeatXTime += 1;
+        row.stitchesPerRow += 1;
+        setState(() {});
+      },
+      decrease: () {
+        row.details[length - 1].repeatXTime -= 1;
+        row.stitchesPerRow -= 1;
+        setState(() {});
+      },
+    );
+  }
+
   Widget _createStichButton(String stitch) {
     return AddDetailButton(
       text: stitch,
@@ -182,23 +197,7 @@ class _NewRowPageState extends State<NewRowPage> {
           row.details.add(PatternRowDetail(rowId: -1, stitch: stitch));
         }
         int length = row.details.length;
-        details.add(
-          StitchCountButton(
-            signed: false,
-            text: stitch,
-            count: row.details[length - 1].repeatXTime,
-            increase: () {
-              row.details[length - 1].repeatXTime += 1;
-              row.stitchesPerRow += 1;
-              setState(() {});
-            },
-            decrease: () {
-              row.details[length - 1].repeatXTime -= 1;
-              row.stitchesPerRow -= 1;
-              setState(() {});
-            },
-          ),
-        );
+        details.add(_createStitchCountButton(stitch));
         needScroll = true;
         setState(() {});
       },
@@ -209,7 +208,7 @@ class _NewRowPageState extends State<NewRowPage> {
     return AddDetailButton(
       text: "New sequence",
       onPressed: () async {
-        PatternRow t =
+        PatternRowDetail t =
             await Navigator.push(
                   context,
                   MaterialPageRoute<void>(
@@ -218,8 +217,10 @@ class _NewRowPageState extends State<NewRowPage> {
                         NewSubRowPage(rowId: row.rowId, partId: row.partId),
                   ),
                 )
-                as PatternRow;
-        print(t);
+                as PatternRowDetail;
+        row.details.add(t);
+        details.add(_createStitchCountButton(t.subRow.toString()));
+        setState(() {});
       },
     );
   }

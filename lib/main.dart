@@ -1,4 +1,3 @@
-import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/pages/patterns_stash.dart';
 import 'package:craft_stash/pages/yarn_stash.dart';
 import 'package:craft_stash/premadePatterns/jellyfish.dart';
