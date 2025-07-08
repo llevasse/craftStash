@@ -189,7 +189,8 @@ class _NewRowPageState extends State<NewRowPage> {
       onPressed: () async {
         print(row.details.last.toStringWithoutNumber());
         print(stitch);
-        if (row.details.isNotEmpty && row.details.last.toStringWithoutNumber() == stitch) {
+        if (row.details.isNotEmpty &&
+            row.details.last.toStringWithoutNumber() == stitch) {
           row.details.last.repeatXTime += 1;
           details.removeLast();
         } else {
@@ -248,7 +249,7 @@ class _NewRowPageState extends State<NewRowPage> {
     list.add(_createSubRowButton());
     for (Stitch e in stitches) {
       if (e.abreviation.contains(stitchSearch) ||
-          e.name!.contains(stitchSearch)) {
+          (e.name != null && e.name!.contains(stitchSearch))) {
         list.add(_createStichButton(e.abreviation));
       }
     }
