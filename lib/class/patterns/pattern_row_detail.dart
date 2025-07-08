@@ -47,7 +47,8 @@ class PatternRowDetail {
   }
 
   @override
-  int get hashCode => Object.hash(rowDetailId, rowId, stitch, color, hasSubrow);
+  int get hashCode =>
+      Object.hash(rowId, stitch, color, hasSubrow, subRow?.hashCode);
 }
 
 Future<int> insertPatternRowDetailInDb(

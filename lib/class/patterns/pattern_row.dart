@@ -62,13 +62,12 @@ class PatternRow {
 
   @override
   int get hashCode => Object.hash(
-    rowId,
-    partDetailId,
     partId,
     startRow,
     endRow,
     inSameStitch,
     stitchesPerRow,
+    toString()
   );
 
   String detailsAsString() {

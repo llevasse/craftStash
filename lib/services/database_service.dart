@@ -1,8 +1,4 @@
 import 'dart:async';
-import 'package:craft_stash/class/patterns/pattern_part.dart';
-import 'package:craft_stash/class/patterns/pattern_row.dart';
-import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
-import 'package:craft_stash/class/patterns/patterns.dart' as craft;
 import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/class/yarns/brand.dart';
 import 'package:craft_stash/class/yarns/material.dart';
@@ -40,31 +36,31 @@ class DbService {
   }
 
   Future<void> _onCreate(Database db, int version) async {
-    db.execute(
+    await db.execute(
       '''CREATE TABLE IF NOT EXISTS yarn(id INTEGER PRIMARY KEY, color INT, brand TEXT, material TEXT, color_name TEXT, min_hook REAL, max_hook REAL, thickness REAL, number_of_skeins INT, collection_id INT DEFAULT -1, hash INT)''',
     );
 
-    db.execute(
+    await db.execute(
       '''CREATE TABLE IF NOT EXISTS brand(id INTEGER PRIMARY KEY, name TEXT UNIQUE, hash INT)''',
     );
 
-    db.execute(
+    await db.execute(
       '''CREATE TABLE IF NOT EXISTS material(id INTEGER PRIMARY KEY, name TEXT UNIQUE, hash INT)''',
     );
-    db.execute(
+    await db.execute(
       '''CREATE TABLE IF NOT EXISTS yarn_collection(id INTEGER PRIMARY KEY, brand TEXT, material TEXT, min_hook REAL, max_hook REAL, thickness REAL, name TEXT, hash INT)''',
     );
 
-    db.execute(
+    await db.execute(
       '''CREATE TABLE IF NOT EXISTS pattern(pattern_id INTEGER PRIMARY KEY, name TEXT, hash INT UNIQUE)''',
     );
-    db.execute(
+    await db.execute(
       '''CREATE TABLE IF NOT EXISTS pattern_part(part_id INTEGER PRIMARY KEY, name TEXT, numbers_to_make INT, pattern_id INT, FOREIGN KEY (pattern_id) REFERENCES pattern(pattern_id) ON DELETE CASCADE)''',
     );
-    db.execute(
+    await db.execute(
       '''CREATE TABLE IF NOT EXISTS pattern_row(row_id INTEGER PRIMARY KEY, part_id INT, part_detail_id INT, start_row INT, number_of_rows INT, stitches_count_per_row INT, in_same_stitch INT, FOREIGN KEY (part_id) REFERENCES pattern_part(part_id) ON DELETE CASCADE, FOREIGN KEY (part_detail_id) REFERENCES pattern_row_detail(row_detail_id) ON DELETE CASCADE)''',
     );
-    db.execute(
+    await db.execute(
       '''CREATE TABLE IF NOT EXISTS pattern_row_detail(row_detail_id INTEGER PRIMARY KEY, row_id INT, stitch TEXT, repeat_x_time INT, color INT, has_subrow INT, FOREIGN KEY (row_id) REFERENCES pattern_row(row_id) ON DELETE CASCADE)''',
     );
     await db.execute(

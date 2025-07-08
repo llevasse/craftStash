@@ -10,8 +10,8 @@ import 'package:flutter/services.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  // await DbService().recreateDb();
-  // await insertJellyFishPattern();
+  await DbService().recreateDb();
+  await insertJellyFishPattern();
   runApp(const MyApp());
 }
 

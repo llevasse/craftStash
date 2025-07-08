@@ -187,7 +187,9 @@ class _NewRowPageState extends State<NewRowPage> {
     return AddDetailButton(
       text: stitch,
       onPressed: () async {
-        if (row.details.isNotEmpty && row.details.last.stitch == stitch) {
+        print(row.details.last.toStringWithoutNumber());
+        print(stitch);
+        if (row.details.isNotEmpty && row.details.last.toStringWithoutNumber() == stitch) {
           row.details.last.repeatXTime += 1;
           details.removeLast();
         } else {
@@ -216,7 +218,13 @@ class _NewRowPageState extends State<NewRowPage> {
                 )
                 as PatternRowDetail?;
         if (t == null) return;
-        row.details.add(t);
+        if (row.details.isNotEmpty && row.details.last.hashCode == t.hashCode) {
+          await deletePatternRowDetailInDb(t.rowDetailId);
+          row.details.last.repeatXTime += 1;
+          details.removeLast();
+        } else {
+          row.details.add(t);
+        }
         details.add(_createStitchCountButton(t.subRow.toString()));
         await getAllStitches();
       },
