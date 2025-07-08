@@ -190,6 +190,9 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
             }
           }
           detail.subRow = row;
+          await insertStitchInDb(
+            Stitch(abreviation: detail.toStringWithoutNumber()),
+          );
           Navigator.pop(context, detail);
         }
       },

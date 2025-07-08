@@ -49,13 +49,11 @@ class PatternRow {
       return tmp;
     } else {
       String tmp = inSameStitch == 0 ? "(" : "[";
-      int lastId = details.last.rowDetailId;
       for (PatternRowDetail detail in details) {
-        if (detail.rowDetailId != lastId) {
-          tmp += "${detail.toString()}, ";
-        } else {
-          tmp += detail.toString();
-        }
+        tmp += "${detail.toString()}, ";
+      }
+      if (details.isNotEmpty) {
+        tmp = tmp.substring(0, tmp.length - 2);
       }
       tmp += inSameStitch == 0 ? ")" : "]";
       return tmp;

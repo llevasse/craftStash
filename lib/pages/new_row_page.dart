@@ -87,9 +87,6 @@ class _NewRowPageState extends State<NewRowPage> {
     detailsString = "";
     row.details.forEach((detail) {
       if (detail.repeatXTime != 0) {
-        // if (detail.repeatXTime > 1) {
-        //   detailsString += detail.repeatXTime.toString();
-        // }
         detailsString += "${detail.toString()}, ";
       }
     });
@@ -220,20 +217,20 @@ class _NewRowPageState extends State<NewRowPage> {
                 as PatternRowDetail;
         row.details.add(t);
         details.add(_createStitchCountButton(t.subRow.toString()));
-        setState(() {});
+        await getAllStitches();
       },
       style: ButtonStyle(
-            side: WidgetStatePropertyAll(
-              BorderSide(color: theme.colorScheme.primary, width: 1),
-            ),
-            shape: WidgetStatePropertyAll(
-              RoundedSuperellipseBorder(
-                borderRadius: BorderRadiusGeometry.all(Radius.circular(18)),
-              ),
-            ),
-
-            backgroundColor: WidgetStateProperty.all(theme.colorScheme.tertiary),
+        side: WidgetStatePropertyAll(
+          BorderSide(color: theme.colorScheme.primary, width: 1),
+        ),
+        shape: WidgetStatePropertyAll(
+          RoundedSuperellipseBorder(
+            borderRadius: BorderRadiusGeometry.all(Radius.circular(18)),
           ),
+        ),
+
+        backgroundColor: WidgetStateProperty.all(theme.colorScheme.tertiary),
+      ),
     );
   }
 
