@@ -205,7 +205,7 @@ class _NewRowPageState extends State<NewRowPage> {
     return AddDetailButton(
       text: "New sequence",
       onPressed: () async {
-        PatternRowDetail t =
+        PatternRowDetail? t =
             await Navigator.push(
                   context,
                   MaterialPageRoute<void>(
@@ -214,7 +214,8 @@ class _NewRowPageState extends State<NewRowPage> {
                         NewSubRowPage(rowId: row.rowId, partId: row.partId),
                   ),
                 )
-                as PatternRowDetail;
+                as PatternRowDetail?;
+        if (t == null) return;
         row.details.add(t);
         details.add(_createStitchCountButton(t.subRow.toString()));
         await getAllStitches();
