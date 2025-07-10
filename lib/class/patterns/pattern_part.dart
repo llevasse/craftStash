@@ -37,8 +37,11 @@ class PatternPart {
   int get hashCode => Object.hash(name, patternId, numbersToMake);
 }
 
-Future<int> insertPatternPartInDb(PatternPart patternPart) async {
-  final db = (await DbService().database);
+Future<int> insertPatternPartInDb(
+  PatternPart patternPart, [
+  Database? db,
+]) async {
+  db ??= (await DbService().database);
   if (db != null) {
     return db.insert(
       'pattern_part',

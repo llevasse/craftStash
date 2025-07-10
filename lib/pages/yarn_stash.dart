@@ -1,5 +1,6 @@
 import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:craft_stash/class/yarns/yarn_collection.dart';
+import 'package:craft_stash/widgets/page_select_dropdown_button.dart';
 import 'package:craft_stash/widgets/yarnButtons/edit_yarn_button.dart';
 import 'package:flutter/material.dart';
 
@@ -93,6 +94,13 @@ class _YarnStashPageState extends State<YarnStashPage> {
       appBar: AppBar(
         backgroundColor: theme.colorScheme.primary,
         title: Text("Yarn stash"),
+        actions: [
+          PageSelectDropdownButton(
+            onQuit: () async {
+              await getAllYarns();
+            },
+          ),
+        ],
       ),
       body: ListView(children: listViewContent),
     );

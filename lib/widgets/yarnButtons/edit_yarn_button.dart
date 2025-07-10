@@ -26,7 +26,6 @@ class _EditYarnButton extends State<EditYarnButton> {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData theme = Theme.of(context);
     return ListTile(
       leading: Container(
         width: 30,

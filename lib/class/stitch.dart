@@ -23,7 +23,7 @@ class Stitch {
   int get hashCode => Object.hash(abreviation, name, description);
 }
 
-Future<void> insertDefaultStitchesInDb() async {
+Future<void> insertDefaultStitchesInDb([Database? db]) async {
   List<Stitch> stitches = [
     Stitch(abreviation: "ch", name: "chain", description: null),
     Stitch(abreviation: "sl st", name: "slip stitch", description: null),
@@ -36,12 +36,12 @@ Future<void> insertDefaultStitchesInDb() async {
     Stitch(abreviation: "sk", name: "skip", description: null),
   ];
   stitches.forEach((stitch) async {
-    await insertStitchInDb(stitch);
+    await insertStitchInDb(stitch, db);
   });
 }
 
-Future<void> insertStitchInDb(Stitch stitch) async {
-  final db = (await DbService().database);
+Future<void> insertStitchInDb(Stitch stitch, [Database? db]) async {
+  db ??= (await DbService().database);
   if (db != null) {
     final list = await db.query(
       _tableName,

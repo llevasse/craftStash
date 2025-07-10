@@ -2,10 +2,11 @@ import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
+import 'package:sqflite/sqflite.dart';
 
-Future<PatternPart> _createHeadPart(int patternId) async {
+Future<PatternPart> _createHeadPart(int patternId, Database? db) async {
   PatternPart head = PatternPart(name: "head", patternId: patternId);
-  head.partId = await insertPatternPartInDb(head);
+  head.partId = await insertPatternPartInDb(head, db);
 
   PatternRow r1 = PatternRow(
     partId: head.partId,
@@ -13,9 +14,10 @@ Future<PatternPart> _createHeadPart(int patternId) async {
     numberOfRows: 1,
     stitchesPerRow: 6,
   );
-  r1.rowId = await insertPatternRowInDb(r1);
+  r1.rowId = await insertPatternRowInDb(r1, db);
   await insertPatternRowDetailInDb(
     PatternRowDetail(rowId: r1.rowId, repeatXTime: 6, stitch: "sc"),
+    db,
   );
 
   PatternRow r2 = PatternRow(
@@ -24,9 +26,10 @@ Future<PatternPart> _createHeadPart(int patternId) async {
     numberOfRows: 1,
     stitchesPerRow: 12,
   );
-  r2.rowId = await insertPatternRowInDb(r2);
+  r2.rowId = await insertPatternRowInDb(r2, db);
   await insertPatternRowDetailInDb(
     PatternRowDetail(rowId: r2.rowId, repeatXTime: 6, stitch: "inc"),
+    db,
   );
 
   PatternRow r3 = PatternRow(
@@ -35,14 +38,14 @@ Future<PatternPart> _createHeadPart(int patternId) async {
     numberOfRows: 1,
     stitchesPerRow: 18,
   );
-  r3.rowId = await insertPatternRowInDb(r3);
+  r3.rowId = await insertPatternRowInDb(r3, db);
   PatternRowDetail dr3 = PatternRowDetail(
     rowId: r3.rowId,
     repeatXTime: 3,
     stitch: "(1sc, inc)",
     hasSubrow: 1,
   );
-  dr3.rowDetailId = await insertPatternRowDetailInDb(dr3);
+  dr3.rowDetailId = await insertPatternRowDetailInDb(dr3, db);
   PatternRow r3Subrow = PatternRow(
     partId: head.partId,
     startRow: 0,
@@ -50,7 +53,7 @@ Future<PatternPart> _createHeadPart(int patternId) async {
     stitchesPerRow: 3,
     partDetailId: dr3.rowDetailId,
   );
-  r3Subrow.rowId = await insertPatternRowInDb(r3Subrow);
+  r3Subrow.rowId = await insertPatternRowInDb(r3Subrow, db);
   await insertPatternRowDetailInDb(
     PatternRowDetail(
       rowId: r3Subrow.rowId,
@@ -58,6 +61,7 @@ Future<PatternPart> _createHeadPart(int patternId) async {
       stitch: "sc",
       hasSubrow: 0,
     ),
+    db,
   );
   await insertPatternRowDetailInDb(
     PatternRowDetail(
@@ -66,6 +70,7 @@ Future<PatternPart> _createHeadPart(int patternId) async {
       stitch: "inc",
       hasSubrow: 0,
     ),
+    db,
   );
 
   PatternRow r4 = PatternRow(
@@ -74,9 +79,10 @@ Future<PatternPart> _createHeadPart(int patternId) async {
     numberOfRows: 2,
     stitchesPerRow: 18,
   );
-  r4.rowId = await insertPatternRowInDb(r4);
+  r4.rowId = await insertPatternRowInDb(r4, db);
   await insertPatternRowDetailInDb(
     PatternRowDetail(rowId: r4.rowId, repeatXTime: 18, stitch: "sc"),
+    db,
   );
 
   PatternRow r6 = PatternRow(
@@ -85,21 +91,22 @@ Future<PatternPart> _createHeadPart(int patternId) async {
     numberOfRows: 1,
     stitchesPerRow: 9,
   );
-  r6.rowId = await insertPatternRowInDb(r6);
+  r6.rowId = await insertPatternRowInDb(r6, db);
   await insertPatternRowDetailInDb(
     PatternRowDetail(rowId: r6.rowId, repeatXTime: 9, stitch: "dec"),
+    db,
   );
 
   return head;
 }
 
-Future<PatternPart> _createShortTentacles(int patternId) async {
+Future<PatternPart> _createShortTentacles(int patternId, Database? db) async {
   PatternPart short = PatternPart(
     name: "short tentacles",
     patternId: patternId,
     numbersToMake: 4,
   );
-  short.partId = await insertPatternPartInDb(short);
+  short.partId = await insertPatternPartInDb(short, db);
 
   PatternRow r1 = PatternRow(
     partId: short.partId,
@@ -107,20 +114,21 @@ Future<PatternPart> _createShortTentacles(int patternId) async {
     numberOfRows: 1,
     stitchesPerRow: 8,
   );
-  r1.rowId = await insertPatternRowInDb(r1);
+  r1.rowId = await insertPatternRowInDb(r1, db);
   await insertPatternRowDetailInDb(
     PatternRowDetail(rowId: r1.rowId, repeatXTime: 8, stitch: "ch"),
+    db,
   );
   return (short);
 }
 
-Future<PatternPart> _createLongTentacles(int patternId) async {
+Future<PatternPart> _createLongTentacles(int patternId, Database? db) async {
   PatternPart long = PatternPart(
     name: "long tentacles",
     patternId: patternId,
     numbersToMake: 4,
   );
-  long.partId = await insertPatternPartInDb(long);
+  long.partId = await insertPatternPartInDb(long, db);
 
   PatternRow r1 = PatternRow(
     partId: long.partId,
@@ -128,17 +136,19 @@ Future<PatternPart> _createLongTentacles(int patternId) async {
     numberOfRows: 1,
     stitchesPerRow: 12,
   );
-  r1.rowId = await insertPatternRowInDb(r1);
+  r1.rowId = await insertPatternRowInDb(r1, db);
   await insertPatternRowDetailInDb(
     PatternRowDetail(rowId: r1.rowId, repeatXTime: 12, stitch: "ch"),
+    db,
   );
   return (long);
 }
 
-Future<void> insertJellyFishPattern() async {
+Future<void> insertJellyFishPattern([Database? db]) async {
   craft.Pattern pattern = craft.Pattern(name: "Jellyfish");
-  pattern.patternId = await craft.insertPatternInDb(pattern);
-  pattern.parts.add(await _createHeadPart(pattern.patternId));
-  pattern.parts.add(await _createShortTentacles(pattern.patternId));
-  pattern.parts.add(await _createLongTentacles(pattern.patternId));
+  pattern.patternId = await craft.insertPatternInDb(pattern, db);
+  pattern.parts.add(await _createHeadPart(pattern.patternId, db));
+  pattern.parts.add(await _createShortTentacles(pattern.patternId, db));
+  pattern.parts.add(await _createLongTentacles(pattern.patternId, db));
+  print("jelly created");
 }

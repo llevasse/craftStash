@@ -52,9 +52,10 @@ class PatternRowDetail {
 }
 
 Future<int> insertPatternRowDetailInDb(
-  PatternRowDetail patternRowDetail,
-) async {
-  final db = (await DbService().database);
+  PatternRowDetail patternRowDetail, [
+  Database? db,
+]) async {
+  db ??= (await DbService().database);
   if (db != null) {
     return await db.insert(
       _tableName,
