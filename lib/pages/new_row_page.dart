@@ -12,13 +12,13 @@ class NewRowPage extends StatefulWidget {
   PatternPart part;
   PatternRow? row;
   int startRow;
-  int endRow;
+  int numberOfRows;
   NewRowPage({
     super.key,
     required this.part,
     required this.updatePattern,
     this.startRow = 0,
-    this.endRow = 1,
+    this.numberOfRows = 1,
     this.row,
   });
 
@@ -35,13 +35,13 @@ class _NewRowPageState extends State<NewRowPage> {
   List<StitchCountButton> details = List.empty(growable: true);
   String detailsString = "";
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  PatternRow row = PatternRow(startRow: 0, endRow: 0, stitchesPerRow: 0);
+  PatternRow row = PatternRow(startRow: 0, numberOfRows: 0, stitchesPerRow: 0);
   TextEditingController previewControler = TextEditingController();
   @override
   void initState() {
     getAllStitches();
     row.startRow = widget.startRow;
-    row.endRow = widget.endRow;
+    row.numberOfRows = widget.numberOfRows;
     if (widget.row != null) {
       row = widget.row!;
       detailsString = "";
@@ -139,7 +139,7 @@ class _NewRowPageState extends State<NewRowPage> {
           child: TextFormField(
             keyboardType: TextInputType.numberWithOptions(),
             decoration: InputDecoration(label: Text("Number of rows")),
-            initialValue: row.endRow.toString(),
+            initialValue: row.numberOfRows.toString(),
             validator: (value) {
               if (value == null || value.trim().isEmpty) {
                 return ("Can't be empty");
@@ -156,7 +156,7 @@ class _NewRowPageState extends State<NewRowPage> {
             },
             onSaved: (newValue) {
               if (newValue == null) return;
-              row.endRow = int.parse(newValue.trim());
+              row.numberOfRows = int.parse(newValue.trim());
             },
           ),
         ),
@@ -322,7 +322,9 @@ class _NewRowPageState extends State<NewRowPage> {
     }
     return Scaffold(
       appBar: AppBar(
-        title: Text("Row ${row.startRow}"),
+        title: Text(
+          "${widget.part.name}/Row ${row.startRow}${row.numberOfRows > 1 ? "-${row.startRow + row.numberOfRows - 1}" : ""}",
+        ),
         backgroundColor: theme.colorScheme.primary,
         actions: [_saveButton()],
       ),

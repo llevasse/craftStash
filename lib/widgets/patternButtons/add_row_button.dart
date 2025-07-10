@@ -7,13 +7,13 @@ class AddRowButton extends StatefulWidget {
   final Future<void> Function() updatePattern;
   PatternPart part;
   int startRow;
-  int endRow;
+  int numberOfRows;
   AddRowButton({
     super.key,
     required this.part,
     required this.updatePattern,
     this.startRow = 1,
-    this.endRow = 1,
+    this.numberOfRows = 1,
   });
 
   @override
@@ -39,7 +39,7 @@ class _AddRowButton extends State<AddRowButton> {
               part: widget.part,
               updatePattern: widget.updatePattern,
               startRow: widget.startRow,
-              endRow: widget.endRow,
+              numberOfRows: widget.numberOfRows,
             ),
           ),
         );

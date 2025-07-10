@@ -9,7 +9,7 @@ class PatternRow {
   int partId;
   int? partDetailId;
   int inSameStitch;
-  int startRow, endRow;
+  int startRow, numberOfRows;
   int stitchesPerRow;
   List<PatternRowDetail> details = List.empty(growable: true);
   PatternRow({
@@ -18,7 +18,7 @@ class PatternRow {
     this.inSameStitch = 0, // non zero if is a subrow in done in the same stitch
     this.partId = -1,
     required this.startRow,
-    required this.endRow,
+    required this.numberOfRows,
     required this.stitchesPerRow,
   });
 
@@ -27,7 +27,7 @@ class PatternRow {
       'part_detail_id': partDetailId,
       'part_id': partId,
       'start_row': startRow,
-      'number_of_rows': endRow,
+      'number_of_rows': numberOfRows,
       'in_same_stitch': inSameStitch,
       'stitches_count_per_row': stitchesPerRow,
       // 'hash': hashCode,
@@ -35,13 +35,13 @@ class PatternRow {
   }
 
   String getSpecAsString() {
-    return "rowId : $rowId | partId : $partId | startRow : $startRow | endRow : $endRow";
+    return "rowId : $rowId | partId : $partId | startRow : $startRow | numberOfRows : $numberOfRows";
   }
 
   @override
   String toString() {
     if (partDetailId == null) {
-      String tmp = "$startRow-$endRow :\n";
+      String tmp = "$startRow-$numberOfRows :\n";
       for (PatternRowDetail detail in details) {
         tmp += "\t\t${detail.toString()}";
       }
@@ -64,10 +64,10 @@ class PatternRow {
   int get hashCode => Object.hash(
     partId,
     startRow,
-    endRow,
+    numberOfRows,
     inSameStitch,
     stitchesPerRow,
-    toString()
+    toString(),
   );
 
   String detailsAsString() {
@@ -144,7 +144,7 @@ Future<List<PatternRow>> getAllPatternRow() async {
             'part_detail_id': partDetailId as int?,
             'part_id': partId as int,
             'start_row': startRow as int,
-            'number_of_rows': endRow as int,
+            'number_of_rows': numberOfRows as int,
             'in_same_stitch': inSameStitch as int,
             'stitches_count_per_row': stitchesPerRow as int,
           }
@@ -155,7 +155,7 @@ Future<List<PatternRow>> getAllPatternRow() async {
           partId: partId,
           startRow: startRow,
           inSameStitch: inSameStitch,
-          endRow: endRow,
+          numberOfRows: numberOfRows,
 
           stitchesPerRow: stitchesPerRow,
         ),
@@ -181,7 +181,7 @@ Future<List<PatternRow>> getAllPatternRowByPartId(int id) async {
         partId: map['part_id'] as int,
         partDetailId: null,
         startRow: map['start_row'] as int,
-        endRow: map['number_of_rows'] as int,
+        numberOfRows: map['number_of_rows'] as int,
         stitchesPerRow: map['stitches_count_per_row'] as int,
       );
       if (map['part_detail_id'] != null) {
@@ -213,7 +213,7 @@ Future<PatternRow> getPatternRowByDetailId(int id) async {
         partId: map['part_id'] as int,
         partDetailId: map['part_detail_id'] as int,
         startRow: map['start_row'] as int,
-        endRow: map['number_of_rows'] as int,
+        numberOfRows: map['number_of_rows'] as int,
         inSameStitch: map['in_same_stitch'] as int,
         stitchesPerRow: map['stitches_count_per_row'] as int,
       );

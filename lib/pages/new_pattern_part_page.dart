@@ -96,8 +96,9 @@ class _NewPatternPartPageState extends State<NewPatternPartPage> {
 
   Widget _patternRowTile(PatternRow row) {
     String title = "row ${row.startRow}";
-    if (row.endRow > 1) {
-      title += "-${row.startRow + row.endRow - 1} (${row.endRow} rows)";
+    if (row.numberOfRows > 1) {
+      title +=
+          "-${row.startRow + row.numberOfRows - 1} (${row.numberOfRows} rows)";
     }
     return ListTile(
       title: Text(title),
@@ -215,8 +216,8 @@ class _NewPatternPartPageState extends State<NewPatternPartPage> {
         updatePattern: updateListView,
         startRow: part.rows.isEmpty
             ? 1
-            : part.rows.last.startRow + part.rows.last.endRow,
-        endRow: 1,
+            : part.rows.last.startRow + part.rows.last.numberOfRows,
+        numberOfRows: 1,
       ),
     );
   }

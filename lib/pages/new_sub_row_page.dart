@@ -29,13 +29,13 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
   List<StitchCountButton> details = List.empty(growable: true);
   String detailsString = "";
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  PatternRow row = PatternRow(startRow: 0, endRow: 0, stitchesPerRow: 0);
+  PatternRow row = PatternRow(startRow: 0, numberOfRows: 0, stitchesPerRow: 0);
   TextEditingController previewControler = TextEditingController();
   @override
   void initState() {
     getAllStitches();
     row.startRow = 0;
-    row.endRow = 0;
+    row.numberOfRows = 0;
     if (widget.subrow != null) {
       row = widget.subrow!;
       detailsString = "";

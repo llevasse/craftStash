@@ -10,7 +10,7 @@ Future<PatternPart> _createHeadPart(int patternId) async {
   PatternRow r1 = PatternRow(
     partId: head.partId,
     startRow: 1,
-    endRow: 1,
+    numberOfRows: 1,
     stitchesPerRow: 6,
   );
   r1.rowId = await insertPatternRowInDb(r1);
@@ -21,7 +21,7 @@ Future<PatternPart> _createHeadPart(int patternId) async {
   PatternRow r2 = PatternRow(
     partId: head.partId,
     startRow: 2,
-    endRow: 1,
+    numberOfRows: 1,
     stitchesPerRow: 12,
   );
   r2.rowId = await insertPatternRowInDb(r2);
@@ -32,7 +32,7 @@ Future<PatternPart> _createHeadPart(int patternId) async {
   PatternRow r3 = PatternRow(
     partId: head.partId,
     startRow: 3,
-    endRow: 1,
+    numberOfRows: 1,
     stitchesPerRow: 18,
   );
   r3.rowId = await insertPatternRowInDb(r3);
@@ -46,7 +46,7 @@ Future<PatternPart> _createHeadPart(int patternId) async {
   PatternRow r3Subrow = PatternRow(
     partId: head.partId,
     startRow: 0,
-    endRow: 0,
+    numberOfRows: 0,
     stitchesPerRow: 3,
     partDetailId: dr3.rowDetailId,
   );
@@ -71,7 +71,7 @@ Future<PatternPart> _createHeadPart(int patternId) async {
   PatternRow r4 = PatternRow(
     partId: head.partId,
     startRow: 4,
-    endRow: 2,
+    numberOfRows: 2,
     stitchesPerRow: 18,
   );
   r4.rowId = await insertPatternRowInDb(r4);
@@ -82,7 +82,7 @@ Future<PatternPart> _createHeadPart(int patternId) async {
   PatternRow r6 = PatternRow(
     partId: head.partId,
     startRow: 6,
-    endRow: 1,
+    numberOfRows: 1,
     stitchesPerRow: 9,
   );
   r6.rowId = await insertPatternRowInDb(r6);
@@ -104,7 +104,7 @@ Future<PatternPart> _createShortTentacles(int patternId) async {
   PatternRow r1 = PatternRow(
     partId: short.partId,
     startRow: 1,
-    endRow: 1,
+    numberOfRows: 1,
     stitchesPerRow: 8,
   );
   r1.rowId = await insertPatternRowInDb(r1);
@@ -125,7 +125,7 @@ Future<PatternPart> _createLongTentacles(int patternId) async {
   PatternRow r1 = PatternRow(
     partId: long.partId,
     startRow: 1,
-    endRow: 1,
+    numberOfRows: 1,
     stitchesPerRow: 12,
   );
   r1.rowId = await insertPatternRowInDb(r1);
@@ -142,4 +142,3 @@ Future<void> insertJellyFishPattern() async {
   pattern.parts.add(await _createShortTentacles(pattern.patternId));
   pattern.parts.add(await _createLongTentacles(pattern.patternId));
 }
- 
