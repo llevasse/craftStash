@@ -27,8 +27,8 @@ class Pattern {
   int get hashCode => Object.hash(name, 0);
 }
 
-Future<int> insertPatternInDb(Pattern pattern) async {
-  final db = (await DbService().database);
+Future<int> insertPatternInDb(Pattern pattern, [Database? db]) async {
+  db ??= (await DbService().database);
   if (db != null) {
     return db.insert(
       'pattern',

@@ -86,8 +86,8 @@ class PatternRow {
   }
 }
 
-Future<int> insertPatternRowInDb(PatternRow patternRow) async {
-  final db = (await DbService().database);
+Future<int> insertPatternRowInDb(PatternRow patternRow, [Database? db]) async {
+  db ??= (await DbService().database);
   if (db != null) {
     return db.insert(
       _tableName,

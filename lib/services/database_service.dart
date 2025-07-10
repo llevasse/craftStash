@@ -4,6 +4,7 @@ import 'package:craft_stash/class/yarns/brand.dart';
 import 'package:craft_stash/class/yarns/material.dart';
 import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:craft_stash/class/yarns/yarn_collection.dart';
+import 'package:craft_stash/premadePatterns/jellyfish.dart';
 import 'package:craft_stash/services/database_versioning.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -19,6 +20,7 @@ class DbService {
       return _db;
     }
     _db = await _initDb();
+
     return _db;
   }
 
@@ -66,7 +68,8 @@ class DbService {
     await db.execute(
       '''CREATE TABLE IF NOT EXISTS stitch(id INTEGER PRIMARY KEY, abreviation TEXT, name TEXT, description TEXT, hash INT)''',
     );
-    await insertDefaultStitchesInDb();
+    await insertDefaultStitchesInDb(db);
+    await insertJellyFishPattern(db);
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
@@ -109,7 +112,8 @@ class DbService {
     final databasePath = await getDatabasesPath();
     final path = join(databasePath, 'db.db');
     await deleteDatabase(path);
-    await _initDb();
+    _db = null;
+    database;
   }
 }
 
