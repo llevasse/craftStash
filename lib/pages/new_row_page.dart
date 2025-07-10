@@ -5,6 +5,7 @@ import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/pages/new_sub_row_page.dart';
 import 'package:craft_stash/widgets/patternButtons/add_detail_button.dart';
 import 'package:craft_stash/widgets/patternButtons/stitch_count_button.dart';
+import 'package:craft_stash/widgets/stitch_list.dart';
 import 'package:flutter/material.dart';
 
 class NewRowPage extends StatefulWidget {
@@ -183,26 +184,6 @@ class _NewRowPageState extends State<NewRowPage> {
     );
   }
 
-  Widget _createStichButton(String stitch) {
-    return AddDetailButton(
-      text: stitch,
-      onPressed: () async {
-        print(row.details.last.toStringWithoutNumber());
-        print(stitch);
-        if (row.details.isNotEmpty &&
-            row.details.last.toStringWithoutNumber() == stitch) {
-          row.details.last.repeatXTime += 1;
-          details.removeLast();
-        } else {
-          row.details.add(PatternRowDetail(rowId: -1, stitch: stitch));
-        }
-        details.add(_createStitchCountButton(stitch));
-        needScroll = true;
-        setState(() {});
-      },
-    );
-  }
-
   Widget _createSubRowButton() {
     ThemeData theme = Theme.of(context);
     return AddDetailButton(
@@ -241,20 +222,6 @@ class _NewRowPageState extends State<NewRowPage> {
 
         backgroundColor: WidgetStateProperty.all(theme.colorScheme.tertiary),
       ),
-    );
-  }
-
-  Widget _stichesList() {
-    List<Widget> list = List.empty(growable: true);
-    list.add(_createSubRowButton());
-    for (Stitch e in stitches) {
-      if (e.abreviation.contains(stitchSearch) ||
-          (e.name != null && e.name!.contains(stitchSearch))) {
-        list.add(_createStichButton(e.abreviation));
-      }
-    }
-    return Expanded(
-      child: SingleChildScrollView(child: Wrap(spacing: 10, children: list)),
     );
   }
 
@@ -307,6 +274,18 @@ class _NewRowPageState extends State<NewRowPage> {
     );
   }
 
+  Future<void> _addStitch(String stitch) async {
+    if (row.details.isNotEmpty && row.details.last.stitch == stitch) {
+      row.details.last.repeatXTime += 1;
+      details.removeLast();
+    } else {
+      row.details.add(PatternRowDetail(rowId: -1, stitch: stitch));
+    }
+    details.add(_createStitchCountButton(stitch));
+    needScroll = true;
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
@@ -344,14 +323,12 @@ class _NewRowPageState extends State<NewRowPage> {
               ),
               _stitchDetailsList(),
 
-              TextFormField(
-                decoration: InputDecoration(label: Text("Search a stitch")),
-                onChanged: (value) {
-                  stitchSearch = value.trim();
-                  setState(() {});
-                },
+              Expanded(
+                child: StitchList(
+                  customActions: [_createSubRowButton()],
+                  onPressed: _addStitch,
+                ),
               ),
-              _stichesList(),
             ],
           ),
         ),

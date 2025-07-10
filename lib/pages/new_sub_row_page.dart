@@ -1,8 +1,8 @@
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/class/stitch.dart';
-import 'package:craft_stash/widgets/patternButtons/add_detail_button.dart';
 import 'package:craft_stash/widgets/patternButtons/stitch_count_button.dart';
+import 'package:craft_stash/widgets/stitch_list.dart';
 import 'package:flutter/material.dart';
 
 class NewSubRowPage extends StatefulWidget {
@@ -92,53 +92,6 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
     super.setState(fn);
   }
 
-  Widget _createStichButton(String stitch) {
-    return AddDetailButton(
-      text: stitch,
-      onPressed: () async {
-        if (row.details.isNotEmpty && row.details.last.stitch == stitch) {
-          row.details.last.repeatXTime += 1;
-          details.removeLast();
-        } else {
-          row.details.add(PatternRowDetail(rowId: -1, stitch: stitch));
-        }
-        int length = row.details.length;
-        details.add(
-          StitchCountButton(
-            signed: false,
-            text: stitch,
-            count: row.details[length - 1].repeatXTime,
-            increase: () {
-              row.details[length - 1].repeatXTime += 1;
-              row.stitchesPerRow += 1;
-              setState(() {});
-            },
-            decrease: () {
-              row.details[length - 1].repeatXTime -= 1;
-              row.stitchesPerRow -= 1;
-              setState(() {});
-            },
-          ),
-        );
-        needScroll = true;
-        setState(() {});
-      },
-    );
-  }
-
-  Widget _stichesList() {
-    List<Widget> list = List.empty(growable: true);
-    for (Stitch e in stitches) {
-      if (e.abreviation.contains(stitchSearch) ||
-          e.name!.contains(stitchSearch)) {
-        list.add(_createStichButton(e.abreviation));
-      }
-    }
-    return Expanded(
-      child: SingleChildScrollView(child: Wrap(spacing: 10, children: list)),
-    );
-  }
-
   Widget _stitchDetailsList() {
     return Container(
       constraints: BoxConstraints(maxHeight: buttonHeight * 2.5),
@@ -148,6 +101,37 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
         child: Wrap(spacing: 10, children: [for (Widget e in details) e]),
       ),
     );
+  }
+
+  StitchCountButton _createStitchCountButton(String stitch) {
+    int length = row.details.length;
+    return StitchCountButton(
+      signed: false,
+      text: stitch,
+      count: row.details[length - 1].repeatXTime,
+      increase: () {
+        row.details[length - 1].repeatXTime += 1;
+        row.stitchesPerRow += 1;
+        setState(() {});
+      },
+      decrease: () {
+        row.details[length - 1].repeatXTime -= 1;
+        row.stitchesPerRow -= 1;
+        setState(() {});
+      },
+    );
+  }
+
+  Future<void> _addStitch(String stitch) async {
+    if (row.details.isNotEmpty && row.details.last.stitch == stitch) {
+      row.details.last.repeatXTime += 1;
+      details.removeLast();
+    } else {
+      row.details.add(PatternRowDetail(rowId: -1, stitch: stitch));
+    }
+    details.add(_createStitchCountButton(stitch));
+    needScroll = true;
+    setState(() {});
   }
 
   Widget _saveButton() {
@@ -248,14 +232,8 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
                 decoration: InputDecoration(label: Text("Preview")),
               ),
               _stitchDetailsList(),
-              TextFormField(
-                decoration: InputDecoration(label: Text("Search a stitch")),
-                onChanged: (value) {
-                  stitchSearch = value.trim();
-                  setState(() {});
-                },
-              ),
-              _stichesList(),
+
+              Expanded(child: StitchList(onPressed: _addStitch)),
             ],
           ),
         ),
