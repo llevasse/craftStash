@@ -12,10 +12,12 @@ class StitchList extends StatefulWidget {
     this.customActions,
     this.stitchCountButtonList,
     this.row,
+    this.spacing = 10,
   });
   List<Widget>? customActions = [];
   List<StitchCountButton>? stitchCountButtonList = [];
   PatternRow? row;
+  double spacing;
   @override
   State<StatefulWidget> createState() => _StitchListState();
 }
@@ -30,8 +32,9 @@ class _StitchListState extends State<StitchList> {
     super.initState();
   }
 
-  Future<void> getAllStitches() async {
-    stitches = await getAllStitchesInDb();
+  @override
+  void setState(VoidCallback fn) {
+    list.clear();
     if (widget.customActions != null) {
       for (Widget action in widget.customActions!) {
         list.add(action);
@@ -52,12 +55,19 @@ class _StitchListState extends State<StitchList> {
         );
       }
     }
+    super.setState(fn);
+  }
+
+  Future<void> getAllStitches() async {
+    stitches = await getAllStitchesInDb();
+
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      spacing: widget.spacing,
       children: [
         TextFormField(
           decoration: InputDecoration(label: Text("Search a stitch")),
