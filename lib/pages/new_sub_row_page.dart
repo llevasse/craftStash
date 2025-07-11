@@ -2,7 +2,7 @@ import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/widgets/patternButtons/stitch_count_button.dart';
-import 'package:craft_stash/widgets/stitch_list.dart';
+import 'package:craft_stash/widgets/stitches/stitch_list.dart';
 import 'package:flutter/material.dart';
 
 class NewSubRowPage extends StatefulWidget {

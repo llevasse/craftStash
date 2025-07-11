@@ -5,7 +5,7 @@ import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/pages/new_sub_row_page.dart';
 import 'package:craft_stash/widgets/patternButtons/add_detail_button.dart';
 import 'package:craft_stash/widgets/patternButtons/stitch_count_button.dart';
-import 'package:craft_stash/widgets/stitch_list.dart';
+import 'package:craft_stash/widgets/stitches/stitch_list.dart';
 import 'package:flutter/material.dart';
 
 class NewRowPage extends StatefulWidget {
