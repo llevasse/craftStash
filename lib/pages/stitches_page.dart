@@ -1,4 +1,5 @@
-import 'package:craft_stash/widgets/patternButtons/add_detail_button.dart';
+import 'package:craft_stash/widgets/patternButtons/add_custom_detail_button.dart';
+import 'package:craft_stash/widgets/patternButtons/add_generic_detail_button.dart';
 import 'package:craft_stash/widgets/stitches/stitch_form.dart';
 import 'package:craft_stash/widgets/stitches/stitch_list.dart';
 import 'package:flutter/material.dart';
@@ -12,8 +13,7 @@ class StitchesPage extends StatefulWidget {
 
 class _StitchesPageState extends State<StitchesPage> {
   Widget _createNewStitchButton() {
-    ThemeData theme = Theme.of(context);
-    return AddDetailButton(
+    return AddCustomDetailButton(
       text: "New stitch",
       onPressed: () async {
         await showDialog(
@@ -25,18 +25,6 @@ class _StitchesPageState extends State<StitchesPage> {
           ),
         );
       },
-      style: ButtonStyle(
-        side: WidgetStatePropertyAll(
-          BorderSide(color: theme.colorScheme.primary, width: 1),
-        ),
-        shape: WidgetStatePropertyAll(
-          RoundedSuperellipseBorder(
-            borderRadius: BorderRadiusGeometry.all(Radius.circular(18)),
-          ),
-        ),
-
-        backgroundColor: WidgetStateProperty.all(theme.colorScheme.tertiary),
-      ),
     );
   }
 

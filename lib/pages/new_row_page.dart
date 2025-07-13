@@ -3,7 +3,8 @@ import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/pages/new_sub_row_page.dart';
-import 'package:craft_stash/widgets/patternButtons/add_detail_button.dart';
+import 'package:craft_stash/widgets/patternButtons/add_custom_detail_button.dart';
+import 'package:craft_stash/widgets/patternButtons/add_generic_detail_button.dart';
 import 'package:craft_stash/widgets/patternButtons/stitch_count_button.dart';
 import 'package:craft_stash/widgets/stitches/stitch_list.dart';
 import 'package:flutter/material.dart';
@@ -185,8 +186,7 @@ class _NewRowPageState extends State<NewRowPage> {
   }
 
   Widget _createSubRowButton() {
-    ThemeData theme = Theme.of(context);
-    return AddDetailButton(
+    return AddCustomDetailButton(
       text: "New sequence",
       onPressed: () async {
         PatternRowDetail? t =
@@ -210,18 +210,6 @@ class _NewRowPageState extends State<NewRowPage> {
         details.add(_createStitchCountButton(t.subRow.toString()));
         await getAllStitches();
       },
-      style: ButtonStyle(
-        side: WidgetStatePropertyAll(
-          BorderSide(color: theme.colorScheme.primary, width: 1),
-        ),
-        shape: WidgetStatePropertyAll(
-          RoundedSuperellipseBorder(
-            borderRadius: BorderRadiusGeometry.all(Radius.circular(18)),
-          ),
-        ),
-
-        backgroundColor: WidgetStateProperty.all(theme.colorScheme.tertiary),
-      ),
     );
   }
 

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class AddDetailButton extends StatefulWidget {
+class AddGenericDetailButton extends StatefulWidget {
   final Function() onPressed;
   final String text;
   final ButtonStyle? style;
-  const AddDetailButton({
+  const AddGenericDetailButton({
     super.key,
     required this.onPressed,
     required this.text,
@@ -12,10 +12,10 @@ class AddDetailButton extends StatefulWidget {
   });
 
   @override
-  State<StatefulWidget> createState() => _AddDetailButton();
+  State<StatefulWidget> createState() => _AddGenericDetailButton();
 }
 
-class _AddDetailButton extends State<AddDetailButton> {
+class _AddGenericDetailButton extends State<AddGenericDetailButton> {
   @override
   void initState() {
     super.initState();

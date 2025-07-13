@@ -1,6 +1,6 @@
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/stitch.dart';
-import 'package:craft_stash/widgets/patternButtons/add_detail_button.dart';
+import 'package:craft_stash/widgets/patternButtons/add_generic_detail_button.dart';
 import 'package:craft_stash/widgets/patternButtons/stitch_count_button.dart';
 import 'package:flutter/material.dart';
 
@@ -44,7 +44,7 @@ class _StitchListState extends State<StitchList> {
       if (e.abreviation.contains(stitchSearch) ||
           (e.name != null && e.name!.contains(stitchSearch))) {
         list.add(
-          AddDetailButton(
+          AddGenericDetailButton(
             text: e.abreviation,
             onPressed: () {
               if (widget.onPressed != null) {
