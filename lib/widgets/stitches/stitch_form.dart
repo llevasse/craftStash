@@ -20,6 +20,7 @@ class _StitchFormState extends State<StitchForm> {
     return TextFormField(
       decoration: InputDecoration(label: Text("Abreviation")),
       initialValue: widget.base?.abreviation,
+      maxLength: 15,
       validator: (value) {
         if (value == null || value.trim().isEmpty) {
           return ("Abreviation can't be empty");
@@ -36,6 +37,7 @@ class _StitchFormState extends State<StitchForm> {
     return TextFormField(
       decoration: InputDecoration(label: Text("Full name")),
       initialValue: widget.base?.name,
+      maxLength: 50,
       validator: (value) {
         return null;
       },
@@ -48,6 +50,9 @@ class _StitchFormState extends State<StitchForm> {
   Widget _createDescriptionInput() {
     return TextFormField(
       decoration: InputDecoration(label: Text("Description")),
+      maxLines: 5,
+      minLines: 1,
+      maxLength: 500,
       initialValue: widget.base?.description,
       validator: (value) {
         return null;
@@ -61,10 +66,11 @@ class _StitchFormState extends State<StitchForm> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("Create stitch"),
+      title: Text(widget.base == null ? "Create stitch" : "Edit stitch"),
       content: Form(
         key: _formKey,
         child: Column(
+        mainAxisSize: MainAxisSize.min,
           children: [
             _createAbreviationInput(),
             _createFullNameInput(),
@@ -92,7 +98,7 @@ class _StitchFormState extends State<StitchForm> {
               Navigator.pop(context, s);
             }
           },
-          child: Text("Add stitch"),
+          child: Text(widget.base == null ? "Add stitch" : "Edit stitch"),
         ),
       ],
     );
