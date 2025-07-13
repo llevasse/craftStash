@@ -122,8 +122,9 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
     );
   }
 
-  Future<void> _addStitch(Stitch stitch) async {
-    if (row.details.isNotEmpty && row.details.last.stitch == stitch.abreviation) {
+  Future<Stitch?> _addStitch(Stitch stitch) async {
+    if (row.details.isNotEmpty &&
+        row.details.last.stitch == stitch.abreviation) {
       row.details.last.repeatXTime += 1;
       details.removeLast();
     } else {

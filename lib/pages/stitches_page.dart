@@ -1,3 +1,4 @@
+import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/widgets/patternButtons/add_custom_detail_button.dart';
 import 'package:craft_stash/widgets/patternButtons/add_generic_detail_button.dart';
 import 'package:craft_stash/widgets/stitches/stitch_form.dart';
@@ -47,15 +48,16 @@ class _StitchesPageState extends State<StitchesPage> {
               Expanded(
                 child: StitchList(
                   onPressed: (stitch) async {
-                    await showDialog(
-                      context: context,
-                      builder: (BuildContext context) => StitchForm(
-                        base: stitch,
-                        onValidate: () {
-                          setState(() {});
-                        },
-                      ),
-                    );
+                    return await showDialog(
+                          context: context,
+                          builder: (BuildContext context) => StitchForm(
+                            base: stitch,
+                            onValidate: () {
+                              setState(() {});
+                            },
+                          ),
+                        )
+                        as Stitch?;
                   },
                   customActions: [_createNewStitchButton()],
                 ),

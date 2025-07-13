@@ -262,7 +262,7 @@ class _NewRowPageState extends State<NewRowPage> {
     );
   }
 
-  Future<void> _addStitch(Stitch stitch) async {
+  Future<Stitch?> _addStitch(Stitch stitch) async {
     if (row.details.isNotEmpty &&
         row.details.last.stitch == stitch.abreviation) {
       row.details.last.repeatXTime += 1;

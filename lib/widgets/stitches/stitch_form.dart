@@ -77,27 +77,20 @@ class _StitchFormState extends State<StitchForm> {
           onPressed: () async {
             if (_formKey.currentState!.validate()) {
               _formKey.currentState!.save();
+              Stitch s = Stitch(
+                abreviation: abreviation,
+                name: fullName,
+                description: description,
+              );
               if (widget.base == null) {
-                await insertStitchInDb(
-                  Stitch(
-                    abreviation: abreviation,
-                    name: fullName,
-                    description: description,
-                  ),
-                );
+                await insertStitchInDb(s);
               } else {
-                await updateStitchInDb(
-                  Stitch(
-                    id: widget.base!.id,
-                    abreviation: abreviation,
-                    name: fullName,
-                    description: description,
-                  ),
-                );
+                s.id = widget.base!.id;
+                await updateStitchInDb(s);
               }
               widget.onValidate.call();
+              Navigator.pop(context, s);
             }
-            Navigator.pop(context);
           },
           child: Text("Add stitch"),
         ),

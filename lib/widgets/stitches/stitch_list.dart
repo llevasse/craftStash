@@ -1,4 +1,3 @@
-
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/widgets/patternButtons/add_generic_detail_button.dart';
@@ -6,7 +5,7 @@ import 'package:craft_stash/widgets/patternButtons/stitch_count_button.dart';
 import 'package:flutter/material.dart';
 
 class StitchList extends StatefulWidget {
-  void Function(Stitch stitch)? onPressed;
+  Future<Stitch?> Function(Stitch stitch)? onPressed;
   void Function(Stitch stitch)? onLongPress;
   StitchList({
     super.key,
@@ -54,9 +53,10 @@ class _StitchListState extends State<StitchList> {
                 widget.onLongPress?.call(e);
               }
             },
-            onPressed: () {
+            onPressed: () async {
               if (widget.onPressed != null) {
-                widget.onPressed?.call(e);
+                Stitch? s = await widget.onPressed?.call(e);
+                if (s != null) await getAllStitches();
               }
             },
           ),
