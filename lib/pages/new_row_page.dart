@@ -5,6 +5,7 @@ import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/pages/new_sub_row_page.dart';
 import 'package:craft_stash/widgets/patternButtons/add_custom_detail_button.dart';
 import 'package:craft_stash/widgets/patternButtons/add_generic_detail_button.dart';
+import 'package:craft_stash/widgets/patternButtons/new_subrow_button.dart';
 import 'package:craft_stash/widgets/patternButtons/stitch_count_button.dart';
 import 'package:craft_stash/widgets/stitches/stitch_list.dart';
 import 'package:flutter/material.dart';
@@ -185,34 +186,6 @@ class _NewRowPageState extends State<NewRowPage> {
     );
   }
 
-  Widget _createSubRowButton() {
-    return AddCustomDetailButton(
-      text: "New sequence",
-      onPressed: () async {
-        PatternRowDetail? t =
-            await Navigator.push(
-                  context,
-                  MaterialPageRoute<void>(
-                    settings: RouteSettings(name: "subrow"),
-                    builder: (BuildContext context) =>
-                        NewSubRowPage(rowId: row.rowId, partId: row.partId),
-                  ),
-                )
-                as PatternRowDetail?;
-        if (t == null) return;
-        if (row.details.isNotEmpty && row.details.last.hashCode == t.hashCode) {
-          await deletePatternRowDetailInDb(t.rowDetailId);
-          row.details.last.repeatXTime += 1;
-          details.removeLast();
-        } else {
-          row.details.add(t);
-        }
-        details.add(_createStitchCountButton(t.subRow.toString()));
-        await getAllStitches();
-      },
-    );
-  }
-
   Widget _stitchDetailsList() {
     return Container(
       constraints: BoxConstraints(maxHeight: buttonHeight * 2.5),
@@ -314,7 +287,27 @@ class _NewRowPageState extends State<NewRowPage> {
 
               Expanded(
                 child: StitchList(
-                  customActions: [_createSubRowButton()],
+                  customActions: [
+                    NewSubrowButton(
+                      rowId: row.rowId,
+                      partId: row.partId,
+                      onPressed: (PatternRowDetail? detail) async {
+                        if (detail == null) return;
+                        if (row.details.isNotEmpty &&
+                            row.details.last.hashCode == detail.hashCode) {
+                          await deletePatternRowDetailInDb(detail!.rowDetailId);
+                          row.details.last.repeatXTime += 1;
+                          details.removeLast();
+                        } else {
+                          row.details.add(detail!);
+                        }
+                        details.add(
+                          _createStitchCountButton(detail.subRow.toString()),
+                        );
+                        await getAllStitches();
+                      },
+                    ),
+                  ],
                   onPressed: _addStitch,
                 ),
               ),

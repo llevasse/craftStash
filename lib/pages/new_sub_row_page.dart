@@ -5,16 +5,12 @@ import 'package:craft_stash/widgets/patternButtons/stitch_count_button.dart';
 import 'package:craft_stash/widgets/stitches/stitch_list.dart';
 import 'package:flutter/material.dart';
 
+/// if rowId or partId are null, new subrow will be created but not added to any pattern or row
 class NewSubRowPage extends StatefulWidget {
   final PatternRow? subrow;
-  final int rowId;
-  final int partId;
-  const NewSubRowPage({
-    super.key,
-    this.subrow,
-    required this.rowId,
-    required this.partId,
-  });
+  final int? rowId;
+  final int? partId;
+  const NewSubRowPage({super.key, this.subrow, this.rowId, this.partId});
 
   @override
   State<StatefulWidget> createState() => _NewSubRowPageState();
@@ -140,36 +136,37 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
       onPressed: () async {
         if (_formKey.currentState!.validate()) {
           _formKey.currentState!.save();
-          row.partId = widget.partId;
-          PatternRowDetail detail = PatternRowDetail(
-            rowId: widget.rowId,
-            hasSubrow: 1,
-          );
-          row.partDetailId = await insertPatternRowDetailInDb(detail);
-          detail.rowDetailId = row.partDetailId!;
-          if (widget.subrow == null) {
-            // print("Insert row ${row.toString()}");
-            row.rowId = await insertPatternRowInDb(row);
-            for (PatternRowDetail e in row.details) {
-              if (e.repeatXTime != 0) {
-                e.rowId = row.rowId;
-                await insertPatternRowDetailInDb(e);
-              }
-            }
-          } else {
-            await updatePatternRowInDb(row);
-            int rowId = row.rowId;
-            for (PatternRowDetail e in row.details) {
-              if (e.repeatXTime != 0) {
-                e.rowId = rowId;
-                if (e.rowDetailId == 0) {
+          PatternRowDetail detail = PatternRowDetail(hasSubrow: 1, rowId: 0);
+
+          if (widget.partId != null && widget.rowId != null) {
+            row.partId = widget.partId!;
+            detail.rowId = widget.rowId!;
+            row.partDetailId = await insertPatternRowDetailInDb(detail);
+            detail.rowDetailId = row.partDetailId!;
+            if (widget.subrow == null) {
+              // print("Insert row ${row.toString()}");
+              row.rowId = await insertPatternRowInDb(row);
+              for (PatternRowDetail e in row.details) {
+                if (e.repeatXTime != 0) {
+                  e.rowId = row.rowId;
                   await insertPatternRowDetailInDb(e);
-                } else {
-                  await updatePatternRowDetailInDb(e);
                 }
-              } else {
-                if (e.rowDetailId != 0) {
-                  await deletePatternRowDetailInDb(e.rowDetailId);
+              }
+            } else {
+              await updatePatternRowInDb(row);
+              int rowId = row.rowId;
+              for (PatternRowDetail e in row.details) {
+                if (e.repeatXTime != 0) {
+                  e.rowId = rowId;
+                  if (e.rowDetailId == 0) {
+                    await insertPatternRowDetailInDb(e);
+                  } else {
+                    await updatePatternRowDetailInDb(e);
+                  }
+                } else {
+                  if (e.rowDetailId != 0) {
+                    await deletePatternRowDetailInDb(e.rowDetailId);
+                  }
                 }
               }
             }

@@ -40,24 +40,15 @@ class PatternRow {
 
   @override
   String toString() {
-    if (partDetailId == null) {
-      String tmp = "$startRow-$numberOfRows :\n";
-      for (PatternRowDetail detail in details) {
-        tmp += "\t\t${detail.toString()}";
-      }
-
-      return tmp;
-    } else {
-      String tmp = inSameStitch == 0 ? "(" : "[";
-      for (PatternRowDetail detail in details) {
-        tmp += "${detail.toString()}, ";
-      }
-      if (details.isNotEmpty) {
-        tmp = tmp.substring(0, tmp.length - 2);
-      }
-      tmp += inSameStitch == 0 ? ")" : "]";
-      return tmp;
+    String tmp = inSameStitch == 0 ? "(" : "[";
+    for (PatternRowDetail detail in details) {
+      tmp += "${detail.toString()}, ";
     }
+    if (details.isNotEmpty) {
+      tmp = tmp.substring(0, tmp.length - 2);
+    }
+    tmp += inSameStitch == 0 ? ")" : "]";
+    return tmp;
   }
 
   @override

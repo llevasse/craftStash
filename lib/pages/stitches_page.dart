@@ -1,6 +1,7 @@
 import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/widgets/patternButtons/add_custom_detail_button.dart';
 import 'package:craft_stash/widgets/patternButtons/add_generic_detail_button.dart';
+import 'package:craft_stash/widgets/patternButtons/new_subrow_button.dart';
 import 'package:craft_stash/widgets/stitches/stitch_form.dart';
 import 'package:craft_stash/widgets/stitches/stitch_list.dart';
 import 'package:flutter/material.dart';
@@ -59,7 +60,14 @@ class _StitchesPageState extends State<StitchesPage> {
                         )
                         as Stitch?;
                   },
-                  customActions: [_createNewStitchButton()],
+                  customActions: [
+                    _createNewStitchButton(),
+                    NewSubrowButton(
+                      onPressed: (detail) async {
+                        setState(() {});
+                      },
+                    ),
+                  ],
                 ),
               ),
             ],
