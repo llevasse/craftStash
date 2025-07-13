@@ -46,7 +46,17 @@ class _StitchesPageState extends State<StitchesPage> {
             children: [
               Expanded(
                 child: StitchList(
-                  onPressed: (String) {},
+                  onPressed: (stitch) async {
+                    await showDialog(
+                      context: context,
+                      builder: (BuildContext context) => StitchForm(
+                        base: stitch,
+                        onValidate: () {
+                          setState(() {});
+                        },
+                      ),
+                    );
+                  },
                   customActions: [_createNewStitchButton()],
                 ),
               ),

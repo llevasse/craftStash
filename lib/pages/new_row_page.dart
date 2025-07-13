@@ -262,14 +262,15 @@ class _NewRowPageState extends State<NewRowPage> {
     );
   }
 
-  Future<void> _addStitch(String stitch) async {
-    if (row.details.isNotEmpty && row.details.last.stitch == stitch) {
+  Future<void> _addStitch(Stitch stitch) async {
+    if (row.details.isNotEmpty &&
+        row.details.last.stitch == stitch.abreviation) {
       row.details.last.repeatXTime += 1;
       details.removeLast();
     } else {
-      row.details.add(PatternRowDetail(rowId: -1, stitch: stitch));
+      row.details.add(PatternRowDetail(rowId: -1, stitch: stitch.abreviation));
     }
-    details.add(_createStitchCountButton(stitch));
+    details.add(_createStitchCountButton(stitch.abreviation));
     needScroll = true;
     setState(() {});
   }

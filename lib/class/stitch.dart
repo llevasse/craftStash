@@ -60,6 +60,20 @@ Future<void> insertStitchInDb(Stitch stitch, [Database? db]) async {
   }
 }
 
+Future<void> updateStitchInDb(Stitch stitch) async {
+  final db = (await DbService().database);
+  if (db != null) {
+    await db.update(
+      _tableName,
+      stitch.toMap(),
+      where: "id = ?",
+      whereArgs: [stitch.id],
+    );
+  } else {
+    throw DatabaseDoesNotExistException("Could not get database");
+  }
+}
+
 Future<void> deleteStitchInDb(int id) async {
   final db = (await DbService().database);
   if (db != null) {

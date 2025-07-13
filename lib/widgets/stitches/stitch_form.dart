@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 
 class StitchForm extends StatefulWidget {
   final void Function() onValidate;
-  const StitchForm({super.key, required this.onValidate});
+  final Stitch? base;
+  const StitchForm({super.key, required this.onValidate, this.base});
 
   @override
   State<StatefulWidget> createState() => _StitchFormState();
@@ -18,6 +19,7 @@ class _StitchFormState extends State<StitchForm> {
   Widget _createAbreviationInput() {
     return TextFormField(
       decoration: InputDecoration(label: Text("Abreviation")),
+      initialValue: widget.base?.abreviation,
       validator: (value) {
         if (value == null || value.trim().isEmpty) {
           return ("Abreviation can't be empty");
@@ -33,6 +35,7 @@ class _StitchFormState extends State<StitchForm> {
   Widget _createFullNameInput() {
     return TextFormField(
       decoration: InputDecoration(label: Text("Full name")),
+      initialValue: widget.base?.name,
       validator: (value) {
         return null;
       },
@@ -45,6 +48,7 @@ class _StitchFormState extends State<StitchForm> {
   Widget _createDescriptionInput() {
     return TextFormField(
       decoration: InputDecoration(label: Text("Description")),
+      initialValue: widget.base?.description,
       validator: (value) {
         return null;
       },
@@ -73,13 +77,24 @@ class _StitchFormState extends State<StitchForm> {
           onPressed: () async {
             if (_formKey.currentState!.validate()) {
               _formKey.currentState!.save();
-              await insertStitchInDb(
-                Stitch(
-                  abreviation: abreviation,
-                  name: fullName,
-                  description: description,
-                ),
-              );
+              if (widget.base == null) {
+                await insertStitchInDb(
+                  Stitch(
+                    abreviation: abreviation,
+                    name: fullName,
+                    description: description,
+                  ),
+                );
+              } else {
+                await updateStitchInDb(
+                  Stitch(
+                    id: widget.base!.id,
+                    abreviation: abreviation,
+                    name: fullName,
+                    description: description,
+                  ),
+                );
+              }
               widget.onValidate.call();
             }
             Navigator.pop(context);

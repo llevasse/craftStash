@@ -1,13 +1,18 @@
+import 'package:craft_stash/class/stitch.dart';
 import 'package:flutter/material.dart';
 
 class AddGenericDetailButton extends StatefulWidget {
   final Function() onPressed;
-  final String text;
+  final Function()? onLongPress;
+  final String? text;
   final ButtonStyle? style;
+  final Stitch? stitch;
   const AddGenericDetailButton({
     super.key,
     required this.onPressed,
-    required this.text,
+    this.onLongPress,
+    this.text,
+    this.stitch,
     this.style,
   });
 
@@ -23,9 +28,15 @@ class _AddGenericDetailButton extends State<AddGenericDetailButton> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.text == null && widget.stitch == null) {
+      throw GenericDetailButtonMissingElements(
+        "AddGenericDetailButton() need either a String or Stitch ar argument",
+      );
+    }
     ThemeData theme = Theme.of(context);
     return OutlinedButton(
       onPressed: widget.onPressed,
+      onLongPress: widget.onLongPress,
       style:
           widget.style ??
           ButtonStyle(
@@ -41,10 +52,15 @@ class _AddGenericDetailButton extends State<AddGenericDetailButton> {
             backgroundColor: WidgetStateProperty.all(theme.colorScheme.primary),
           ),
       child: Text(
-        widget.text,
+        widget.text ?? widget.stitch!.abreviation,
         style: TextStyle(color: theme.colorScheme.secondary),
         textScaler: TextScaler.linear(1.25),
       ),
     );
   }
+}
+
+class GenericDetailButtonMissingElements implements Exception {
+  GenericDetailButtonMissingElements(this.cause);
+  String cause;
 }
