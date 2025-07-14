@@ -1,20 +1,32 @@
+import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';
 
 final String _tableName = "stitch";
 
 class Stitch {
-  Stitch({this.id = 0, required this.abreviation, this.name, this.description});
+  Stitch({
+    this.id = 0,
+    required this.abreviation,
+    this.name,
+    this.description,
+    this.isSequence = 0,
+  });
   int id;
   String abreviation;
   String? name;
   String? description;
+  int isSequence;
+  int? rowId;
+  PatternRow? row;
 
   Map<String, dynamic> toMap() {
     return {
       "abreviation": abreviation,
       "name": name,
       "description": description,
+      "is_sequence": isSequence,
+      "row_id": rowId,
       "hash": hashCode,
     };
   }
