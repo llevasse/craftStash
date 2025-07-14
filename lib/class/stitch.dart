@@ -11,6 +11,7 @@ class Stitch {
     this.name,
     this.description,
     this.isSequence = 0,
+    this.rowId,
   });
   int id;
   String abreviation;
@@ -105,6 +106,8 @@ Future<List<Stitch>> getAllStitchesInDb() async {
             'abreviation': abreviation as String,
             'name': name as String?,
             'description': description as String?,
+            "is_sequence": isSequence as int,
+            "row_id": rowId as int?,
           }
           in stitchMaps)
         Stitch(
@@ -112,6 +115,8 @@ Future<List<Stitch>> getAllStitchesInDb() async {
           abreviation: abreviation,
           name: name,
           description: description,
+          isSequence: isSequence,
+          rowId: rowId,
         ),
     ];
   } else {

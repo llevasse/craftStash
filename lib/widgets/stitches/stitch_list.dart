@@ -1,5 +1,6 @@
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/stitch.dart';
+import 'package:craft_stash/widgets/patternButtons/add_custom_detail_button.dart';
 import 'package:craft_stash/widgets/patternButtons/add_generic_detail_button.dart';
 import 'package:craft_stash/widgets/patternButtons/new_stitch_button.dart';
 import 'package:craft_stash/widgets/patternButtons/new_subrow_button.dart';
@@ -83,22 +84,36 @@ class _StitchListState extends State<StitchList> {
     for (Stitch e in stitches) {
       if (e.abreviation.contains(stitchSearch) ||
           (e.name != null && e.name!.contains(stitchSearch))) {
-        list.add(
-          AddGenericDetailButton(
-            text: e.abreviation,
-            onLongPress: () {
-              if (widget.onLongPress != null) {
-                widget.onLongPress?.call(e);
-              }
-            },
-            onPressed: () async {
-              if (widget.onPressed != null) {
-                Stitch? s = await widget.onPressed?.call(e);
-                if (s != null) await getAllStitches();
-              }
-            },
-          ),
-        );
+        if (e.isSequence == 0) {
+          list.add(
+            AddGenericDetailButton(
+              text: e.abreviation,
+              onLongPress: () {
+                if (widget.onLongPress != null) {
+                  widget.onLongPress?.call(e);
+                }
+              },
+              onPressed: () async {
+                if (widget.onPressed != null) {
+                  Stitch? s = await widget.onPressed?.call(e);
+                  if (s != null) await getAllStitches();
+                }
+              },
+            ),
+          );
+        } else {
+          list.add(
+            AddCustomDetailButton(
+              text: e.abreviation,
+              onPressed: () async {
+                if (widget.onPressed != null) {
+                  Stitch? s = await widget.onPressed?.call(e);
+                  if (s != null) await getAllStitches();
+                }
+              },
+            ),
+          );
+        }
       }
     }
     setState(() {});
