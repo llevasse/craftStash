@@ -63,6 +63,45 @@ class _StitchFormState extends State<StitchForm> {
     );
   }
 
+  List<Widget> actions() {
+    List<Widget> l = List.empty(growable: true);
+    if (widget.base != null) {
+      l.add(
+        TextButton(
+          onPressed: () async {
+            await deleteStitchInDb(widget.base!.id);
+            Navigator.pop(context);
+          },
+          child: Text("Delete stitch"),
+        ),
+      );
+    }
+    l.add(
+      TextButton(
+        onPressed: () async {
+          if (_formKey.currentState!.validate()) {
+            _formKey.currentState!.save();
+            Stitch s = Stitch(
+              abreviation: abreviation,
+              name: fullName,
+              description: description,
+            );
+            if (widget.base == null) {
+              await insertStitchInDb(s);
+            } else {
+              s.id = widget.base!.id;
+              await updateStitchInDb(s);
+            }
+            widget.onValidate.call();
+            Navigator.pop(context, s);
+          }
+        },
+        child: Text(widget.base == null ? "Add stitch" : "Edit stitch"),
+      ),
+    );
+    return (l);
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -70,7 +109,7 @@ class _StitchFormState extends State<StitchForm> {
       content: Form(
         key: _formKey,
         child: Column(
-        mainAxisSize: MainAxisSize.min,
+          mainAxisSize: MainAxisSize.min,
           children: [
             _createAbreviationInput(),
             _createFullNameInput(),
@@ -78,29 +117,7 @@ class _StitchFormState extends State<StitchForm> {
           ],
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () async {
-            if (_formKey.currentState!.validate()) {
-              _formKey.currentState!.save();
-              Stitch s = Stitch(
-                abreviation: abreviation,
-                name: fullName,
-                description: description,
-              );
-              if (widget.base == null) {
-                await insertStitchInDb(s);
-              } else {
-                s.id = widget.base!.id;
-                await updateStitchInDb(s);
-              }
-              widget.onValidate.call();
-              Navigator.pop(context, s);
-            }
-          },
-          child: Text(widget.base == null ? "Add stitch" : "Edit stitch"),
-        ),
-      ],
+      actions: actions(),
     );
   }
 }
