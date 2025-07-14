@@ -100,16 +100,17 @@ Future<List<Stitch>> getAllStitchesInDb() async {
   final db = (await DbService().database);
   if (db != null) {
     final List<Map<String, Object?>> stitchMaps = await db.query(_tableName);
-    return [
-      for (final {
-            'id': id as int,
-            'abreviation': abreviation as String,
-            'name': name as String?,
-            'description': description as String?,
-            "is_sequence": isSequence as int,
-            "row_id": rowId as int?,
-          }
-          in stitchMaps)
+    List<Stitch> l = List.empty(growable: true);
+    for (final {
+          'id': id as int,
+          'abreviation': abreviation as String,
+          'name': name as String?,
+          'description': description as String?,
+          "is_sequence": isSequence as int,
+          "row_id": rowId as int?,
+        }
+        in stitchMaps) {
+      l.add(
         Stitch(
           id: id,
           abreviation: abreviation,
@@ -118,7 +119,12 @@ Future<List<Stitch>> getAllStitchesInDb() async {
           isSequence: isSequence,
           rowId: rowId,
         ),
-    ];
+      );
+      if (isSequence != 0 && rowId != null) {
+        l.last.row = await getPatternRowByRowId(rowId);
+      }
+    }
+    return l;
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }

@@ -1,4 +1,5 @@
 import 'package:craft_stash/class/stitch.dart';
+import 'package:craft_stash/pages/new_sub_row_page.dart';
 import 'package:craft_stash/widgets/patternButtons/add_custom_detail_button.dart';
 import 'package:craft_stash/widgets/patternButtons/add_generic_detail_button.dart';
 import 'package:craft_stash/widgets/patternButtons/new_stitch_button.dart';
@@ -32,7 +33,7 @@ class _StitchesPageState extends State<StitchesPage> {
             children: [
               Expanded(
                 child: StitchList(
-                  onPressed: (stitch) async {
+                  onStitchPressed: (stitch) async {
                     return await showDialog(
                           context: context,
                           builder: (BuildContext context) => StitchForm(
@@ -43,6 +44,17 @@ class _StitchesPageState extends State<StitchesPage> {
                           ),
                         )
                         as Stitch?;
+                  },
+                  onSequencePressed: (stitch) async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        settings: RouteSettings(name: "subrow"),
+                        builder: (BuildContext context) =>
+                            NewSubRowPage(subrow: stitch.row),
+                      ),
+                    );
+                    return stitch;
                   },
                   newSubrow: true,
                   newStitch: true,

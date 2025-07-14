@@ -263,7 +263,7 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
               ),
               _stitchDetailsList(),
 
-              Expanded(child: StitchList(onPressed: _addStitch)),
+              Expanded(child: StitchList(onStitchPressed: _addStitch)),
             ],
           ),
         ),

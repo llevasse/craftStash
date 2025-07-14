@@ -305,7 +305,7 @@ class _NewRowPageState extends State<NewRowPage> {
                       },
                     ),
                   ],
-                  onPressed: _addStitch,
+                  onStitchPressed: _addStitch,
                 ),
               ),
             ],
