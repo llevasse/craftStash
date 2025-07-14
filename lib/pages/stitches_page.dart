@@ -1,7 +1,7 @@
 import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/widgets/patternButtons/add_custom_detail_button.dart';
 import 'package:craft_stash/widgets/patternButtons/add_generic_detail_button.dart';
-import 'package:craft_stash/widgets/patternButtons/new_subrow_button.dart';
+import 'package:craft_stash/widgets/patternButtons/new_stitch_button.dart';
 import 'package:craft_stash/widgets/stitches/stitch_form.dart';
 import 'package:craft_stash/widgets/stitches/stitch_list.dart';
 import 'package:flutter/material.dart';
@@ -14,22 +14,6 @@ class StitchesPage extends StatefulWidget {
 }
 
 class _StitchesPageState extends State<StitchesPage> {
-  Widget _createNewStitchButton() {
-    return AddCustomDetailButton(
-      text: "New stitch",
-      onPressed: () async {
-        await showDialog(
-          context: context,
-          builder: (BuildContext context) => StitchForm(
-            onValidate: () {
-              setState(() {});
-            },
-          ),
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
@@ -60,13 +44,10 @@ class _StitchesPageState extends State<StitchesPage> {
                         )
                         as Stitch?;
                   },
+                  newSubrow: true,
+                  newStitch: true,
                   customActions: [
-                    _createNewStitchButton(),
-                    NewSubrowButton(
-                      onPressed: (detail) async {
-                        setState(() {});
-                      },
-                    ),
+                    // _createNewStitchButton(),
                   ],
                 ),
               ),

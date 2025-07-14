@@ -1,5 +1,3 @@
-
-import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/pages/new_sub_row_page.dart';
 import 'package:craft_stash/widgets/patternButtons/add_custom_detail_button.dart';
@@ -40,6 +38,7 @@ class _NewSubrowButtonState extends State<NewSubrowButton> {
                 as PatternRowDetail?;
         if (t == null) return;
         await widget.onPressed.call(t);
+        setState(() {});
       },
     );
   }

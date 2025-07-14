@@ -1,6 +1,8 @@
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/widgets/patternButtons/add_generic_detail_button.dart';
+import 'package:craft_stash/widgets/patternButtons/new_stitch_button.dart';
+import 'package:craft_stash/widgets/patternButtons/new_subrow_button.dart';
 import 'package:craft_stash/widgets/patternButtons/stitch_count_button.dart';
 import 'package:flutter/material.dart';
 
@@ -15,11 +17,17 @@ class StitchList extends StatefulWidget {
     this.stitchCountButtonList,
     this.row,
     this.spacing = 10,
+    this.newSubrow = false,
+    this.newStitch = false,
   });
   List<Widget>? customActions = [];
   List<StitchCountButton>? stitchCountButtonList = [];
   PatternRow? row;
   double spacing;
+  bool newSubrow;
+  bool newStitch;
+  int? rowId;
+  int? partId;
   @override
   State<StatefulWidget> createState() => _StitchListState();
 }
@@ -36,11 +44,40 @@ class _StitchListState extends State<StitchList> {
 
   @override
   void setState(VoidCallback fn) {
+    super.setState(fn);
+  }
+
+  Future<void> getAllStitches() async {
+    stitches = await getAllStitchesInDb();
     list.clear();
     if (widget.customActions != null) {
       for (Widget action in widget.customActions!) {
         list.add(action);
       }
+    }
+    if (widget.newSubrow) {
+      list.add(
+        NewSubrowButton(
+          onPressed: (detail) async {
+            if (detail != null) {
+              stitches.add(Stitch(abreviation: detail.toStringWithoutNumber()));
+            }
+            setState(() {});
+          },
+        ),
+      );
+    }
+    if (widget.newSubrow) {
+      list.add(
+        NewStitchButton(
+          onPressed: (stitch) async {
+            if (stitch != null) {
+              stitches.add(stitch);
+              setState(() {});
+            }
+          },
+        ),
+      );
     }
     for (Stitch e in stitches) {
       if (e.abreviation.contains(stitchSearch) ||
@@ -63,17 +100,12 @@ class _StitchListState extends State<StitchList> {
         );
       }
     }
-    super.setState(fn);
-  }
-
-  Future<void> getAllStitches() async {
-    stitches = await getAllStitchesInDb();
-
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
+    getAllStitches();
     return Column(
       spacing: widget.spacing,
       children: [

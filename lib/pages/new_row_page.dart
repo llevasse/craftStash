@@ -2,9 +2,6 @@ import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/class/stitch.dart';
-import 'package:craft_stash/pages/new_sub_row_page.dart';
-import 'package:craft_stash/widgets/patternButtons/add_custom_detail_button.dart';
-import 'package:craft_stash/widgets/patternButtons/add_generic_detail_button.dart';
 import 'package:craft_stash/widgets/patternButtons/new_subrow_button.dart';
 import 'package:craft_stash/widgets/patternButtons/stitch_count_button.dart';
 import 'package:craft_stash/widgets/stitches/stitch_list.dart';
@@ -295,11 +292,11 @@ class _NewRowPageState extends State<NewRowPage> {
                         if (detail == null) return;
                         if (row.details.isNotEmpty &&
                             row.details.last.hashCode == detail.hashCode) {
-                          await deletePatternRowDetailInDb(detail!.rowDetailId);
+                          await deletePatternRowDetailInDb(detail.rowDetailId);
                           row.details.last.repeatXTime += 1;
                           details.removeLast();
                         } else {
-                          row.details.add(detail!);
+                          row.details.add(detail);
                         }
                         details.add(
                           _createStitchCountButton(detail.subRow.toString()),
