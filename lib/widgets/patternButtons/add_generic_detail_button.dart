@@ -41,7 +41,7 @@ class _AddGenericDetailButton extends State<AddGenericDetailButton> {
           widget.style ??
           ButtonStyle(
             side: WidgetStatePropertyAll(
-              BorderSide(color: theme.colorScheme.primary, width: 5),
+              BorderSide(color: theme.colorScheme.primary, width: 0),
             ),
             shape: WidgetStatePropertyAll(
               RoundedSuperellipseBorder(
@@ -55,6 +55,7 @@ class _AddGenericDetailButton extends State<AddGenericDetailButton> {
         widget.text ?? widget.stitch!.abreviation,
         style: TextStyle(color: theme.colorScheme.secondary),
         textScaler: TextScaler.linear(1.25),
+        overflow: TextOverflow.ellipsis,
       ),
     );
   }

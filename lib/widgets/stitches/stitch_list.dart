@@ -44,6 +44,7 @@ class _StitchListState extends State<StitchList> {
 
   @override
   void setState(VoidCallback fn) {
+    if (!mounted) return;
     super.setState(fn);
   }
 
