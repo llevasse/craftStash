@@ -135,7 +135,13 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
       row.details.last.repeatXTime += 1;
       details.removeLast();
     } else {
-      row.details.add(PatternRowDetail(rowId: -1, stitch: stitch.abreviation));
+      row.details.add(
+        PatternRowDetail(
+          rowId: -1,
+          stitch: stitch.abreviation,
+          stitchId: stitch.id,
+        ),
+      );
     }
     details.add(_createStitchCountButton(stitch.abreviation));
     needScroll = true;
@@ -147,8 +153,31 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
       onPressed: () async {
         if (_formKey.currentState!.validate()) {
           _formKey.currentState!.save();
-          PatternRowDetail detail = PatternRowDetail(hasSubrow: 1, rowId: 0);
+          PatternRowDetail detail = PatternRowDetail(
+            hasSubrow: 1,
+            rowId: 0,
+            stitchId: 0,
+          );
           detail.subRow = row;
+
+          if (widget.stitchId == null) {
+            detail.stitchId = await insertStitchInDb(
+              Stitch(
+                abreviation: detail.toStringWithoutNumber(),
+                isSequence: 1,
+                rowId: row.rowId,
+              ),
+            );
+          } else {
+            await updateStitchInDb(
+              Stitch(
+                id: widget.stitchId as int,
+                abreviation: detail.toStringWithoutNumber(),
+                isSequence: 1,
+                rowId: row.rowId,
+              ),
+            );
+          }
 
           if (widget.partId != null && widget.rowId != null) {
             row.partId = widget.partId!;
@@ -164,13 +193,6 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
                 await insertPatternRowDetailInDb(e);
               }
             }
-            await insertStitchInDb(
-              Stitch(
-                abreviation: detail.toStringWithoutNumber(),
-                isSequence: 1,
-                rowId: row.rowId,
-              ),
-            );
           } else {
             await updatePatternRowInDb(row);
             int rowId = row.rowId;
@@ -188,14 +210,6 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
                 }
               }
             }
-            await updateStitchInDb(
-              Stitch(
-                id: widget.stitchId as int,
-                abreviation: detail.toStringWithoutNumber(),
-                isSequence: 1,
-                rowId: row.rowId,
-              ),
-            );
           }
 
           Navigator.pop(context, detail);

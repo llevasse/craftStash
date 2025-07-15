@@ -53,21 +53,20 @@ Future<void> insertDefaultStitchesInDb([Database? db]) async {
   });
 }
 
-Future<void> insertStitchInDb(Stitch stitch, [Database? db]) async {
+Future<int> insertStitchInDb(Stitch stitch, [Database? db]) async {
   db ??= (await DbService().database);
   if (db != null) {
+    return await db.insert(
+      _tableName,
+      stitch.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
     final list = await db.query(
       _tableName,
       where: "hash = ?",
       whereArgs: [stitch.hashCode],
     );
-    if (list.isEmpty) {
-      db.insert(
-        _tableName,
-        stitch.toMap(),
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
-    }
+    if (list.isEmpty) {}
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }
@@ -96,8 +95,8 @@ Future<void> deleteStitchInDb(int id) async {
   }
 }
 
-Future<List<Stitch>> getAllStitchesInDb() async {
-  final db = (await DbService().database);
+Future<List<Stitch>> getAllStitchesInDb([Database? db]) async {
+  db ??= (await DbService().database);
   if (db != null) {
     final List<Map<String, Object?>> stitchMaps = await db.query(_tableName);
     List<Stitch> l = List.empty(growable: true);

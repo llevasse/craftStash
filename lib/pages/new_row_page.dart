@@ -273,7 +273,7 @@ class _NewRowPageState extends State<NewRowPage> {
       row.details.last.repeatXTime += 1;
       details.removeLast();
     } else {
-      row.details.add(PatternRowDetail(rowId: -1, stitch: stitch.abreviation));
+      row.details.add(PatternRowDetail(rowId: -1, stitch: stitch.abreviation, stitchId: stitch.id));
     }
     details.add(_createStitchCountButton(stitch.abreviation));
     needScroll = true;
