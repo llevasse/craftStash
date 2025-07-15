@@ -16,7 +16,7 @@ class _NewStitchButtonState extends State<NewStitchButton> {
   Widget build(BuildContext context) {
     return AddCustomDetailButton(
       text: "New stitch",
-      onPressed: () async {
+      onPressed: (detail) async {
         Stitch? s =
             await showDialog(
                   context: context,

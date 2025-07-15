@@ -3,17 +3,16 @@ import 'package:craft_stash/pages/new_sub_row_page.dart';
 import 'package:craft_stash/widgets/patternButtons/add_custom_detail_button.dart';
 import 'package:flutter/material.dart';
 
-class NewSubrowButton extends StatefulWidget {
+class NewSubrowButton extends AddCustomDetailButton {
   int? rowId;
   int? partId;
-  Future<void> Function(PatternRowDetail?) onPressed;
 
   NewSubrowButton({
     super.key,
     this.partId,
     this.rowId,
-    required this.onPressed,
-  });
+    required super.onPressed,
+  }) : super(text: "New sequence");
   @override
   State<StatefulWidget> createState() => _NewSubrowButtonState();
 }
@@ -23,7 +22,7 @@ class _NewSubrowButtonState extends State<NewSubrowButton> {
   Widget build(BuildContext context) {
     return AddCustomDetailButton(
       text: "New sequence",
-      onPressed: () async {
+      onPressed: (detail) async {
         PatternRowDetail? t =
             await Navigator.push(
                   context,

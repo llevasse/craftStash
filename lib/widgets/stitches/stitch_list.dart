@@ -7,10 +7,14 @@ import 'package:craft_stash/widgets/patternButtons/new_subrow_button.dart';
 import 'package:craft_stash/widgets/patternButtons/stitch_count_button.dart';
 import 'package:flutter/material.dart';
 
+typedef MyBuilder =
+    void Function(BuildContext context, void Function() methodFromChild);
+
 class StitchList extends StatefulWidget {
   Future<Stitch?> Function(Stitch stitch)? onStitchPressed;
   Future<Stitch?> Function(Stitch stitch)? onSequencePressed;
   void Function(Stitch stitch)? onLongPress;
+  final MyBuilder? builder;
   StitchList({
     super.key,
     this.onStitchPressed,
@@ -23,8 +27,10 @@ class StitchList extends StatefulWidget {
     this.newSubrow = false,
     this.newStitch = false,
     this.stitchBlacklistById,
+    this.builder,
   });
-  List<Widget>? customActions = [];
+
+  List<AddCustomDetailButton>? customActions = [];
   List<StitchCountButton>? stitchCountButtonList = [];
   List<int>? stitchBlacklistById = [];
   PatternRow? row;
@@ -34,10 +40,10 @@ class StitchList extends StatefulWidget {
   int? rowId;
   int? partId;
   @override
-  State<StatefulWidget> createState() => _StitchListState();
+  State<StatefulWidget> createState() => StitchListState();
 }
 
-class _StitchListState extends State<StitchList> {
+class StitchListState extends State<StitchList> {
   List<Stitch> stitches = [];
   String stitchSearch = "";
   List<Widget> list = List.empty(growable: true);
@@ -63,7 +69,7 @@ class _StitchListState extends State<StitchList> {
     stitches = await getAllStitchesInDb();
     list.clear();
     if (widget.customActions != null) {
-      for (Widget action in widget.customActions!) {
+      for (AddCustomDetailButton action in widget.customActions!) {
         list.add(action);
       }
     }
@@ -121,7 +127,7 @@ class _StitchListState extends State<StitchList> {
           list.add(
             AddCustomDetailButton(
               text: e.abreviation,
-              onPressed: () async {
+              onPressed: (detail) async {
                 if (widget.onSequencePressed != null) {
                   Stitch? s = await widget.onSequencePressed?.call(e);
                   if (s != null) await getAllStitches();
@@ -137,6 +143,9 @@ class _StitchListState extends State<StitchList> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.builder != null) {
+      widget.builder!(context, init);
+    }
     return Column(
       spacing: widget.spacing,
       children: [

@@ -37,6 +37,8 @@ class _NewRowPageState extends State<NewRowPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   PatternRow row = PatternRow(startRow: 0, numberOfRows: 0, stitchesPerRow: 0);
   TextEditingController previewControler = TextEditingController();
+  StitchList stitchList = StitchList();
+  late void Function() stitchListInitFunction;
   @override
   void initState() {
     getAllStitches();
@@ -67,7 +69,40 @@ class _NewRowPageState extends State<NewRowPage> {
     } else {
       _insertRowInDb();
     }
+
+    stitchList = _createStitchList();
+
     super.initState();
+  }
+
+  StitchList _createStitchList() {
+    StitchList s = StitchList(
+      onStitchPressed: _addStitch,
+      customActions: [
+        NewSubrowButton(
+          rowId: row.rowId,
+          partId: row.partId,
+          onPressed: (PatternRowDetail? detail) async {
+            if (detail == null) return;
+            if (row.details.isNotEmpty &&
+                row.details.last.hashCode == detail.hashCode) {
+              await deletePatternRowDetailInDb(detail.rowDetailId);
+              row.details.last.repeatXTime += 1;
+              details.removeLast();
+            } else {
+              row.details.add(detail);
+            }
+            details.add(_createStitchCountButton(detail.subRow.toString()));
+            await getAllStitches();
+            stitchListInitFunction();
+          },
+        ),
+      ],
+      builder: (BuildContext context, void Function() methodFromChild) {
+        stitchListInitFunction = methodFromChild;
+      },
+    );
+    return s;
   }
 
   Future<void> _insertRowInDb() async {
@@ -282,32 +317,7 @@ class _NewRowPageState extends State<NewRowPage> {
               ),
               _stitchDetailsList(),
 
-              Expanded(
-                child: StitchList(
-                  customActions: [
-                    NewSubrowButton(
-                      rowId: row.rowId,
-                      partId: row.partId,
-                      onPressed: (PatternRowDetail? detail) async {
-                        if (detail == null) return;
-                        if (row.details.isNotEmpty &&
-                            row.details.last.hashCode == detail.hashCode) {
-                          await deletePatternRowDetailInDb(detail.rowDetailId);
-                          row.details.last.repeatXTime += 1;
-                          details.removeLast();
-                        } else {
-                          row.details.add(detail);
-                        }
-                        details.add(
-                          _createStitchCountButton(detail.subRow.toString()),
-                        );
-                        await getAllStitches();
-                      },
-                    ),
-                  ],
-                  onStitchPressed: _addStitch,
-                ),
-              ),
+              Expanded(child: stitchList),
             ],
           ),
         ),

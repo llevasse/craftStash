@@ -1,11 +1,12 @@
+import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/widgets/patternButtons/add_generic_detail_button.dart';
 import 'package:flutter/material.dart';
 
 class AddCustomDetailButton extends StatefulWidget {
-  final Function() onPressed;
+  Future<void> Function(PatternRowDetail?) onPressed;
   final String text;
   final ButtonStyle? style;
-  const AddCustomDetailButton({
+  AddCustomDetailButton({
     super.key,
     required this.onPressed,
     required this.text,
@@ -26,7 +27,9 @@ class _AddCustomDetailButton extends State<AddCustomDetailButton> {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     return AddGenericDetailButton(
-      onPressed: widget.onPressed,
+      onPressed: () {
+        widget.onPressed.call(null);
+      },
       style:
           widget.style ??
           ButtonStyle(
