@@ -1,21 +1,26 @@
+import 'package:craft_stash/class/stitch.dart';
 import 'package:flutter/material.dart';
 
-class AddDetailButton extends StatefulWidget {
+class AddGenericDetailButton extends StatefulWidget {
   final Function() onPressed;
-  final String text;
+  final Function()? onLongPress;
+  final String? text;
   final ButtonStyle? style;
-  const AddDetailButton({
+  final Stitch? stitch;
+  const AddGenericDetailButton({
     super.key,
     required this.onPressed,
-    required this.text,
+    this.onLongPress,
+    this.text,
+    this.stitch,
     this.style,
   });
 
   @override
-  State<StatefulWidget> createState() => _AddDetailButton();
+  State<StatefulWidget> createState() => _AddGenericDetailButton();
 }
 
-class _AddDetailButton extends State<AddDetailButton> {
+class _AddGenericDetailButton extends State<AddGenericDetailButton> {
   @override
   void initState() {
     super.initState();
@@ -23,14 +28,20 @@ class _AddDetailButton extends State<AddDetailButton> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.text == null && widget.stitch == null) {
+      throw GenericDetailButtonMissingElements(
+        "AddGenericDetailButton() need either a String or Stitch ar argument",
+      );
+    }
     ThemeData theme = Theme.of(context);
     return OutlinedButton(
       onPressed: widget.onPressed,
+      onLongPress: widget.onLongPress,
       style:
           widget.style ??
           ButtonStyle(
             side: WidgetStatePropertyAll(
-              BorderSide(color: theme.colorScheme.primary, width: 5),
+              BorderSide(color: theme.colorScheme.primary, width: 0),
             ),
             shape: WidgetStatePropertyAll(
               RoundedSuperellipseBorder(
@@ -41,10 +52,16 @@ class _AddDetailButton extends State<AddDetailButton> {
             backgroundColor: WidgetStateProperty.all(theme.colorScheme.primary),
           ),
       child: Text(
-        widget.text,
+        widget.text ?? widget.stitch!.abreviation,
         style: TextStyle(color: theme.colorScheme.secondary),
         textScaler: TextScaler.linear(1.25),
+        overflow: TextOverflow.ellipsis,
       ),
     );
   }
+}
+
+class GenericDetailButtonMissingElements implements Exception {
+  GenericDetailButtonMissingElements(this.cause);
+  String cause;
 }

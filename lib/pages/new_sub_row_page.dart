@@ -2,18 +2,21 @@ import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/widgets/patternButtons/stitch_count_button.dart';
-import 'package:craft_stash/widgets/stitch_list.dart';
+import 'package:craft_stash/widgets/stitches/stitch_list.dart';
 import 'package:flutter/material.dart';
 
+/// if rowId or partId are null, new subrow will be created but not added to any pattern or row
 class NewSubRowPage extends StatefulWidget {
+  final int? stitchId;
   final PatternRow? subrow;
-  final int rowId;
-  final int partId;
+  final int? rowId;
+  final int? partId;
   const NewSubRowPage({
     super.key,
     this.subrow,
-    required this.rowId,
-    required this.partId,
+    this.rowId,
+    this.partId,
+    this.stitchId,
   });
 
   @override
@@ -22,6 +25,7 @@ class NewSubRowPage extends StatefulWidget {
 
 class _NewSubRowPageState extends State<NewSubRowPage> {
   List<Stitch> stitches = [];
+  List<int> blacklist = [];
   String stitchSearch = "";
   double buttonHeight = 50;
   bool needScroll = false;
@@ -33,6 +37,9 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
   TextEditingController previewControler = TextEditingController();
   @override
   void initState() {
+    if (widget.stitchId != null) {
+      blacklist.add(widget.stitchId as int);
+    }
     getAllStitches();
     row.startRow = 0;
     row.numberOfRows = 0;
@@ -122,14 +129,15 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
     );
   }
 
-  Future<void> _addStitch(String stitch) async {
-    if (row.details.isNotEmpty && row.details.last.stitch == stitch) {
+  Future<Stitch?> _addStitch(Stitch stitch) async {
+    if (row.details.isNotEmpty &&
+        row.details.last.stitch == stitch.abreviation) {
       row.details.last.repeatXTime += 1;
       details.removeLast();
     } else {
-      row.details.add(PatternRowDetail(rowId: -1, stitch: stitch));
+      row.details.add(PatternRowDetail(rowId: -1, stitch: stitch.abreviation));
     }
-    details.add(_createStitchCountButton(stitch));
+    details.add(_createStitchCountButton(stitch.abreviation));
     needScroll = true;
     setState(() {});
   }
@@ -139,15 +147,16 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
       onPressed: () async {
         if (_formKey.currentState!.validate()) {
           _formKey.currentState!.save();
-          row.partId = widget.partId;
-          PatternRowDetail detail = PatternRowDetail(
-            rowId: widget.rowId,
-            hasSubrow: 1,
-          );
-          row.partDetailId = await insertPatternRowDetailInDb(detail);
-          detail.rowDetailId = row.partDetailId!;
+          PatternRowDetail detail = PatternRowDetail(hasSubrow: 1, rowId: 0);
+          detail.subRow = row;
+
+          if (widget.partId != null && widget.rowId != null) {
+            row.partId = widget.partId!;
+            detail.rowId = widget.rowId!;
+            row.partDetailId = await insertPatternRowDetailInDb(detail);
+            detail.rowDetailId = row.partDetailId!;
+          }
           if (widget.subrow == null) {
-            // print("Insert row ${row.toString()}");
             row.rowId = await insertPatternRowInDb(row);
             for (PatternRowDetail e in row.details) {
               if (e.repeatXTime != 0) {
@@ -155,6 +164,13 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
                 await insertPatternRowDetailInDb(e);
               }
             }
+            await insertStitchInDb(
+              Stitch(
+                abreviation: detail.toStringWithoutNumber(),
+                isSequence: 1,
+                rowId: row.rowId,
+              ),
+            );
           } else {
             await updatePatternRowInDb(row);
             int rowId = row.rowId;
@@ -172,11 +188,16 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
                 }
               }
             }
+            await updateStitchInDb(
+              Stitch(
+                id: widget.stitchId as int,
+                abreviation: detail.toStringWithoutNumber(),
+                isSequence: 1,
+                rowId: row.rowId,
+              ),
+            );
           }
-          detail.subRow = row;
-          await insertStitchInDb(
-            Stitch(abreviation: detail.toStringWithoutNumber()),
-          );
+
           Navigator.pop(context, detail);
         }
       },
@@ -233,7 +254,12 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
               ),
               _stitchDetailsList(),
 
-              Expanded(child: StitchList(onPressed: _addStitch)),
+              Expanded(
+                child: StitchList(
+                  onStitchPressed: _addStitch,
+                  stitchBlacklistById: blacklist,
+                ),
+              ),
             ],
           ),
         ),

@@ -58,7 +58,7 @@ Future<void> dbV8(Batch batch) async {
 
 Future<void> dbV9(Batch batch) async {
   batch.execute(
-    '''CREATE TABLE IF NOT EXISTS stitch(id INTEGER PRIMARY KEY, abreviation TEXT, name TEXT, description TEXT, hash INT)''',
+    '''CREATE TABLE IF NOT EXISTS stitch(id INTEGER PRIMARY KEY, row_id INT, abreviation TEXT, name TEXT, description TEXT, is_sequence INT, hash INT, FOREIGN KEY (row_id) REFERENCES pattern_row(row_id) ON DELETE CASCADE)''',
   );
   await batch.commit();
   await insertDefaultStitchesInDb();

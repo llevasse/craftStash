@@ -2,10 +2,9 @@ import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/class/stitch.dart';
-import 'package:craft_stash/pages/new_sub_row_page.dart';
-import 'package:craft_stash/widgets/patternButtons/add_detail_button.dart';
+import 'package:craft_stash/widgets/patternButtons/new_subrow_button.dart';
 import 'package:craft_stash/widgets/patternButtons/stitch_count_button.dart';
-import 'package:craft_stash/widgets/stitch_list.dart';
+import 'package:craft_stash/widgets/stitches/stitch_list.dart';
 import 'package:flutter/material.dart';
 
 class NewRowPage extends StatefulWidget {
@@ -38,6 +37,8 @@ class _NewRowPageState extends State<NewRowPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   PatternRow row = PatternRow(startRow: 0, numberOfRows: 0, stitchesPerRow: 0);
   TextEditingController previewControler = TextEditingController();
+  StitchList stitchList = StitchList();
+  late void Function() stitchListInitFunction;
   @override
   void initState() {
     getAllStitches();
@@ -68,7 +69,40 @@ class _NewRowPageState extends State<NewRowPage> {
     } else {
       _insertRowInDb();
     }
+
+    stitchList = _createStitchList();
+
     super.initState();
+  }
+
+  StitchList _createStitchList() {
+    StitchList s = StitchList(
+      onStitchPressed: _addStitch,
+      customActions: [
+        NewSubrowButton(
+          rowId: row.rowId,
+          partId: row.partId,
+          onPressed: (PatternRowDetail? detail) async {
+            if (detail == null) return;
+            if (row.details.isNotEmpty &&
+                row.details.last.hashCode == detail.hashCode) {
+              await deletePatternRowDetailInDb(detail.rowDetailId);
+              row.details.last.repeatXTime += 1;
+              details.removeLast();
+            } else {
+              row.details.add(detail);
+            }
+            details.add(_createStitchCountButton(detail.subRow.toString()));
+            await getAllStitches();
+            stitchListInitFunction();
+          },
+        ),
+      ],
+      builder: (BuildContext context, void Function() methodFromChild) {
+        stitchListInitFunction = methodFromChild;
+      },
+    );
+    return s;
   }
 
   Future<void> _insertRowInDb() async {
@@ -184,47 +218,6 @@ class _NewRowPageState extends State<NewRowPage> {
     );
   }
 
-  Widget _createSubRowButton() {
-    ThemeData theme = Theme.of(context);
-    return AddDetailButton(
-      text: "New sequence",
-      onPressed: () async {
-        PatternRowDetail? t =
-            await Navigator.push(
-                  context,
-                  MaterialPageRoute<void>(
-                    settings: RouteSettings(name: "subrow"),
-                    builder: (BuildContext context) =>
-                        NewSubRowPage(rowId: row.rowId, partId: row.partId),
-                  ),
-                )
-                as PatternRowDetail?;
-        if (t == null) return;
-        if (row.details.isNotEmpty && row.details.last.hashCode == t.hashCode) {
-          await deletePatternRowDetailInDb(t.rowDetailId);
-          row.details.last.repeatXTime += 1;
-          details.removeLast();
-        } else {
-          row.details.add(t);
-        }
-        details.add(_createStitchCountButton(t.subRow.toString()));
-        await getAllStitches();
-      },
-      style: ButtonStyle(
-        side: WidgetStatePropertyAll(
-          BorderSide(color: theme.colorScheme.primary, width: 1),
-        ),
-        shape: WidgetStatePropertyAll(
-          RoundedSuperellipseBorder(
-            borderRadius: BorderRadiusGeometry.all(Radius.circular(18)),
-          ),
-        ),
-
-        backgroundColor: WidgetStateProperty.all(theme.colorScheme.tertiary),
-      ),
-    );
-  }
-
   Widget _stitchDetailsList() {
     return Container(
       constraints: BoxConstraints(maxHeight: buttonHeight * 2.5),
@@ -274,14 +267,15 @@ class _NewRowPageState extends State<NewRowPage> {
     );
   }
 
-  Future<void> _addStitch(String stitch) async {
-    if (row.details.isNotEmpty && row.details.last.stitch == stitch) {
+  Future<Stitch?> _addStitch(Stitch stitch) async {
+    if (row.details.isNotEmpty &&
+        row.details.last.stitch == stitch.abreviation) {
       row.details.last.repeatXTime += 1;
       details.removeLast();
     } else {
-      row.details.add(PatternRowDetail(rowId: -1, stitch: stitch));
+      row.details.add(PatternRowDetail(rowId: -1, stitch: stitch.abreviation));
     }
-    details.add(_createStitchCountButton(stitch));
+    details.add(_createStitchCountButton(stitch.abreviation));
     needScroll = true;
     setState(() {});
   }
@@ -323,12 +317,7 @@ class _NewRowPageState extends State<NewRowPage> {
               ),
               _stitchDetailsList(),
 
-              Expanded(
-                child: StitchList(
-                  customActions: [_createSubRowButton()],
-                  onPressed: _addStitch,
-                ),
-              ),
+              Expanded(child: stitchList),
             ],
           ),
         ),

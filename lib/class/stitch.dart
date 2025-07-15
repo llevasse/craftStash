@@ -1,20 +1,33 @@
+import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';
 
 final String _tableName = "stitch";
 
 class Stitch {
-  Stitch({this.id = 0, required this.abreviation, this.name, this.description});
+  Stitch({
+    this.id = 0,
+    required this.abreviation,
+    this.name,
+    this.description,
+    this.isSequence = 0,
+    this.rowId,
+  });
   int id;
   String abreviation;
   String? name;
   String? description;
+  int isSequence;
+  int? rowId;
+  PatternRow? row;
 
   Map<String, dynamic> toMap() {
     return {
       "abreviation": abreviation,
       "name": name,
       "description": description,
+      "is_sequence": isSequence,
+      "row_id": rowId,
       "hash": hashCode,
     };
   }
@@ -60,6 +73,20 @@ Future<void> insertStitchInDb(Stitch stitch, [Database? db]) async {
   }
 }
 
+Future<void> updateStitchInDb(Stitch stitch) async {
+  final db = (await DbService().database);
+  if (db != null) {
+    await db.update(
+      _tableName,
+      stitch.toMap(),
+      where: "id = ?",
+      whereArgs: [stitch.id],
+    );
+  } else {
+    throw DatabaseDoesNotExistException("Could not get database");
+  }
+}
+
 Future<void> deleteStitchInDb(int id) async {
   final db = (await DbService().database);
   if (db != null) {
@@ -73,21 +100,31 @@ Future<List<Stitch>> getAllStitchesInDb() async {
   final db = (await DbService().database);
   if (db != null) {
     final List<Map<String, Object?>> stitchMaps = await db.query(_tableName);
-    return [
-      for (final {
-            'id': id as int,
-            'abreviation': abreviation as String,
-            'name': name as String?,
-            'description': description as String?,
-          }
-          in stitchMaps)
+    List<Stitch> l = List.empty(growable: true);
+    for (final {
+          'id': id as int,
+          'abreviation': abreviation as String,
+          'name': name as String?,
+          'description': description as String?,
+          "is_sequence": isSequence as int,
+          "row_id": rowId as int?,
+        }
+        in stitchMaps) {
+      l.add(
         Stitch(
           id: id,
           abreviation: abreviation,
           name: name,
           description: description,
+          isSequence: isSequence,
+          rowId: rowId,
         ),
-    ];
+      );
+      if (isSequence != 0 && rowId != null) {
+        l.last.row = await getPatternRowByRowId(rowId);
+      }
+    }
+    return l;
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }

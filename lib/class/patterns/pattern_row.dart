@@ -6,7 +6,7 @@ final String _tableName = "pattern_row";
 
 class PatternRow {
   int rowId;
-  int partId;
+  int? partId;
   int? partDetailId;
   int inSameStitch;
   int startRow, numberOfRows;
@@ -16,7 +16,7 @@ class PatternRow {
     this.rowId = 0,
     this.partDetailId, // non zero if is a 'subrow' (i.e repetetive instruction with different stitches)
     this.inSameStitch = 0, // non zero if is a subrow in done in the same stitch
-    this.partId = -1,
+    this.partId,
     required this.startRow,
     required this.numberOfRows,
     required this.stitchesPerRow,
@@ -40,24 +40,15 @@ class PatternRow {
 
   @override
   String toString() {
-    if (partDetailId == null) {
-      String tmp = "$startRow-$numberOfRows :\n";
-      for (PatternRowDetail detail in details) {
-        tmp += "\t\t${detail.toString()}";
-      }
-
-      return tmp;
-    } else {
-      String tmp = inSameStitch == 0 ? "(" : "[";
-      for (PatternRowDetail detail in details) {
-        tmp += "${detail.toString()}, ";
-      }
-      if (details.isNotEmpty) {
-        tmp = tmp.substring(0, tmp.length - 2);
-      }
-      tmp += inSameStitch == 0 ? ")" : "]";
-      return tmp;
+    String tmp = inSameStitch == 0 ? "(" : "[";
+    for (PatternRowDetail detail in details) {
+      if (detail.repeatXTime > 0) tmp += "${detail.toString()}, ";
     }
+    if (details.isNotEmpty) {
+      tmp = tmp.substring(0, tmp.length - 2);
+    }
+    tmp += inSameStitch == 0 ? ")" : "]";
+    return tmp;
   }
 
   @override
@@ -142,7 +133,7 @@ Future<List<PatternRow>> getAllPatternRow() async {
       for (final {
             'row_id': rowId as int,
             'part_detail_id': partDetailId as int?,
-            'part_id': partId as int,
+            'part_id': partId as int?,
             'start_row': startRow as int,
             'number_of_rows': numberOfRows as int,
             'in_same_stitch': inSameStitch as int,
@@ -178,15 +169,12 @@ Future<List<PatternRow>> getAllPatternRowByPartId(int id) async {
     for (Map<String, Object?> map in patternRowMaps) {
       PatternRow tmp = PatternRow(
         rowId: map['row_id'] as int,
-        partId: map['part_id'] as int,
-        partDetailId: null,
+        partId: map['part_id'] as int?,
+        partDetailId: map['part_detail_id'] as int?,
         startRow: map['start_row'] as int,
         numberOfRows: map['number_of_rows'] as int,
         stitchesPerRow: map['stitches_count_per_row'] as int,
       );
-      if (map['part_detail_id'] != null) {
-        tmp.partDetailId = map['part_detail_id'] as int;
-      }
       tmp.details = await getAllPatternRowDetailByRowId(tmp.rowId);
       l.add(tmp);
     }
@@ -210,8 +198,37 @@ Future<PatternRow> getPatternRowByDetailId(int id) async {
     for (Map<String, Object?> map in patternRowMaps) {
       PatternRow tmp = PatternRow(
         rowId: map['row_id'] as int,
-        partId: map['part_id'] as int,
-        partDetailId: map['part_detail_id'] as int,
+        partId: map['part_id'] as int?,
+        partDetailId: map['part_detail_id'] as int?,
+        startRow: map['start_row'] as int,
+        numberOfRows: map['number_of_rows'] as int,
+        inSameStitch: map['in_same_stitch'] as int,
+        stitchesPerRow: map['stitches_count_per_row'] as int,
+      );
+      tmp.details = await getAllPatternRowDetailByRowId(tmp.rowId);
+      l.add(tmp);
+    }
+    return (l[0]);
+  } else {
+    throw DatabaseDoesNotExistException("Could not get database");
+  }
+}
+
+Future<PatternRow> getPatternRowByRowId(int id) async {
+  final db = (await DbService().database);
+  if (db != null) {
+    final List<Map<String, Object?>> patternRowMaps = await db.query(
+      _tableName,
+      where: "row_id = ?",
+      whereArgs: [id],
+      limit: 1,
+    );
+    List<PatternRow> l = List.empty(growable: true);
+    for (Map<String, Object?> map in patternRowMaps) {
+      PatternRow tmp = PatternRow(
+        rowId: map['row_id'] as int,
+        partId: map['part_id'] as int?,
+        partDetailId: map['part_detail_id'] as int?,
         startRow: map['start_row'] as int,
         numberOfRows: map['number_of_rows'] as int,
         inSameStitch: map['in_same_stitch'] as int,
