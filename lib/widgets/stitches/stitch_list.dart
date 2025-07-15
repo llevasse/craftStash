@@ -22,9 +22,11 @@ class StitchList extends StatefulWidget {
     this.spacing = 10,
     this.newSubrow = false,
     this.newStitch = false,
+    this.stitchBlacklistById,
   });
   List<Widget>? customActions = [];
   List<StitchCountButton>? stitchCountButtonList = [];
+  List<int>? stitchBlacklistById = [];
   PatternRow? row;
   double spacing;
   bool newSubrow;
@@ -86,6 +88,10 @@ class _StitchListState extends State<StitchList> {
     for (Stitch e in stitches) {
       if (e.abreviation.contains(stitchSearch) ||
           (e.name != null && e.name!.contains(stitchSearch))) {
+        if (widget.stitchBlacklistById != null &&
+            widget.stitchBlacklistById!.contains(e.id)) {
+          continue;
+        }
         if (e.isSequence == 0) {
           list.add(
             AddGenericDetailButton(

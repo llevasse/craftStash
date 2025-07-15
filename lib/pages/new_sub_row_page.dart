@@ -7,10 +7,17 @@ import 'package:flutter/material.dart';
 
 /// if rowId or partId are null, new subrow will be created but not added to any pattern or row
 class NewSubRowPage extends StatefulWidget {
+  final int? stitchId;
   final PatternRow? subrow;
   final int? rowId;
   final int? partId;
-  const NewSubRowPage({super.key, this.subrow, this.rowId, this.partId});
+  const NewSubRowPage({
+    super.key,
+    this.subrow,
+    this.rowId,
+    this.partId,
+    this.stitchId,
+  });
 
   @override
   State<StatefulWidget> createState() => _NewSubRowPageState();
@@ -18,6 +25,7 @@ class NewSubRowPage extends StatefulWidget {
 
 class _NewSubRowPageState extends State<NewSubRowPage> {
   List<Stitch> stitches = [];
+  List<int> blacklist = [];
   String stitchSearch = "";
   double buttonHeight = 50;
   bool needScroll = false;
@@ -29,6 +37,9 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
   TextEditingController previewControler = TextEditingController();
   @override
   void initState() {
+    if (widget.stitchId != null) {
+      blacklist.add(widget.stitchId as int);
+    }
     getAllStitches();
     row.startRow = 0;
     row.numberOfRows = 0;
@@ -234,7 +245,12 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
               ),
               _stitchDetailsList(),
 
-              Expanded(child: StitchList(onStitchPressed: _addStitch)),
+              Expanded(
+                child: StitchList(
+                  onStitchPressed: _addStitch,
+                  stitchBlacklistById: blacklist,
+                ),
+              ),
             ],
           ),
         ),

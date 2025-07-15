@@ -50,8 +50,10 @@ class _StitchesPageState extends State<StitchesPage> {
                       context,
                       MaterialPageRoute<void>(
                         settings: RouteSettings(name: "subrow"),
-                        builder: (BuildContext context) =>
-                            NewSubRowPage(subrow: stitch.row),
+                        builder: (BuildContext context) => NewSubRowPage(
+                          subrow: stitch.row,
+                          stitchId: stitch.id,
+                        ),
                       ),
                     );
                     return stitch;
