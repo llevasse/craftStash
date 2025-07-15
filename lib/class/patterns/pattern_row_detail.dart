@@ -7,6 +7,7 @@ final String _tableName = "pattern_row_detail";
 class PatternRowDetail {
   int rowId;
   int rowDetailId;
+  int stitchId;
   String stitch;
   int repeatXTime;
   int color;
@@ -14,6 +15,7 @@ class PatternRowDetail {
   PatternRow? subRow;
   PatternRowDetail({
     required this.rowId,
+    required this.stitchId,
     this.rowDetailId = 0,
     this.repeatXTime = 1,
     this.stitch = "empty",
@@ -24,6 +26,7 @@ class PatternRowDetail {
   Map<String, dynamic> toMap() {
     return {
       'row_id': rowId,
+      'stitch_id': stitchId,
       'stitch': stitch,
       'repeat_x_time': repeatXTime,
       'color': color,
@@ -49,6 +52,18 @@ class PatternRowDetail {
   @override
   int get hashCode =>
       Object.hash(rowId, stitch, color, hasSubrow, subRow?.hashCode);
+}
+
+PatternRowDetail _fromMap(Map<String, dynamic> map) {
+  return PatternRowDetail(
+    rowDetailId: map['row_detail_id'] as int,
+    rowId: map['row_id'] as int,
+    stitchId: map['stitch_id'] as int,
+    stitch: map['stitch'] as String,
+    repeatXTime: map['repeat_x_time'] as int,
+    color: map['color'] as int,
+    hasSubrow: map['has_subrow'] as int,
+  );
 }
 
 Future<int> insertPatternRowDetailInDb(
@@ -108,23 +123,7 @@ Future<List<PatternRowDetail>> getAllPatternRowDetail() async {
       _tableName,
     );
     return [
-      for (final {
-            'row_detail_id': rowDetailId as int,
-            'row_id': rowId as int,
-            'stitch': stitch as String,
-            'repeat_x_time': repeatXTime as int,
-            'color': color as int,
-            'has_subrow': hasSubrow as int,
-          }
-          in patternRowDetailMaps)
-        PatternRowDetail(
-          rowDetailId: rowDetailId,
-          rowId: rowId,
-          stitch: stitch,
-          repeatXTime: repeatXTime,
-          color: color,
-          hasSubrow: hasSubrow,
-        ),
+      for (Map<String, Object?> map in patternRowDetailMaps) _fromMap(map),
     ];
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
@@ -140,23 +139,7 @@ Future<List<PatternRowDetail>> getAllPatternRowDetailByRowId(int id) async {
       whereArgs: [id],
     );
     List<PatternRowDetail> l = [
-      for (final {
-            'row_detail_id': rowDetailId as int,
-            'row_id': rowId as int,
-            'stitch': stitch as String,
-            'repeat_x_time': repeatXTime as int,
-            'color': color as int,
-            'has_subrow': hasSubrow as int,
-          }
-          in patternRowDetailMaps)
-        PatternRowDetail(
-          rowDetailId: rowDetailId,
-          rowId: rowId,
-          stitch: stitch,
-          repeatXTime: repeatXTime,
-          color: color,
-          hasSubrow: hasSubrow,
-        ),
+      for (Map<String, Object?> map in patternRowDetailMaps) _fromMap(map),
     ];
     for (PatternRowDetail detail in l) {
       if (detail.hasSubrow == 1) {

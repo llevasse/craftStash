@@ -63,7 +63,7 @@ class DbService {
       '''CREATE TABLE IF NOT EXISTS pattern_row(row_id INTEGER PRIMARY KEY, part_id INT, part_detail_id INT, start_row INT, number_of_rows INT, stitches_count_per_row INT, in_same_stitch INT, FOREIGN KEY (part_id) REFERENCES pattern_part(part_id) ON DELETE CASCADE, FOREIGN KEY (part_detail_id) REFERENCES pattern_row_detail(row_detail_id) ON DELETE CASCADE)''',
     );
     await db.execute(
-      '''CREATE TABLE IF NOT EXISTS pattern_row_detail(row_detail_id INTEGER PRIMARY KEY, row_id INT, stitch TEXT, repeat_x_time INT, color INT, has_subrow INT, FOREIGN KEY (row_id) REFERENCES pattern_row(row_id) ON DELETE CASCADE)''',
+      '''CREATE TABLE IF NOT EXISTS pattern_row_detail(row_detail_id INTEGER PRIMARY KEY, row_id INT, stitch_id INT, stitch TEXT, repeat_x_time INT, color INT, has_subrow INT, FOREIGN KEY (row_id) REFERENCES pattern_row(row_id) ON DELETE CASCADE, FOREIGN KEY (stich_id) REFERENCES stitch(id) ON DELETE CASCADE)''',
     );
     await db.execute(
       '''CREATE TABLE IF NOT EXISTS stitch(id INTEGER PRIMARY KEY, row_id INT, abreviation TEXT, name TEXT, description TEXT, is_sequence INT, hash INT, FOREIGN KEY (row_id) REFERENCES pattern_row(row_id) ON DELETE CASCADE)''',
