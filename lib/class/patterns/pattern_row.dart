@@ -42,7 +42,7 @@ class PatternRow {
   String toString() {
     String tmp = inSameStitch == 0 ? "(" : "[";
     for (PatternRowDetail detail in details) {
-      tmp += "${detail.toString()}, ";
+      if (detail.repeatXTime > 0) tmp += "${detail.toString()}, ";
     }
     if (details.isNotEmpty) {
       tmp = tmp.substring(0, tmp.length - 2);

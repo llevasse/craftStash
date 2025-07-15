@@ -143,58 +143,29 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
             detail.rowId = widget.rowId!;
             row.partDetailId = await insertPatternRowDetailInDb(detail);
             detail.rowDetailId = row.partDetailId!;
-            if (widget.subrow == null) {
-              // print("Insert row ${row.toString()}");
-              row.rowId = await insertPatternRowInDb(row);
-              for (PatternRowDetail e in row.details) {
-                if (e.repeatXTime != 0) {
-                  e.rowId = row.rowId;
-                  await insertPatternRowDetailInDb(e);
-                }
-              }
-            } else {
-              await updatePatternRowInDb(row);
-              int rowId = row.rowId;
-              for (PatternRowDetail e in row.details) {
-                if (e.repeatXTime != 0) {
-                  e.rowId = rowId;
-                  if (e.rowDetailId == 0) {
-                    await insertPatternRowDetailInDb(e);
-                  } else {
-                    await updatePatternRowDetailInDb(e);
-                  }
-                } else {
-                  if (e.rowDetailId != 0) {
-                    await deletePatternRowDetailInDb(e.rowDetailId);
-                  }
-                }
+          }
+          if (widget.subrow == null) {
+            row.rowId = await insertPatternRowInDb(row);
+            for (PatternRowDetail e in row.details) {
+              if (e.repeatXTime != 0) {
+                e.rowId = row.rowId;
+                await insertPatternRowDetailInDb(e);
               }
             }
           } else {
-            if (widget.subrow == null) {
-              // print("Insert row ${row.toString()}");
-              row.rowId = await insertPatternRowInDb(row);
-              for (PatternRowDetail e in row.details) {
-                if (e.repeatXTime != 0) {
-                  e.rowId = row.rowId;
+            await updatePatternRowInDb(row);
+            int rowId = row.rowId;
+            for (PatternRowDetail e in row.details) {
+              if (e.repeatXTime != 0) {
+                e.rowId = rowId;
+                if (e.rowDetailId == 0) {
                   await insertPatternRowDetailInDb(e);
-                }
-              }
-            } else {
-              await updatePatternRowInDb(row);
-              int rowId = row.rowId;
-              for (PatternRowDetail e in row.details) {
-                if (e.repeatXTime != 0) {
-                  e.rowId = rowId;
-                  if (e.rowDetailId == 0) {
-                    await insertPatternRowDetailInDb(e);
-                  } else {
-                    await updatePatternRowDetailInDb(e);
-                  }
                 } else {
-                  if (e.rowDetailId != 0) {
-                    await deletePatternRowDetailInDb(e.rowDetailId);
-                  }
+                  await updatePatternRowDetailInDb(e);
+                }
+              } else {
+                if (e.rowDetailId != 0) {
+                  await deletePatternRowDetailInDb(e.rowDetailId);
                 }
               }
             }
