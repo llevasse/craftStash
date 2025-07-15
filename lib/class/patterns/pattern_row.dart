@@ -6,7 +6,7 @@ final String _tableName = "pattern_row";
 
 class PatternRow {
   int rowId;
-  int partId;
+  int? partId;
   int? partDetailId;
   int inSameStitch;
   int startRow, numberOfRows;
@@ -16,7 +16,7 @@ class PatternRow {
     this.rowId = 0,
     this.partDetailId, // non zero if is a 'subrow' (i.e repetetive instruction with different stitches)
     this.inSameStitch = 0, // non zero if is a subrow in done in the same stitch
-    this.partId = -1,
+    this.partId,
     required this.startRow,
     required this.numberOfRows,
     required this.stitchesPerRow,
@@ -133,7 +133,7 @@ Future<List<PatternRow>> getAllPatternRow() async {
       for (final {
             'row_id': rowId as int,
             'part_detail_id': partDetailId as int?,
-            'part_id': partId as int,
+            'part_id': partId as int?,
             'start_row': startRow as int,
             'number_of_rows': numberOfRows as int,
             'in_same_stitch': inSameStitch as int,
@@ -169,15 +169,12 @@ Future<List<PatternRow>> getAllPatternRowByPartId(int id) async {
     for (Map<String, Object?> map in patternRowMaps) {
       PatternRow tmp = PatternRow(
         rowId: map['row_id'] as int,
-        partId: map['part_id'] as int,
-        partDetailId: null,
+        partId: map['part_id'] as int?,
+        partDetailId: map['part_detail_id'] as int?,
         startRow: map['start_row'] as int,
         numberOfRows: map['number_of_rows'] as int,
         stitchesPerRow: map['stitches_count_per_row'] as int,
       );
-      if (map['part_detail_id'] != null) {
-        tmp.partDetailId = map['part_detail_id'] as int;
-      }
       tmp.details = await getAllPatternRowDetailByRowId(tmp.rowId);
       l.add(tmp);
     }
@@ -201,8 +198,8 @@ Future<PatternRow> getPatternRowByDetailId(int id) async {
     for (Map<String, Object?> map in patternRowMaps) {
       PatternRow tmp = PatternRow(
         rowId: map['row_id'] as int,
-        partId: map['part_id'] as int,
-        partDetailId: map['part_detail_id'] as int,
+        partId: map['part_id'] as int?,
+        partDetailId: map['part_detail_id'] as int?,
         startRow: map['start_row'] as int,
         numberOfRows: map['number_of_rows'] as int,
         inSameStitch: map['in_same_stitch'] as int,
@@ -230,8 +227,8 @@ Future<PatternRow> getPatternRowByRowId(int id) async {
     for (Map<String, Object?> map in patternRowMaps) {
       PatternRow tmp = PatternRow(
         rowId: map['row_id'] as int,
-        partId: map['part_id'] as int,
-        partDetailId: map['part_detail_id'] as int,
+        partId: map['part_id'] as int?,
+        partDetailId: map['part_detail_id'] as int?,
         startRow: map['start_row'] as int,
         numberOfRows: map['number_of_rows'] as int,
         inSameStitch: map['in_same_stitch'] as int,
