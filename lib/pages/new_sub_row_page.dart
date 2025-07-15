@@ -148,6 +148,7 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
         if (_formKey.currentState!.validate()) {
           _formKey.currentState!.save();
           PatternRowDetail detail = PatternRowDetail(hasSubrow: 1, rowId: 0);
+          detail.subRow = row;
 
           if (widget.partId != null && widget.rowId != null) {
             row.partId = widget.partId!;
@@ -163,6 +164,13 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
                 await insertPatternRowDetailInDb(e);
               }
             }
+            await insertStitchInDb(
+              Stitch(
+                abreviation: detail.toStringWithoutNumber(),
+                isSequence: 1,
+                rowId: row.rowId,
+              ),
+            );
           } else {
             await updatePatternRowInDb(row);
             int rowId = row.rowId;
@@ -180,15 +188,16 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
                 }
               }
             }
+            await updateStitchInDb(
+              Stitch(
+                id: widget.stitchId as int,
+                abreviation: detail.toStringWithoutNumber(),
+                isSequence: 1,
+                rowId: row.rowId,
+              ),
+            );
           }
-          detail.subRow = row;
-          await insertStitchInDb(
-            Stitch(
-              abreviation: detail.toStringWithoutNumber(),
-              isSequence: 1,
-              rowId: row.rowId,
-            ),
-          );
+
           Navigator.pop(context, detail);
         }
       },
