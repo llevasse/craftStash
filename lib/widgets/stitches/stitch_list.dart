@@ -41,9 +41,15 @@ class _StitchListState extends State<StitchList> {
   List<Stitch> stitches = [];
   String stitchSearch = "";
   List<Widget> list = List.empty(growable: true);
+
+  void init() async {
+    await getAllStitches();
+    if (mounted) setState(() {});
+  }
+
   @override
   void initState() {
-    getAllStitches();
+    init();
     super.initState();
   }
 
@@ -68,7 +74,7 @@ class _StitchListState extends State<StitchList> {
             if (detail != null) {
               stitches.add(Stitch(abreviation: detail.toStringWithoutNumber()));
             }
-            setState(() {});
+            init();
           },
         ),
       );
@@ -79,7 +85,7 @@ class _StitchListState extends State<StitchList> {
           onPressed: (stitch) async {
             if (stitch != null) {
               stitches.add(stitch);
-              setState(() {});
+              init();
             }
           },
         ),
@@ -99,12 +105,14 @@ class _StitchListState extends State<StitchList> {
               onLongPress: () {
                 if (widget.onLongPress != null) {
                   widget.onLongPress?.call(e);
+                  init();
                 }
               },
               onPressed: () async {
                 if (widget.onStitchPressed != null) {
                   Stitch? s = await widget.onStitchPressed?.call(e);
                   if (s != null) await getAllStitches();
+                  init();
                 }
               },
             ),
@@ -117,6 +125,7 @@ class _StitchListState extends State<StitchList> {
                 if (widget.onSequencePressed != null) {
                   Stitch? s = await widget.onSequencePressed?.call(e);
                   if (s != null) await getAllStitches();
+                  init();
                 }
               },
             ),
@@ -124,12 +133,10 @@ class _StitchListState extends State<StitchList> {
         }
       }
     }
-    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    getAllStitches();
     return Column(
       spacing: widget.spacing,
       children: [
