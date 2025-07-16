@@ -64,6 +64,7 @@ class PatternRowDetail {
 
 PatternRowDetail _fromMap(Map<String, dynamic> map) {
   return PatternRowDetail(
+    rowDetailId: map['row_detail_id'] as int,
     rowId: map['row_id'] as int,
     stitchId: map['stitch_id'] as int,
     repeatXTime: map['repeat_x_time'] as int,

@@ -246,10 +246,9 @@ class _NewRowPageState extends State<NewRowPage> {
             }
           } else {
             await updatePatternRowInDb(row);
-            int rowId = row.rowId;
             for (PatternRowDetail e in row.details) {
               if (e.repeatXTime != 0) {
-                e.rowId = rowId;
+                e.rowId = row.rowId;
                 if (e.rowDetailId == 0) {
                   await insertPatternRowDetailInDb(e);
                 } else {
@@ -276,7 +275,9 @@ class _NewRowPageState extends State<NewRowPage> {
       row.details.last.repeatXTime += 1;
       details.removeLast();
     } else {
-      row.details.add(PatternRowDetail(rowId: -1, stitchId: stitch.id, stitch: stitch));
+      row.details.add(
+        PatternRowDetail(rowId: -1, stitchId: stitch.id, stitch: stitch),
+      );
     }
     details.add(_createStitchCountButton(stitch.abreviation));
     needScroll = true;
