@@ -84,7 +84,6 @@ class _NewRowPageState extends State<NewRowPage> {
           rowId: row.rowId,
           partId: row.partId,
           onPressed: (PatternRowDetail? detail) async {
-            print(detail);
             if (detail == null) return;
             if (row.details.isNotEmpty &&
                 row.details.last.hashCode == detail.hashCode) {

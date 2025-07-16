@@ -46,7 +46,7 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
     if (widget.subrow != null) {
       row = widget.subrow!;
       detailsString = "";
-      row.details.forEach((detail) {
+      for (PatternRowDetail detail in row.details) {
         if (detail.repeatXTime != 0) {
           if (detail.repeatXTime > 1) {
             detailsString += detail.repeatXTime.toString();
@@ -57,6 +57,7 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
           StitchCountButton(
             signed: false,
             count: detail.repeatXTime,
+            text: detail.stitch?.abreviation,
             increase: () {
               detail.repeatXTime += 1;
               row.stitchesPerRow += 1;
@@ -69,7 +70,7 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
             },
           ),
         );
-      });
+      }
       previewControler.text = detailsString;
     }
     super.initState();
@@ -151,7 +152,7 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
           if (widget.stitchId == null) {
             detail.stitchId = await insertStitchInDb(
               Stitch(
-                abreviation: detail.toString(),
+                abreviation: row.toString(),
                 isSequence: 1,
                 sequenceId: row.rowId,
               ),
@@ -160,7 +161,7 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
             await updateStitchInDb(
               Stitch(
                 id: widget.stitchId as int,
-                abreviation: detail.toString(),
+                abreviation: row.toString(),
                 isSequence: 1,
                 sequenceId: row.rowId,
               ),

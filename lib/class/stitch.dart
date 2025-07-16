@@ -131,10 +131,13 @@ Future<void> updateStitchInDb(Stitch stitch) async {
   }
 }
 
-Future<void> deleteStitchInDb(int id) async {
+Future<void> deleteStitchInDb(Stitch stitch) async {
   final db = (await DbService().database);
   if (db != null) {
-    await db.delete(_tableName, where: "id = ?", whereArgs: [id]);
+    if ((await getAllPatternRowDetailByStitch(stitch)).isNotEmpty) {
+      throw StitchAlreadyExist("Stitch already exist");
+    }
+    await db.delete(_tableName, where: "id = ?", whereArgs: [stitch.id]);
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }
@@ -197,11 +200,11 @@ Future<Stitch> getStitchInDbById(int id, [Database? db]) async {
 
 Future<Map<int, Stitch>> getAllStitchMappedById([Database? db]) async {
   List<Stitch> l = await getAllStitchesInDb(db);
-  Map<int, Stitch> _stitchesMap = {};
+  Map<int, Stitch> stitchesMap = {};
   for (Stitch s in l) {
-    _stitchesMap.addAll({s.id: s});
+    stitchesMap.addAll({s.id: s});
   }
-  return _stitchesMap;
+  return stitchesMap;
 }
 
 Future<void> removeAllStitch() async {

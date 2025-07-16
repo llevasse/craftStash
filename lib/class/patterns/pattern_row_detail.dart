@@ -151,6 +151,29 @@ Future<List<PatternRowDetail>> getAllPatternRowDetailByRowId(
   }
 }
 
+Future<List<PatternRowDetail>> getAllPatternRowDetailByStitch(
+  Stitch stitch, [
+  Database? db,
+]) async {
+  db ??= (await DbService().database);
+  if (db != null) {
+    final List<Map<String, Object?>> patternRowDetailMaps = await db.query(
+      _tableName,
+      where: "stitch_id = ?",
+      whereArgs: [stitch.id],
+    );
+    List<PatternRowDetail> l = [
+      for (Map<String, Object?> map in patternRowDetailMaps) _fromMap(map),
+    ];
+    for (PatternRowDetail detail in l) {
+      detail.stitch = stitch;
+    }
+    return l;
+  } else {
+    throw DatabaseDoesNotExistException("Could not get database");
+  }
+}
+
 Future<void> removeAllPatternRowDetail() async {
   final db = (await DbService().database);
   if (db != null) {
