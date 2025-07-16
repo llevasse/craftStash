@@ -30,7 +30,7 @@ class PatternRowDetail {
 
   @override
   String toString() {
-    if (stitch != null && repeatXTime < 1) {
+    if (stitch != null && repeatXTime >= 1) {
       if (repeatXTime == 1) return (stitch.toString());
       if (stitch!.isSequence == 1) {
         return ("${stitch.toString()}x${repeatXTime.toString()}");
@@ -39,6 +39,15 @@ class PatternRowDetail {
     }
 
     return "";
+  }
+
+  void printDetail() {
+    print("rowId : ${rowId.toString()}");
+    print("rowDetailId : ${rowDetailId.toString()}");
+    print("stitchId : ${stitchId.toString()}");
+    print("stitch : $stitch");
+    print("repeat : ${repeatXTime.toString()}");
+    print("color : ${color.toString()}");
   }
 
   // String toString() {

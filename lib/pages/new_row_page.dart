@@ -51,7 +51,7 @@ class _NewRowPageState extends State<NewRowPage> {
         details.add(
           StitchCountButton(
             signed: false,
-            text: detail.toString(),
+            text: detail.stitch?.abreviation,
             count: detail.repeatXTime,
             increase: () {
               detail.repeatXTime += 1;
@@ -273,12 +273,7 @@ class _NewRowPageState extends State<NewRowPage> {
       row.details.last.repeatXTime += 1;
       details.removeLast();
     } else {
-      row.details.add(
-        PatternRowDetail(
-          rowId: -1,
-          stitchId: stitch.id,
-        ),
-      );
+      row.details.add(PatternRowDetail(rowId: -1, stitchId: stitch.id));
     }
     details.add(_createStitchCountButton(stitch.abreviation));
     needScroll = true;
