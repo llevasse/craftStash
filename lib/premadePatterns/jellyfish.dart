@@ -22,7 +22,6 @@ Future<PatternPart> _createHeadPart(int patternId, Database? db) async {
     PatternRowDetail(
       rowId: r1.rowId,
       repeatXTime: 6,
-      stitch: "sc",
       stitchId: _stitchesMap["sc"]!.id,
     ),
     db,
@@ -39,7 +38,6 @@ Future<PatternPart> _createHeadPart(int patternId, Database? db) async {
     PatternRowDetail(
       rowId: r2.rowId,
       repeatXTime: 6,
-      stitch: "inc",
       stitchId: _stitchesMap["inc"]!.id,
     ),
     db,
@@ -55,9 +53,7 @@ Future<PatternPart> _createHeadPart(int patternId, Database? db) async {
   PatternRowDetail dr3 = PatternRowDetail(
     rowId: r3.rowId,
     repeatXTime: 6,
-    stitch: "(sc, inc)",
     stitchId: _stitchesMap["(sc, inc)"]!.id,
-    hasSubrow: 0,
   );
   dr3.rowDetailId = await insertPatternRowDetailInDb(dr3, db);
 
@@ -72,7 +68,6 @@ Future<PatternPart> _createHeadPart(int patternId, Database? db) async {
     PatternRowDetail(
       rowId: r4.rowId,
       repeatXTime: 18,
-      stitch: "sc",
       stitchId: _stitchesMap["sc"]!.id,
     ),
     db,
@@ -89,7 +84,6 @@ Future<PatternPart> _createHeadPart(int patternId, Database? db) async {
     PatternRowDetail(
       rowId: r6.rowId,
       repeatXTime: 9,
-      stitch: "dec",
       stitchId: _stitchesMap["dec"]!.id,
     ),
     db,
@@ -117,7 +111,6 @@ Future<PatternPart> _createShortTentacles(int patternId, Database? db) async {
     PatternRowDetail(
       rowId: r1.rowId,
       repeatXTime: 8,
-      stitch: "ch",
       stitchId: _stitchesMap["ch"]!.id,
     ),
     db,
@@ -144,7 +137,6 @@ Future<PatternPart> _createLongTentacles(int patternId, Database? db) async {
     PatternRowDetail(
       rowId: r1.rowId,
       repeatXTime: 12,
-      stitch: "ch",
       stitchId: _stitchesMap["ch"]!.id,
     ),
     db,

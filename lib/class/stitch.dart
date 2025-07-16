@@ -12,14 +12,14 @@ class Stitch {
     this.name,
     this.description,
     this.isSequence = 0,
-    this.rowId,
+    this.sequenceId,
   });
   int id;
   String abreviation;
   String? name;
   String? description;
   int isSequence;
-  int? rowId;
+  int? sequenceId;
   PatternRow? row;
 
   Map<String, dynamic> toMap() {
@@ -28,7 +28,7 @@ class Stitch {
       "name": name,
       "description": description,
       "is_sequence": isSequence,
-      "row_id": rowId,
+      "sequence_id": sequenceId,
       "hash": hashCode,
     };
   }
@@ -40,6 +40,16 @@ class Stitch {
 
   @override
   int get hashCode => Object.hash(abreviation, name, description);
+}
+
+Stitch _fromMap(Map<String, Object?> map) {
+  return Stitch(
+    abreviation: map["abreviation"] as String,
+    name: map["name"] as String?,
+    description: map["description"] as String?,
+    isSequence: map["is_sequence"] as int,
+    sequenceId: map["sequence_id"] as int?,
+  );
 }
 
 Future<void> insertDefaultStitchesInDb([Database? db]) async {
@@ -61,19 +71,10 @@ Future<void> insertDefaultStitchesInDb([Database? db]) async {
   PatternRow row = PatternRow(startRow: 0, numberOfRows: 0, stitchesPerRow: 3);
   row.rowId = await insertPatternRowInDb(row, db);
   row.details = [
-    PatternRowDetail(
-      rowId: row.rowId,
-      stitch: stitches[2].abreviation,
-      stitchId: stitches[2].id,
-    ),
-    PatternRowDetail(
-      rowId: row.rowId,
-      stitch: stitches[6].abreviation,
-      stitchId: stitches[6].id,
-    ),
+    PatternRowDetail(rowId: row.rowId, stitchId: stitches[2].id),
+    PatternRowDetail(rowId: row.rowId, stitchId: stitches[6].id),
   ];
   for (PatternRowDetail e in row.details) {
-    print(e.stitchId);
     if (e.repeatXTime != 0) {
       e.rowId = row.rowId;
       await insertPatternRowDetailInDb(e, db);
@@ -85,7 +86,7 @@ Future<void> insertDefaultStitchesInDb([Database? db]) async {
       name: null,
       description: null,
       isSequence: 1,
-      rowId: row.rowId,
+      sequenceId: row.rowId,
     ),
     db,
   );
@@ -150,7 +151,7 @@ Future<List<Stitch>> getAllStitchesInDb([Database? db]) async {
           'name': name as String?,
           'description': description as String?,
           "is_sequence": isSequence as int,
-          "row_id": rowId as int?,
+          "sequence_id": sequenceId as int?,
         }
         in stitchMaps) {
       l.add(
@@ -160,17 +161,47 @@ Future<List<Stitch>> getAllStitchesInDb([Database? db]) async {
           name: name,
           description: description,
           isSequence: isSequence,
-          rowId: rowId,
+          sequenceId: sequenceId,
         ),
       );
-      if (isSequence != 0 && rowId != null) {
-        l.last.row = await getPatternRowByRowId(rowId, db);
+      if (isSequence != 0 && sequenceId != null) {
+        l.last.row = await getPatternRowByRowId(sequenceId, db);
       }
     }
     return l;
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }
+}
+
+Future<Stitch> getStitchInDbById(int id, [Database? db]) async {
+  if (db != null) {
+    final List<Map<String, Object?>> stitchMaps = await db.query(
+      _tableName,
+      where: "id = ?",
+      whereArgs: [id],
+      limit: 1,
+    );
+    if (stitchMaps.isEmpty) {
+      throw DatabaseNoElementsMeetConditionException("id = $id", _tableName);
+    }
+    Stitch s = _fromMap(stitchMaps.first);
+    if (s.isSequence != 0 && s.sequenceId != null) {
+      s.row = await getPatternRowByRowId(s.sequenceId!, db);
+    }
+    return s;
+  } else {
+    throw DatabaseDoesNotExistException("Could not get database");
+  }
+}
+
+Future<Map<int, Stitch>> getAllStitchMappedById([Database? db]) async {
+  List<Stitch> l = await getAllStitchesInDb(db);
+  Map<int, Stitch> _stitchesMap = {};
+  for (Stitch s in l) {
+    _stitchesMap.addAll({s.id: s});
+  }
+  return _stitchesMap;
 }
 
 Future<void> removeAllStitch() async {

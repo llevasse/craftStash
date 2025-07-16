@@ -78,7 +78,7 @@ class StitchListState extends State<StitchList> {
         NewSubrowButton(
           onPressed: (detail) async {
             if (detail != null) {
-              stitches.add(Stitch(abreviation: detail.toStringWithoutNumber()));
+              stitches.add(Stitch(abreviation: detail.toString()));
             }
             init();
           },

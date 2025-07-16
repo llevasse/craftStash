@@ -56,7 +56,6 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
         details.add(
           StitchCountButton(
             signed: false,
-            text: detail.stitch,
             count: detail.repeatXTime,
             increase: () {
               detail.repeatXTime += 1;
@@ -135,13 +134,7 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
       row.details.last.repeatXTime += 1;
       details.removeLast();
     } else {
-      row.details.add(
-        PatternRowDetail(
-          rowId: -1,
-          stitch: stitch.abreviation,
-          stitchId: stitch.id,
-        ),
-      );
+      row.details.add(PatternRowDetail(rowId: -1, stitchId: stitch.id));
     }
     details.add(_createStitchCountButton(stitch.abreviation));
     needScroll = true;
@@ -153,28 +146,23 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
       onPressed: () async {
         if (_formKey.currentState!.validate()) {
           _formKey.currentState!.save();
-          PatternRowDetail detail = PatternRowDetail(
-            hasSubrow: 1,
-            rowId: 0,
-            stitchId: 0,
-          );
-          detail.subRow = row;
+          PatternRowDetail detail = PatternRowDetail(rowId: 0, stitchId: 0);
 
           if (widget.stitchId == null) {
             detail.stitchId = await insertStitchInDb(
               Stitch(
-                abreviation: detail.toStringWithoutNumber(),
+                abreviation: detail.toString(),
                 isSequence: 1,
-                rowId: row.rowId,
+                sequenceId: row.rowId,
               ),
             );
           } else {
             await updateStitchInDb(
               Stitch(
                 id: widget.stitchId as int,
-                abreviation: detail.toStringWithoutNumber(),
+                abreviation: detail.toString(),
                 isSequence: 1,
-                rowId: row.rowId,
+                sequenceId: row.rowId,
               ),
             );
           }
@@ -182,8 +170,6 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
           if (widget.partId != null && widget.rowId != null) {
             row.partId = widget.partId!;
             detail.rowId = widget.rowId!;
-            row.partDetailId = await insertPatternRowDetailInDb(detail);
-            detail.rowDetailId = row.partDetailId!;
           }
           if (widget.subrow == null) {
             row.rowId = await insertPatternRowInDb(row);
