@@ -1,4 +1,5 @@
 import 'package:craft_stash/class/patterns/pattern_row.dart';
+import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -33,6 +34,11 @@ class Stitch {
   }
 
   @override
+  String toString() {
+    return abreviation;
+  }
+
+  @override
   int get hashCode => Object.hash(abreviation, name, description);
 }
 
@@ -48,25 +54,63 @@ Future<void> insertDefaultStitchesInDb([Database? db]) async {
     Stitch(abreviation: "dec", name: "decrease", description: null),
     Stitch(abreviation: "sk", name: "skip", description: null),
   ];
-  stitches.forEach((stitch) async {
-    await insertStitchInDb(stitch, db);
-  });
+  for (Stitch s in stitches) {
+    s.id = await insertStitchInDb(s, db);
+  }
+
+  PatternRow row = PatternRow(startRow: 0, numberOfRows: 0, stitchesPerRow: 3);
+  row.rowId = await insertPatternRowInDb(row, db);
+  row.details = [
+    PatternRowDetail(
+      rowId: row.rowId,
+      stitch: stitches[2].abreviation,
+      stitchId: stitches[2].id,
+    ),
+    PatternRowDetail(
+      rowId: row.rowId,
+      stitch: stitches[6].abreviation,
+      stitchId: stitches[6].id,
+    ),
+  ];
+  for (PatternRowDetail e in row.details) {
+    print(e.stitchId);
+    if (e.repeatXTime != 0) {
+      e.rowId = row.rowId;
+      await insertPatternRowDetailInDb(e, db);
+    }
+  }
+  await insertStitchInDb(
+    Stitch(
+      abreviation: "(sc, inc)",
+      name: null,
+      description: null,
+      isSequence: 1,
+      rowId: row.rowId,
+    ),
+    db,
+  );
+
+  print("INSERTED DEFAULT STITCHES");
 }
 
 Future<int> insertStitchInDb(Stitch stitch, [Database? db]) async {
   db ??= (await DbService().database);
   if (db != null) {
-    return await db.insert(
-      _tableName,
-      stitch.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
     final list = await db.query(
       _tableName,
       where: "hash = ?",
       whereArgs: [stitch.hashCode],
     );
-    if (list.isEmpty) {}
+    if (list.isNotEmpty) {
+      throw StitchAlreadyExist(
+        "Stitch with hash ${stitch.hashCode} already exist",
+      );
+    }
+    return await db.insert(
+      _tableName,
+      stitch.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }
@@ -120,7 +164,7 @@ Future<List<Stitch>> getAllStitchesInDb([Database? db]) async {
         ),
       );
       if (isSequence != 0 && rowId != null) {
-        l.last.row = await getPatternRowByRowId(rowId);
+        l.last.row = await getPatternRowByRowId(rowId, db);
       }
     }
     return l;
@@ -136,4 +180,9 @@ Future<void> removeAllStitch() async {
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }
+}
+
+class StitchAlreadyExist implements Exception {
+  StitchAlreadyExist(this.cause);
+  String cause;
 }

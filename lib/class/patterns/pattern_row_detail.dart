@@ -129,8 +129,8 @@ Future<List<PatternRowDetail>> getAllPatternRowDetail() async {
   }
 }
 
-Future<List<PatternRowDetail>> getAllPatternRowDetailByRowId(int id) async {
-  final db = (await DbService().database);
+Future<List<PatternRowDetail>> getAllPatternRowDetailByRowId(int id, [Database? db]) async {
+  db ??= (await DbService().database);
   if (db != null) {
     final List<Map<String, Object?>> patternRowDetailMaps = await db.query(
       _tableName,
@@ -142,7 +142,7 @@ Future<List<PatternRowDetail>> getAllPatternRowDetailByRowId(int id) async {
     ];
     for (PatternRowDetail detail in l) {
       if (detail.hasSubrow == 1) {
-        detail.subRow = await getPatternRowByDetailId(detail.rowDetailId);
+        detail.subRow = await getPatternRowByDetailId(detail.rowDetailId, db);
       }
     }
     return l;

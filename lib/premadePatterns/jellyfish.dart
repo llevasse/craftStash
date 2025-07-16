@@ -45,49 +45,21 @@ Future<PatternPart> _createHeadPart(int patternId, Database? db) async {
     db,
   );
 
-  // PatternRow r3 = PatternRow(
-  //   partId: head.partId,
-  //   startRow: 3,
-  //   numberOfRows: 1,
-  //   stitchesPerRow: 18,
-  // );
-  // r3.rowId = await insertPatternRowInDb(r3, db);
-  // PatternRowDetail dr3 = PatternRowDetail(
-  //   rowId: r3.rowId,
-  //   repeatXTime: 3,
-  //   stitch: "(1sc, inc)",
-  //   stitchId: 0,
-  //   hasSubrow: 1,
-  // );
-  // dr3.rowDetailId = await insertPatternRowDetailInDb(dr3, db);
-  // PatternRow r3Subrow = PatternRow(
-  //   partId: head.partId,
-  //   startRow: 0,
-  //   numberOfRows: 0,
-  //   stitchesPerRow: 3,
-  //   partDetailId: dr3.rowDetailId,
-  // );
-  // r3Subrow.rowId = await insertPatternRowInDb(r3Subrow, db);
-  // await insertPatternRowDetailInDb(
-  //   PatternRowDetail(
-  //     rowId: r3Subrow.rowId,
-  //     repeatXTime: 1,
-  //     stitch: "sc",
-  //     stitchId: 0,
-  //     hasSubrow: 0,
-  //   ),
-  //   db,
-  // );
-  // await insertPatternRowDetailInDb(
-  //   PatternRowDetail(
-  //     rowId: r3Subrow.rowId,
-  //     repeatXTime: 1,
-  //     stitch: "inc",
-  //     stitchId: 0,
-  //     hasSubrow: 0,
-  //   ),
-  //   db,
-  // );
+  PatternRow r3 = PatternRow(
+    partId: head.partId,
+    startRow: 3,
+    numberOfRows: 1,
+    stitchesPerRow: 18,
+  );
+  r3.rowId = await insertPatternRowInDb(r3, db);
+  PatternRowDetail dr3 = PatternRowDetail(
+    rowId: r3.rowId,
+    repeatXTime: 6,
+    stitch: "(sc, inc)",
+    stitchId: _stitchesMap["(sc, inc)"]!.id,
+    hasSubrow: 0,
+  );
+  dr3.rowDetailId = await insertPatternRowDetailInDb(dr3, db);
 
   PatternRow r4 = PatternRow(
     partId: head.partId,
@@ -181,13 +153,13 @@ Future<PatternPart> _createLongTentacles(int patternId, Database? db) async {
 }
 
 Future<void> insertJellyFishPattern([Database? db]) async {
-  print("insert jelly");
+  // print("insert jelly");
   List<Stitch> l = await getAllStitchesInDb(db);
-  print(l);
+  // print(l);
   for (Stitch s in l) {
     _stitchesMap.addAll({s.abreviation: s});
   }
-  print(_stitchesMap);
+  // print(_stitchesMap);
   craft.Pattern pattern = craft.Pattern(name: "Jellyfish");
   pattern.patternId = await craft.insertPatternInDb(pattern, db);
   pattern.parts.add(await _createHeadPart(pattern.patternId, db));

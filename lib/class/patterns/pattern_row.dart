@@ -184,8 +184,8 @@ Future<List<PatternRow>> getAllPatternRowByPartId(int id) async {
   }
 }
 
-Future<PatternRow> getPatternRowByDetailId(int id) async {
-  final db = (await DbService().database);
+Future<PatternRow> getPatternRowByDetailId(int id, [Database? db]) async {
+  db ??= (await DbService().database);
   if (db != null) {
     final List<Map<String, Object?>> patternRowMaps = await db.query(
       _tableName,
@@ -205,7 +205,7 @@ Future<PatternRow> getPatternRowByDetailId(int id) async {
         inSameStitch: map['in_same_stitch'] as int,
         stitchesPerRow: map['stitches_count_per_row'] as int,
       );
-      tmp.details = await getAllPatternRowDetailByRowId(tmp.rowId);
+      tmp.details = await getAllPatternRowDetailByRowId(tmp.rowId, db);
       l.add(tmp);
     }
     return (l[0]);
@@ -214,8 +214,8 @@ Future<PatternRow> getPatternRowByDetailId(int id) async {
   }
 }
 
-Future<PatternRow> getPatternRowByRowId(int id) async {
-  final db = (await DbService().database);
+Future<PatternRow> getPatternRowByRowId(int id, [Database? db]) async {
+  db ??= (await DbService().database);
   if (db != null) {
     final List<Map<String, Object?>> patternRowMaps = await db.query(
       _tableName,
@@ -234,7 +234,7 @@ Future<PatternRow> getPatternRowByRowId(int id) async {
         inSameStitch: map['in_same_stitch'] as int,
         stitchesPerRow: map['stitches_count_per_row'] as int,
       );
-      tmp.details = await getAllPatternRowDetailByRowId(tmp.rowId);
+      tmp.details = await getAllPatternRowDetailByRowId(tmp.rowId, db);
       l.add(tmp);
     }
     return (l[0]);
