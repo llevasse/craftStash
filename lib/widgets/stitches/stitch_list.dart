@@ -85,7 +85,7 @@ class StitchListState extends State<StitchList> {
         ),
       );
     }
-    if (widget.newSubrow) {
+    if (widget.newStitch) {
       list.add(
         NewStitchButton(
           onPressed: (stitch) async {

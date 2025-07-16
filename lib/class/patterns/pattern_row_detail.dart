@@ -38,7 +38,6 @@ class PatternRowDetail {
       }
       return ("${repeatXTime.toString()}${stitch.toString()}");
     }
-
     return "";
   }
 
@@ -50,13 +49,6 @@ class PatternRowDetail {
     print("repeat : ${repeatXTime.toString()}");
     print("color : ${color.toString()}");
   }
-
-  // String toString() {
-  //   if (hasSubrow == 0) {
-  //     return stitch;
-  //   }
-  //   return subRow.toString();
-  // }
 
   @override
   int get hashCode => Object.hash(rowId, stitch.hashCode, color);
