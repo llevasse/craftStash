@@ -4,10 +4,12 @@ import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/widgets/patternButtons/stitch_count_button.dart';
 import 'package:craft_stash/widgets/stitches/stitch_list.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 /// if rowId or partId are null, new subrow will be created but not added to any pattern or row
 class NewSubRowPage extends StatefulWidget {
   final int? stitchId;
+  final Stitch? stitch;
   final PatternRow? subrow;
   final int? rowId;
   final int? partId;
@@ -17,6 +19,7 @@ class NewSubRowPage extends StatefulWidget {
     this.rowId,
     this.partId,
     this.stitchId,
+    this.stitch,
   });
 
   @override
@@ -135,7 +138,9 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
       row.details.last.repeatXTime += 1;
       details.removeLast();
     } else {
-      row.details.add(PatternRowDetail(rowId: -1, stitchId: stitch.id));
+      row.details.add(
+        PatternRowDetail(rowId: -1, stitchId: stitch.id, stitch: stitch),
+      );
     }
     details.add(_createStitchCountButton(stitch.abreviation));
     needScroll = true;
@@ -149,25 +154,6 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
           _formKey.currentState!.save();
           PatternRowDetail detail = PatternRowDetail(rowId: 0, stitchId: 0);
 
-          if (widget.stitchId == null) {
-            detail.stitchId = await insertStitchInDb(
-              Stitch(
-                abreviation: row.toString(),
-                isSequence: 1,
-                sequenceId: row.rowId,
-              ),
-            );
-          } else {
-            await updateStitchInDb(
-              Stitch(
-                id: widget.stitchId as int,
-                abreviation: row.toString(),
-                isSequence: 1,
-                sequenceId: row.rowId,
-              ),
-            );
-          }
-
           if (widget.partId != null && widget.rowId != null) {
             row.partId = widget.partId!;
             detail.rowId = widget.rowId!;
@@ -180,12 +166,25 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
                 await insertPatternRowDetailInDb(e);
               }
             }
+            detail.stitch = Stitch(
+              abreviation: row.toString(),
+              isSequence: 1,
+              sequenceId: row.rowId,
+            );
+            detail.stitchId = await insertStitchInDb(detail.stitch!);
           } else {
             await updatePatternRowInDb(row);
-            int rowId = row.rowId;
+            await updateStitchInDb(
+              Stitch(
+                id: widget.stitchId as int,
+                abreviation: row.toString(),
+                isSequence: 1,
+                sequenceId: row.rowId,
+              ),
+            );
             for (PatternRowDetail e in row.details) {
               if (e.repeatXTime != 0) {
-                e.rowId = rowId;
+                e.rowId = row.rowId;
                 if (e.rowDetailId == 0) {
                   await insertPatternRowDetailInDb(e);
                 } else {
@@ -206,6 +205,17 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
     );
   }
 
+  Widget _deleteButton() {
+    return IconButton(
+      onPressed: () async {
+        await deleteStitchInDb(widget.stitch!);
+        await deletePatternRowInDb(widget.stitch!.sequenceId!);
+        Navigator.pop(context);
+      },
+      icon: Icon(LucideIcons.trash),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
@@ -221,9 +231,14 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
     }
     return Scaffold(
       appBar: AppBar(
-        title: Text("Create sequence"),
+        title: Text(
+          widget.stitch == null ? "Create sequence" : "Edit sequence",
+        ),
         backgroundColor: theme.colorScheme.primary,
-        actions: [_saveButton()],
+        actions: [
+          ?widget.stitch == null ? null : _deleteButton(),
+          _saveButton(),
+        ],
       ),
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 10),

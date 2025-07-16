@@ -20,7 +20,7 @@ class Stitch {
   String? description;
   int isSequence;
   int? sequenceId;
-  PatternRow? row;
+  PatternRow? row;  
 
   Map<String, dynamic> toMap() {
     return {
