@@ -14,6 +14,7 @@ class PatternRowDetail {
   PatternRowDetail({
     required this.rowId,
     required this.stitchId,
+    this.stitch,
     this.rowDetailId = 0,
     this.repeatXTime = 1,
     this.color = 0xFFFFC107,

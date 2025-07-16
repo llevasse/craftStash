@@ -120,15 +120,18 @@ class _NewRowPageState extends State<NewRowPage> {
   @override
   void setState(VoidCallback fn) {
     detailsString = "";
-    row.details.forEach((detail) {
+    for (PatternRowDetail detail in row.details) {
+      // detail.printDetail();
+      // print("\r\n");
       if (detail.repeatXTime != 0) {
         detailsString += "${detail.toString()}, ";
       }
-    });
+    }
     previewControler.text = detailsString;
     stitchDetailsScrollController.jumpTo(
       stitchDetailsScrollController.position.maxScrollExtent,
     );
+    // print("\r\n");
     super.setState(fn);
   }
 
@@ -269,11 +272,11 @@ class _NewRowPageState extends State<NewRowPage> {
 
   Future<Stitch?> _addStitch(Stitch stitch) async {
     if (row.details.isNotEmpty &&
-        row.details.last.stitch == stitch.abreviation) {
+        row.details.last.stitch?.abreviation == stitch.abreviation) {
       row.details.last.repeatXTime += 1;
       details.removeLast();
     } else {
-      row.details.add(PatternRowDetail(rowId: -1, stitchId: stitch.id));
+      row.details.add(PatternRowDetail(rowId: -1, stitchId: stitch.id, stitch: stitch));
     }
     details.add(_createStitchCountButton(stitch.abreviation));
     needScroll = true;

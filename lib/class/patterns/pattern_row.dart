@@ -63,8 +63,8 @@ class PatternRow {
     if (details.isNotEmpty) {
       int lastId = details.last.rowDetailId;
       for (PatternRowDetail detail in details) {
-        detail.printDetail();
-        print("\n\r");
+        // detail.printDetail();
+        // print("\n\r");
         if (detail.rowDetailId != lastId) {
           tmp += "${detail.toString()}, ";
         } else {
