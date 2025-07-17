@@ -283,6 +283,7 @@ class _NewRowPageState extends State<NewRowPage> {
     details.add(_createStitchCountButton(stitch.abreviation));
     needScroll = true;
     setState(() {});
+    return null;
   }
 
   @override

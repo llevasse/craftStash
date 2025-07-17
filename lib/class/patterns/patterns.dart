@@ -81,6 +81,21 @@ Future<List<Pattern>> getAllPattern() async {
   }
 }
 
+Future<List<Pattern>> getAllPatternWithoutParts() async {
+  final db = (await DbService().database);
+  if (db != null) {
+    final List<Map<String, Object?>> patternMaps = await db.query('pattern');
+    List<Pattern> p = [
+      for (final {'pattern_id': patternId as int, 'name': name as String}
+          in patternMaps)
+        Pattern(patternId: patternId, name: name),
+    ];
+    return (p);
+  } else {
+    throw DatabaseDoesNotExistException("Could not get database");
+  }
+}
+
 Future<Pattern> getPatternById(int id) async {
   final db = (await DbService().database);
   if (db != null) {

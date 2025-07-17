@@ -5,7 +5,6 @@ import 'package:craft_stash/class/yarns/material.dart';
 import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:craft_stash/class/yarns/yarn_collection.dart';
 import 'package:craft_stash/premadePatterns/jellyfish.dart';
-import 'package:craft_stash/services/database_versioning.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 

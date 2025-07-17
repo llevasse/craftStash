@@ -87,14 +87,14 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
   @override
   void setState(VoidCallback fn) {
     detailsString = "";
-    row.details.forEach((detail) {
+    for (var detail in row.details) {
       if (detail.repeatXTime != 0) {
         if (detail.repeatXTime > 1) {
           detailsString += detail.repeatXTime.toString();
         }
         detailsString += "${detail.stitch}, ";
       }
-    });
+    }
     previewControler.text = detailsString;
     stitchDetailsScrollController.jumpTo(
       stitchDetailsScrollController.position.maxScrollExtent,
@@ -145,6 +145,7 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
     details.add(_createStitchCountButton(stitch.abreviation));
     needScroll = true;
     setState(() {});
+    return null;
   }
 
   Widget _saveButton() {
