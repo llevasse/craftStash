@@ -104,6 +104,8 @@ class _NewPatternPageState extends State<NewPatternPage> {
 
   Future<void> updateListView() async {
     List<Widget> tmp = List.empty(growable: true);
+
+    pattern.parts = await getAllPatternPartsByPatternId(pattern.patternId);
     for (PatternPart part in pattern.parts) {
       tmp.add(
         ListTile(

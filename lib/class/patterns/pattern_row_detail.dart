@@ -1,4 +1,4 @@
-import 'package:craft_stash/class/patterns/pattern_row.dart';
+import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -7,48 +7,66 @@ final String _tableName = "pattern_row_detail";
 class PatternRowDetail {
   int rowId;
   int rowDetailId;
-  String stitch;
+  int stitchId;
+  Stitch? stitch;
   int repeatXTime;
   int color;
-  int hasSubrow;
-  PatternRow? subRow;
   PatternRowDetail({
     required this.rowId,
+    required this.stitchId,
+    this.stitch,
     this.rowDetailId = 0,
     this.repeatXTime = 1,
-    this.stitch = "empty",
     this.color = 0xFFFFC107,
-    this.hasSubrow = 0,
   });
 
   Map<String, dynamic> toMap() {
     return {
       'row_id': rowId,
-      'stitch': stitch,
+      'stitch_id': stitchId,
       'repeat_x_time': repeatXTime,
       'color': color,
-      'has_subrow': hasSubrow,
     };
   }
 
   @override
   String toString() {
-    if (hasSubrow == 0) {
-      return "${repeatXTime == 1 ? "" : repeatXTime.toString()}$stitch";
+    if (stitch != null && repeatXTime >= 1) {
+      if (repeatXTime == 1) return (stitch.toString());
+      if (stitch!.isSequence == 1) {
+        return ("${stitch.toString()}x${repeatXTime.toString()}");
+      }
+      return ("${repeatXTime.toString()}${stitch.toString()}");
     }
-    return "${subRow.toString()} ${repeatXTime == 1 ? "" : "x${repeatXTime.toString()}"}";
+    return "";
   }
 
-  String toStringWithoutNumber() {
-    if (hasSubrow == 0) {
-      return stitch;
+  void printDetail([int tab = 0]) {
+    String s = "";
+    for (int i = 0; i < tab; i++) {
+      s += "\t";
     }
-    return subRow.toString();
+    print("${s}rowId : ${rowId.toString()}");
+    print("${s}rowDetailId : ${rowDetailId.toString()}");
+    print("${s}stitchId : ${stitchId.toString()}");
+    stitch?.printDetails(tab + 1);
+    print("${s}repeat : ${repeatXTime.toString()}");
+    print("${s}color : ${color.toString()}");
+    print("\r\n");
   }
 
   @override
-  int get hashCode =>
-      Object.hash(rowId, stitch, color, hasSubrow, subRow?.hashCode);
+  int get hashCode => Object.hash(rowId, stitch.hashCode, color);
+}
+
+PatternRowDetail _fromMap(Map<String, dynamic> map) {
+  return PatternRowDetail(
+    rowDetailId: map['row_detail_id'] as int,
+    rowId: map['row_id'] as int,
+    stitchId: map['stitch_id'] as int,
+    repeatXTime: map['repeat_x_time'] as int,
+    color: map['color'] as int,
+  );
 }
 
 Future<int> insertPatternRowDetailInDb(
@@ -108,31 +126,18 @@ Future<List<PatternRowDetail>> getAllPatternRowDetail() async {
       _tableName,
     );
     return [
-      for (final {
-            'row_detail_id': rowDetailId as int,
-            'row_id': rowId as int,
-            'stitch': stitch as String,
-            'repeat_x_time': repeatXTime as int,
-            'color': color as int,
-            'has_subrow': hasSubrow as int,
-          }
-          in patternRowDetailMaps)
-        PatternRowDetail(
-          rowDetailId: rowDetailId,
-          rowId: rowId,
-          stitch: stitch,
-          repeatXTime: repeatXTime,
-          color: color,
-          hasSubrow: hasSubrow,
-        ),
+      for (Map<String, Object?> map in patternRowDetailMaps) _fromMap(map),
     ];
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }
 }
 
-Future<List<PatternRowDetail>> getAllPatternRowDetailByRowId(int id) async {
-  final db = (await DbService().database);
+Future<List<PatternRowDetail>> getAllPatternRowDetailByRowId(
+  int id, [
+  Database? db,
+]) async {
+  db ??= (await DbService().database);
   if (db != null) {
     final List<Map<String, Object?>> patternRowDetailMaps = await db.query(
       _tableName,
@@ -140,28 +145,33 @@ Future<List<PatternRowDetail>> getAllPatternRowDetailByRowId(int id) async {
       whereArgs: [id],
     );
     List<PatternRowDetail> l = [
-      for (final {
-            'row_detail_id': rowDetailId as int,
-            'row_id': rowId as int,
-            'stitch': stitch as String,
-            'repeat_x_time': repeatXTime as int,
-            'color': color as int,
-            'has_subrow': hasSubrow as int,
-          }
-          in patternRowDetailMaps)
-        PatternRowDetail(
-          rowDetailId: rowDetailId,
-          rowId: rowId,
-          stitch: stitch,
-          repeatXTime: repeatXTime,
-          color: color,
-          hasSubrow: hasSubrow,
-        ),
+      for (Map<String, Object?> map in patternRowDetailMaps) _fromMap(map),
     ];
     for (PatternRowDetail detail in l) {
-      if (detail.hasSubrow == 1) {
-        detail.subRow = await getPatternRowByDetailId(detail.rowDetailId);
-      }
+      detail.stitch = await getStitchInDbById(detail.stitchId, db);
+    }
+    return l;
+  } else {
+    throw DatabaseDoesNotExistException("Could not get database");
+  }
+}
+
+Future<List<PatternRowDetail>> getAllPatternRowDetailByStitch(
+  Stitch stitch, [
+  Database? db,
+]) async {
+  db ??= (await DbService().database);
+  if (db != null) {
+    final List<Map<String, Object?>> patternRowDetailMaps = await db.query(
+      _tableName,
+      where: "stitch_id = ?",
+      whereArgs: [stitch.id],
+    );
+    List<PatternRowDetail> l = [
+      for (Map<String, Object?> map in patternRowDetailMaps) _fromMap(map),
+    ];
+    for (PatternRowDetail detail in l) {
+      detail.stitch = stitch;
     }
     return l;
   } else {

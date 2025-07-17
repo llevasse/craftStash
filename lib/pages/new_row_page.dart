@@ -51,7 +51,7 @@ class _NewRowPageState extends State<NewRowPage> {
         details.add(
           StitchCountButton(
             signed: false,
-            text: detail.toStringWithoutNumber(),
+            text: detail.stitch?.abreviation,
             count: detail.repeatXTime,
             increase: () {
               detail.repeatXTime += 1;
@@ -78,10 +78,10 @@ class _NewRowPageState extends State<NewRowPage> {
   StitchList _createStitchList() {
     StitchList s = StitchList(
       onStitchPressed: _addStitch,
+      onSequencePressed: _addStitch,
       customActions: [
         NewSubrowButton(
           rowId: row.rowId,
-          partId: row.partId,
           onPressed: (PatternRowDetail? detail) async {
             if (detail == null) return;
             if (row.details.isNotEmpty &&
@@ -92,7 +92,7 @@ class _NewRowPageState extends State<NewRowPage> {
             } else {
               row.details.add(detail);
             }
-            details.add(_createStitchCountButton(detail.subRow.toString()));
+            details.add(_createStitchCountButton(detail.toString()));
             await getAllStitches();
             stitchListInitFunction();
           },
@@ -120,15 +120,18 @@ class _NewRowPageState extends State<NewRowPage> {
   @override
   void setState(VoidCallback fn) {
     detailsString = "";
-    row.details.forEach((detail) {
+    for (PatternRowDetail detail in row.details) {
+      // detail.printDetail();
+      // print("\r\n");
       if (detail.repeatXTime != 0) {
         detailsString += "${detail.toString()}, ";
       }
-    });
+    }
     previewControler.text = detailsString;
     stitchDetailsScrollController.jumpTo(
       stitchDetailsScrollController.position.maxScrollExtent,
     );
+    // print("\r\n");
     super.setState(fn);
   }
 
@@ -243,10 +246,9 @@ class _NewRowPageState extends State<NewRowPage> {
             }
           } else {
             await updatePatternRowInDb(row);
-            int rowId = row.rowId;
             for (PatternRowDetail e in row.details) {
               if (e.repeatXTime != 0) {
-                e.rowId = rowId;
+                e.rowId = row.rowId;
                 if (e.rowDetailId == 0) {
                   await insertPatternRowDetailInDb(e);
                 } else {
@@ -269,15 +271,18 @@ class _NewRowPageState extends State<NewRowPage> {
 
   Future<Stitch?> _addStitch(Stitch stitch) async {
     if (row.details.isNotEmpty &&
-        row.details.last.stitch == stitch.abreviation) {
+        row.details.last.stitch?.abreviation == stitch.abreviation) {
       row.details.last.repeatXTime += 1;
       details.removeLast();
     } else {
-      row.details.add(PatternRowDetail(rowId: -1, stitch: stitch.abreviation));
+      row.details.add(
+        PatternRowDetail(rowId: -1, stitchId: stitch.id, stitch: stitch),
+      );
     }
     details.add(_createStitchCountButton(stitch.abreviation));
     needScroll = true;
     setState(() {});
+    return null;
   }
 
   @override

@@ -5,7 +5,6 @@ import 'package:craft_stash/class/yarns/material.dart';
 import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:craft_stash/class/yarns/yarn_collection.dart';
 import 'package:craft_stash/premadePatterns/jellyfish.dart';
-import 'package:craft_stash/services/database_versioning.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -32,7 +31,7 @@ class DbService {
       path,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
-      version: 9,
+      version: 1,
       onConfigure: (db) async => {await db.execute('PRAGMA foreign_keys = ON')},
     );
   }
@@ -60,13 +59,13 @@ class DbService {
       '''CREATE TABLE IF NOT EXISTS pattern_part(part_id INTEGER PRIMARY KEY, name TEXT, numbers_to_make INT, pattern_id INT, FOREIGN KEY (pattern_id) REFERENCES pattern(pattern_id) ON DELETE CASCADE)''',
     );
     await db.execute(
-      '''CREATE TABLE IF NOT EXISTS pattern_row(row_id INTEGER PRIMARY KEY, part_id INT, part_detail_id INT, start_row INT, number_of_rows INT, stitches_count_per_row INT, in_same_stitch INT, FOREIGN KEY (part_id) REFERENCES pattern_part(part_id) ON DELETE CASCADE, FOREIGN KEY (part_detail_id) REFERENCES pattern_row_detail(row_detail_id) ON DELETE CASCADE)''',
+      '''CREATE TABLE IF NOT EXISTS pattern_row(row_id INTEGER PRIMARY KEY, part_id INT, start_row INT, number_of_rows INT, stitches_count_per_row INT, in_same_stitch INT, FOREIGN KEY (part_id) REFERENCES pattern_part(part_id) ON DELETE CASCADE)''',
     );
     await db.execute(
-      '''CREATE TABLE IF NOT EXISTS pattern_row_detail(row_detail_id INTEGER PRIMARY KEY, row_id INT, stitch TEXT, repeat_x_time INT, color INT, has_subrow INT, FOREIGN KEY (row_id) REFERENCES pattern_row(row_id) ON DELETE CASCADE)''',
+      '''CREATE TABLE IF NOT EXISTS stitch(id INTEGER PRIMARY KEY, sequence_id INT, abreviation TEXT, name TEXT, description TEXT, is_sequence INT, hash INT, FOREIGN KEY (sequence_id) REFERENCES pattern_row(row_id) ON DELETE CASCADE)''',
     );
     await db.execute(
-      '''CREATE TABLE IF NOT EXISTS stitch(id INTEGER PRIMARY KEY, row_id INT, abreviation TEXT, name TEXT, description TEXT, is_sequence INT, hash INT, FOREIGN KEY (row_id) REFERENCES pattern_row(row_id) ON DELETE CASCADE)''',
+      '''CREATE TABLE IF NOT EXISTS pattern_row_detail(row_detail_id INTEGER PRIMARY KEY, row_id INT, stitch_id INT, repeat_x_time INT, color INT, FOREIGN KEY (row_id) REFERENCES pattern_row(row_id) ON DELETE CASCADE, FOREIGN KEY (stitch_id) REFERENCES stitch(id))''',
     );
     await insertDefaultStitchesInDb(db);
     await insertJellyFishPattern(db);
@@ -74,30 +73,30 @@ class DbService {
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     Batch batch = db.batch();
-    if (oldVersion < 2) {
-      await dbV2(batch);
-    }
-    if (oldVersion < 3) {
-      await dbV3(batch);
-    }
-    if (oldVersion < 4) {
-      await dbV4(batch);
-    }
-    if (oldVersion < 5) {
-      await dbV5(batch);
-    }
-    if (oldVersion < 6) {
-      await dbV6(batch);
-    }
-    if (oldVersion < 7) {
-      await dbV7(batch);
-    }
-    if (oldVersion < 8) {
-      await dbV8(batch);
-    }
-    if (oldVersion < 9) {
-      await dbV9(batch);
-    }
+    // if (oldVersion < 2) {
+    //   await dbV2(batch);
+    // }
+    // if (oldVersion < 3) {
+    //   await dbV3(batch);
+    // }
+    // if (oldVersion < 4) {
+    //   await dbV4(batch);
+    // }
+    // if (oldVersion < 5) {
+    //   await dbV5(batch);
+    // }
+    // if (oldVersion < 6) {
+    //   await dbV6(batch);
+    // }
+    // if (oldVersion < 7) {
+    //   await dbV7(batch);
+    // }
+    // if (oldVersion < 8) {
+    //   await dbV8(batch);
+    // }
+    // if (oldVersion < 9) {
+    //   await dbV9(batch);
+    // }
     batch.commit();
   }
 
@@ -120,4 +119,14 @@ class DbService {
 class DatabaseDoesNotExistException implements Exception {
   DatabaseDoesNotExistException(this.cause);
   String cause;
+}
+
+class DatabaseNoElementsMeetConditionException implements Exception {
+  DatabaseNoElementsMeetConditionException(this.condition, this.table);
+  String condition;
+  String table;
+  @override
+  String toString() {
+    return "No elements in table `$table` meets condition $condition";
+  }
 }

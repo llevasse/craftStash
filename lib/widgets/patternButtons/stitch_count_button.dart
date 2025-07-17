@@ -71,7 +71,7 @@ class _StitchCountButtonState extends State<StitchCountButton> {
           constraints: BoxConstraints(maxWidth: 200),
             margin: EdgeInsets.symmetric(horizontal: 10),
             child: Text(
-              "${widget.count.toString()}${widget.text == null ? "" : widget.text}",
+              "${widget.count.toString()}${widget.text ?? ""}",
               textAlign: TextAlign.center,
               style: TextStyle(color: theme.colorScheme.secondary),
             ),

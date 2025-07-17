@@ -4,19 +4,20 @@ import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/widgets/patternButtons/stitch_count_button.dart';
 import 'package:craft_stash/widgets/stitches/stitch_list.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-/// if rowId or partId are null, new subrow will be created but not added to any pattern or row
+/// if rowId is null, new subrow will be created but not added to any pattern or row
 class NewSubRowPage extends StatefulWidget {
   final int? stitchId;
+  final Stitch? stitch;
   final PatternRow? subrow;
   final int? rowId;
-  final int? partId;
   const NewSubRowPage({
     super.key,
     this.subrow,
     this.rowId,
-    this.partId,
     this.stitchId,
+    this.stitch,
   });
 
   @override
@@ -46,7 +47,7 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
     if (widget.subrow != null) {
       row = widget.subrow!;
       detailsString = "";
-      row.details.forEach((detail) {
+      for (PatternRowDetail detail in row.details) {
         if (detail.repeatXTime != 0) {
           if (detail.repeatXTime > 1) {
             detailsString += detail.repeatXTime.toString();
@@ -56,8 +57,8 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
         details.add(
           StitchCountButton(
             signed: false,
-            text: detail.stitch,
             count: detail.repeatXTime,
+            text: detail.stitch?.abreviation,
             increase: () {
               detail.repeatXTime += 1;
               row.stitchesPerRow += 1;
@@ -70,7 +71,7 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
             },
           ),
         );
-      });
+      }
       previewControler.text = detailsString;
     }
     super.initState();
@@ -84,14 +85,14 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
   @override
   void setState(VoidCallback fn) {
     detailsString = "";
-    row.details.forEach((detail) {
+    for (var detail in row.details) {
       if (detail.repeatXTime != 0) {
         if (detail.repeatXTime > 1) {
           detailsString += detail.repeatXTime.toString();
         }
         detailsString += "${detail.stitch}, ";
       }
-    });
+    }
     previewControler.text = detailsString;
     stitchDetailsScrollController.jumpTo(
       stitchDetailsScrollController.position.maxScrollExtent,
@@ -135,11 +136,14 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
       row.details.last.repeatXTime += 1;
       details.removeLast();
     } else {
-      row.details.add(PatternRowDetail(rowId: -1, stitch: stitch.abreviation));
+      row.details.add(
+        PatternRowDetail(rowId: -1, stitchId: stitch.id, stitch: stitch),
+      );
     }
     details.add(_createStitchCountButton(stitch.abreviation));
     needScroll = true;
     setState(() {});
+    return null;
   }
 
   Widget _saveButton() {
@@ -147,14 +151,10 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
       onPressed: () async {
         if (_formKey.currentState!.validate()) {
           _formKey.currentState!.save();
-          PatternRowDetail detail = PatternRowDetail(hasSubrow: 1, rowId: 0);
-          detail.subRow = row;
+          PatternRowDetail detail = PatternRowDetail(rowId: 0, stitchId: 0);
 
-          if (widget.partId != null && widget.rowId != null) {
-            row.partId = widget.partId!;
+          if (widget.rowId != null) {
             detail.rowId = widget.rowId!;
-            row.partDetailId = await insertPatternRowDetailInDb(detail);
-            detail.rowDetailId = row.partDetailId!;
           }
           if (widget.subrow == null) {
             row.rowId = await insertPatternRowInDb(row);
@@ -164,19 +164,25 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
                 await insertPatternRowDetailInDb(e);
               }
             }
-            await insertStitchInDb(
-              Stitch(
-                abreviation: detail.toStringWithoutNumber(),
-                isSequence: 1,
-                rowId: row.rowId,
-              ),
+            detail.stitch = Stitch(
+              abreviation: row.toString(),
+              isSequence: 1,
+              sequenceId: row.rowId,
             );
+            detail.stitchId = await insertStitchInDb(detail.stitch!);
           } else {
             await updatePatternRowInDb(row);
-            int rowId = row.rowId;
+            await updateStitchInDb(
+              Stitch(
+                id: widget.stitchId as int,
+                abreviation: row.toString(),
+                isSequence: 1,
+                sequenceId: row.rowId,
+              ),
+            );
             for (PatternRowDetail e in row.details) {
               if (e.repeatXTime != 0) {
-                e.rowId = rowId;
+                e.rowId = row.rowId;
                 if (e.rowDetailId == 0) {
                   await insertPatternRowDetailInDb(e);
                 } else {
@@ -188,20 +194,23 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
                 }
               }
             }
-            await updateStitchInDb(
-              Stitch(
-                id: widget.stitchId as int,
-                abreviation: detail.toStringWithoutNumber(),
-                isSequence: 1,
-                rowId: row.rowId,
-              ),
-            );
           }
 
           Navigator.pop(context, detail);
         }
       },
       icon: Icon(Icons.save),
+    );
+  }
+
+  Widget _deleteButton() {
+    return IconButton(
+      onPressed: () async {
+        await deleteStitchInDb(widget.stitch!);
+        await deletePatternRowInDb(widget.stitch!.sequenceId!);
+        Navigator.pop(context);
+      },
+      icon: Icon(LucideIcons.trash),
     );
   }
 
@@ -220,9 +229,14 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
     }
     return Scaffold(
       appBar: AppBar(
-        title: Text("Create sequence"),
+        title: Text(
+          widget.stitch == null ? "Create sequence" : "Edit sequence",
+        ),
         backgroundColor: theme.colorScheme.primary,
-        actions: [_saveButton()],
+        actions: [
+          ?widget.stitch == null ? null : _deleteButton(),
+          _saveButton(),
+        ],
       ),
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 10),

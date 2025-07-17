@@ -69,7 +69,7 @@ class _StitchFormState extends State<StitchForm> {
       l.add(
         TextButton(
           onPressed: () async {
-            await deleteStitchInDb(widget.base!.id);
+            await deleteStitchInDb(widget.base!);
             Navigator.pop(context);
           },
           child: Text("Delete stitch"),

@@ -1,8 +1,5 @@
 import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/pages/new_sub_row_page.dart';
-import 'package:craft_stash/widgets/patternButtons/add_custom_detail_button.dart';
-import 'package:craft_stash/widgets/patternButtons/add_generic_detail_button.dart';
-import 'package:craft_stash/widgets/patternButtons/new_stitch_button.dart';
 import 'package:craft_stash/widgets/stitches/stitch_form.dart';
 import 'package:craft_stash/widgets/stitches/stitch_list.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +12,19 @@ class StitchesPage extends StatefulWidget {
 }
 
 class _StitchesPageState extends State<StitchesPage> {
+  @override
+  void initState() {
+    // printAllStitch();
+    super.initState();
+  }
+
+  void printAllStitch() async {
+    List<Stitch> stitches = await getAllStitchesInDb();
+    for (Stitch s in stitches) {
+      s.printDetails();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
@@ -53,6 +63,7 @@ class _StitchesPageState extends State<StitchesPage> {
                         builder: (BuildContext context) => NewSubRowPage(
                           subrow: stitch.row,
                           stitchId: stitch.id,
+                          stitch: stitch,
                         ),
                       ),
                     );

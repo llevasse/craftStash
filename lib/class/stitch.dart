@@ -1,4 +1,5 @@
 import 'package:craft_stash/class/patterns/pattern_row.dart';
+import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -11,14 +12,14 @@ class Stitch {
     this.name,
     this.description,
     this.isSequence = 0,
-    this.rowId,
+    this.sequenceId,
   });
   int id;
   String abreviation;
   String? name;
   String? description;
   int isSequence;
-  int? rowId;
+  int? sequenceId;
   PatternRow? row;
 
   Map<String, dynamic> toMap() {
@@ -27,13 +28,46 @@ class Stitch {
       "name": name,
       "description": description,
       "is_sequence": isSequence,
-      "row_id": rowId,
+      "sequence_id": sequenceId,
       "hash": hashCode,
     };
   }
 
   @override
+  String toString() {
+    return abreviation;
+  }
+
+  void printDetails([int tab = 0]) {
+    String s = "";
+    for (int i = 0; i < tab; i++) {
+      s += "\t";
+    }
+    print("${s}abreviation $abreviation");
+    print("${s}name $name");
+    print("${s}description $description");
+    print("${s}is_sequence $isSequence");
+    if (isSequence == 1) {
+      print("${s}sequence_id $sequenceId");
+      row?.printDetails(tab + 1);
+    }
+
+    print("${s}hash $hashCode");
+    print("\r\n");
+  }
+
+  @override
   int get hashCode => Object.hash(abreviation, name, description);
+}
+
+Stitch _fromMap(Map<String, Object?> map) {
+  return Stitch(
+    abreviation: map["abreviation"] as String,
+    name: map["name"] as String?,
+    description: map["description"] as String?,
+    isSequence: map["is_sequence"] as int,
+    sequenceId: map["sequence_id"] as int?,
+  );
 }
 
 Future<void> insertDefaultStitchesInDb([Database? db]) async {
@@ -48,12 +82,37 @@ Future<void> insertDefaultStitchesInDb([Database? db]) async {
     Stitch(abreviation: "dec", name: "decrease", description: null),
     Stitch(abreviation: "sk", name: "skip", description: null),
   ];
-  stitches.forEach((stitch) async {
-    await insertStitchInDb(stitch, db);
-  });
+  for (Stitch s in stitches) {
+    s.id = await insertStitchInDb(s, db);
+  }
+
+  PatternRow row = PatternRow(startRow: 0, numberOfRows: 0, stitchesPerRow: 3);
+  row.rowId = await insertPatternRowInDb(row, db);
+  row.details = [
+    PatternRowDetail(rowId: row.rowId, stitchId: stitches[2].id),
+    PatternRowDetail(rowId: row.rowId, stitchId: stitches[6].id),
+  ];
+  for (PatternRowDetail e in row.details) {
+    if (e.repeatXTime != 0) {
+      e.rowId = row.rowId;
+      await insertPatternRowDetailInDb(e, db);
+    }
+  }
+  await insertStitchInDb(
+    Stitch(
+      abreviation: "(sc, inc)",
+      name: null,
+      description: null,
+      isSequence: 1,
+      sequenceId: row.rowId,
+    ),
+    db,
+  );
+
+  print("INSERTED DEFAULT STITCHES");
 }
 
-Future<void> insertStitchInDb(Stitch stitch, [Database? db]) async {
+Future<int> insertStitchInDb(Stitch stitch, [Database? db]) async {
   db ??= (await DbService().database);
   if (db != null) {
     final list = await db.query(
@@ -61,13 +120,16 @@ Future<void> insertStitchInDb(Stitch stitch, [Database? db]) async {
       where: "hash = ?",
       whereArgs: [stitch.hashCode],
     );
-    if (list.isEmpty) {
-      db.insert(
-        _tableName,
-        stitch.toMap(),
-        conflictAlgorithm: ConflictAlgorithm.replace,
+    if (list.isNotEmpty) {
+      throw StitchAlreadyExist(
+        "Stitch with hash ${stitch.hashCode} already exist",
       );
     }
+    return await db.insert(
+      _tableName,
+      stitch.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }
@@ -87,17 +149,20 @@ Future<void> updateStitchInDb(Stitch stitch) async {
   }
 }
 
-Future<void> deleteStitchInDb(int id) async {
+Future<void> deleteStitchInDb(Stitch stitch) async {
   final db = (await DbService().database);
   if (db != null) {
-    await db.delete(_tableName, where: "id = ?", whereArgs: [id]);
+    if ((await getAllPatternRowDetailByStitch(stitch)).isNotEmpty) {
+      throw StitchAlreadyExist("Stitch already exist");
+    }
+    await db.delete(_tableName, where: "id = ?", whereArgs: [stitch.id]);
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }
 }
 
-Future<List<Stitch>> getAllStitchesInDb() async {
-  final db = (await DbService().database);
+Future<List<Stitch>> getAllStitchesInDb([Database? db]) async {
+  db ??= (await DbService().database);
   if (db != null) {
     final List<Map<String, Object?>> stitchMaps = await db.query(_tableName);
     List<Stitch> l = List.empty(growable: true);
@@ -107,7 +172,7 @@ Future<List<Stitch>> getAllStitchesInDb() async {
           'name': name as String?,
           'description': description as String?,
           "is_sequence": isSequence as int,
-          "row_id": rowId as int?,
+          "sequence_id": sequenceId as int?,
         }
         in stitchMaps) {
       l.add(
@@ -117,17 +182,47 @@ Future<List<Stitch>> getAllStitchesInDb() async {
           name: name,
           description: description,
           isSequence: isSequence,
-          rowId: rowId,
+          sequenceId: sequenceId,
         ),
       );
-      if (isSequence != 0 && rowId != null) {
-        l.last.row = await getPatternRowByRowId(rowId);
+      if (isSequence != 0 && sequenceId != null) {
+        l.last.row = await getPatternRowByRowId(sequenceId, db);
       }
     }
     return l;
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }
+}
+
+Future<Stitch> getStitchInDbById(int id, [Database? db]) async {
+  if (db != null) {
+    final List<Map<String, Object?>> stitchMaps = await db.query(
+      _tableName,
+      where: "id = ?",
+      whereArgs: [id],
+      limit: 1,
+    );
+    if (stitchMaps.isEmpty) {
+      throw DatabaseNoElementsMeetConditionException("id = $id", _tableName);
+    }
+    Stitch s = _fromMap(stitchMaps.first);
+    if (s.isSequence != 0 && s.sequenceId != null) {
+      s.row = await getPatternRowByRowId(s.sequenceId!, db);
+    }
+    return s;
+  } else {
+    throw DatabaseDoesNotExistException("Could not get database");
+  }
+}
+
+Future<Map<int, Stitch>> getAllStitchMappedById([Database? db]) async {
+  List<Stitch> l = await getAllStitchesInDb(db);
+  Map<int, Stitch> stitchesMap = {};
+  for (Stitch s in l) {
+    stitchesMap.addAll({s.id: s});
+  }
+  return stitchesMap;
 }
 
 Future<void> removeAllStitch() async {
@@ -137,4 +232,9 @@ Future<void> removeAllStitch() async {
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }
+}
+
+class StitchAlreadyExist implements Exception {
+  StitchAlreadyExist(this.cause);
+  String cause;
 }
