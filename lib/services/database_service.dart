@@ -5,6 +5,7 @@ import 'package:craft_stash/class/yarns/material.dart';
 import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:craft_stash/class/yarns/yarn_collection.dart';
 import 'package:craft_stash/premadePatterns/jellyfish.dart';
+import 'package:craft_stash/premadeYarns/phildar.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -68,6 +69,7 @@ class DbService {
       '''CREATE TABLE IF NOT EXISTS pattern_row_detail(row_detail_id INTEGER PRIMARY KEY, row_id INT, stitch_id INT, repeat_x_time INT, color INT, FOREIGN KEY (row_id) REFERENCES pattern_row(row_id) ON DELETE CASCADE, FOREIGN KEY (stitch_id) REFERENCES stitch(id))''',
     );
     await insertDefaultStitchesInDb(db);
+    await insertPhildarYarn(db);
     await insertJellyFishPattern(db);
   }
 

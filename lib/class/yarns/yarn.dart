@@ -53,8 +53,8 @@ class Yarn {
   );
 }
 
-Future<void> insertYarnInDb(Yarn yarn) async {
-  final db = (await DbService().database);
+Future<void> insertYarnInDb(Yarn yarn, [Database? db]) async {
+  db ??= (await DbService().database);
   if (db != null) {
     final list = await db.query(
       'yarn',

@@ -47,8 +47,8 @@ class YarnCollection {
   }
 }
 
-Future<void> insertYarnCollection(YarnCollection yarn) async {
-  final db = (await DbService().database);
+Future<int?> insertYarnCollection(YarnCollection yarn, [Database? db]) async {
+  db ??= (await DbService().database);
 
   if (db != null) {
     final list = await db.query(
@@ -57,12 +57,13 @@ Future<void> insertYarnCollection(YarnCollection yarn) async {
       whereArgs: [yarn.hashCode],
     );
     if (list.isEmpty) {
-      db.insert(
+      return db.insert(
         'yarn_collection',
         yarn.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
     }
+    return null;
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }
