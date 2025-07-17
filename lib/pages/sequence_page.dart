@@ -1,6 +1,7 @@
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/class/stitch.dart';
+import 'package:craft_stash/widgets/errors/error_dialog.dart';
 import 'package:craft_stash/widgets/patternButtons/stitch_count_button.dart';
 import 'package:craft_stash/widgets/stitches/stitch_list.dart';
 import 'package:flutter/material.dart';
@@ -206,9 +207,16 @@ class _SequencePageState extends State<SequencePage> {
   Widget _deleteButton() {
     return IconButton(
       onPressed: () async {
-        await deleteStitchInDb(widget.stitch!);
-        await deletePatternRowInDb(widget.stitch!.sequenceId!);
-        Navigator.pop(context);
+        try {
+          await deleteStitchInDb(widget.stitch!);
+          await deletePatternRowInDb(widget.stitch!.sequenceId!);
+          Navigator.pop(context);
+        } on StitchIsUsed catch (e) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) => ErrorDialog(error: e.cause),
+          );
+        }
       },
       icon: Icon(LucideIcons.trash),
     );

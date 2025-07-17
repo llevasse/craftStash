@@ -153,7 +153,9 @@ Future<void> deleteStitchInDb(Stitch stitch) async {
   final db = (await DbService().database);
   if (db != null) {
     if ((await getAllPatternRowDetailByStitch(stitch)).isNotEmpty) {
-      throw StitchAlreadyExist("Stitch already exist");
+      throw StitchIsUsed(
+        "Can't delete a stitch that is currently used in a pattern.",
+      );
     }
     await db.delete(_tableName, where: "id = ?", whereArgs: [stitch.id]);
   } else {
@@ -236,5 +238,10 @@ Future<void> removeAllStitch() async {
 
 class StitchAlreadyExist implements Exception {
   StitchAlreadyExist(this.cause);
+  String cause;
+}
+
+class StitchIsUsed implements Exception {
+  StitchIsUsed(this.cause);
   String cause;
 }

@@ -1,4 +1,6 @@
+import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/stitch.dart';
+import 'package:craft_stash/widgets/errors/error_dialog.dart';
 import 'package:flutter/material.dart';
 
 class StitchForm extends StatefulWidget {
@@ -69,8 +71,16 @@ class _StitchFormState extends State<StitchForm> {
       l.add(
         TextButton(
           onPressed: () async {
-            await deleteStitchInDb(widget.base!);
-            Navigator.pop(context);
+            try {
+              await deleteStitchInDb(widget.base!);
+              await deletePatternRowInDb(widget.base!.sequenceId!);
+              Navigator.pop(context);
+            } on StitchIsUsed catch (e) {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) => ErrorDialog(error: e.cause),
+              );
+            }
           },
           child: Text("Delete stitch"),
         ),
