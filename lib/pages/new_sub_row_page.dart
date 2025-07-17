@@ -6,18 +6,16 @@ import 'package:craft_stash/widgets/stitches/stitch_list.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-/// if rowId or partId are null, new subrow will be created but not added to any pattern or row
+/// if rowId is null, new subrow will be created but not added to any pattern or row
 class NewSubRowPage extends StatefulWidget {
   final int? stitchId;
   final Stitch? stitch;
   final PatternRow? subrow;
   final int? rowId;
-  final int? partId;
   const NewSubRowPage({
     super.key,
     this.subrow,
     this.rowId,
-    this.partId,
     this.stitchId,
     this.stitch,
   });
@@ -155,8 +153,7 @@ class _NewSubRowPageState extends State<NewSubRowPage> {
           _formKey.currentState!.save();
           PatternRowDetail detail = PatternRowDetail(rowId: 0, stitchId: 0);
 
-          if (widget.partId != null && widget.rowId != null) {
-            row.partId = widget.partId!;
+          if (widget.rowId != null) {
             detail.rowId = widget.rowId!;
           }
           if (widget.subrow == null) {

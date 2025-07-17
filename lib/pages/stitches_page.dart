@@ -13,6 +13,19 @@ class StitchesPage extends StatefulWidget {
 
 class _StitchesPageState extends State<StitchesPage> {
   @override
+  void initState() {
+    // printAllStitch();
+    super.initState();
+  }
+
+  void printAllStitch() async {
+    List<Stitch> stitches = await getAllStitchesInDb();
+    for (Stitch s in stitches) {
+      s.printDetails();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     return Scaffold(

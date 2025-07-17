@@ -20,7 +20,7 @@ class Stitch {
   String? description;
   int isSequence;
   int? sequenceId;
-  PatternRow? row;  
+  PatternRow? row;
 
   Map<String, dynamic> toMap() {
     return {
@@ -36,6 +36,24 @@ class Stitch {
   @override
   String toString() {
     return abreviation;
+  }
+
+  void printDetails([int tab = 0]) {
+    String s = "";
+    for (int i = 0; i < tab; i++) {
+      s += "\t";
+    }
+    print("${s}abreviation $abreviation");
+    print("${s}name $name");
+    print("${s}description $description");
+    print("${s}is_sequence $isSequence");
+    if (isSequence == 1) {
+      print("${s}sequence_id $sequenceId");
+      row?.printDetails(tab + 1);
+    }
+
+    print("${s}hash $hashCode");
+    print("\r\n");
   }
 
   @override

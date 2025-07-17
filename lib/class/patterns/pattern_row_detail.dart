@@ -41,13 +41,18 @@ class PatternRowDetail {
     return "";
   }
 
-  void printDetail() {
-    print("rowId : ${rowId.toString()}");
-    print("rowDetailId : ${rowDetailId.toString()}");
-    print("stitchId : ${stitchId.toString()}");
-    print("stitch : $stitch");
-    print("repeat : ${repeatXTime.toString()}");
-    print("color : ${color.toString()}");
+  void printDetail([int tab = 0]) {
+    String s = "";
+    for (int i = 0; i < tab; i++) {
+      s += "\t";
+    }
+    print("${s}rowId : ${rowId.toString()}");
+    print("${s}rowDetailId : ${rowDetailId.toString()}");
+    print("${s}stitchId : ${stitchId.toString()}");
+    stitch?.printDetails(tab + 1);
+    print("${s}repeat : ${repeatXTime.toString()}");
+    print("${s}color : ${color.toString()}");
+    print("\r\n");
   }
 
   @override

@@ -5,11 +5,9 @@ import 'package:flutter/material.dart';
 
 class NewSubrowButton extends AddCustomDetailButton {
   int? rowId;
-  int? partId;
 
   NewSubrowButton({
     super.key,
-    this.partId,
     this.rowId,
     required super.onPressed,
   }) : super(text: "New sequence");
@@ -30,7 +28,6 @@ class _NewSubrowButtonState extends State<NewSubrowButton> {
                     settings: RouteSettings(name: "subrow"),
                     builder: (BuildContext context) => NewSubRowPage(
                       rowId: widget.rowId,
-                      partId: widget.partId,
                     ),
                   ),
                 )

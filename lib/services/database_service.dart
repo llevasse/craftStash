@@ -65,7 +65,7 @@ class DbService {
       '''CREATE TABLE IF NOT EXISTS stitch(id INTEGER PRIMARY KEY, sequence_id INT, abreviation TEXT, name TEXT, description TEXT, is_sequence INT, hash INT, FOREIGN KEY (sequence_id) REFERENCES pattern_row(row_id) ON DELETE CASCADE)''',
     );
     await db.execute(
-      '''CREATE TABLE IF NOT EXISTS pattern_row_detail(row_detail_id INTEGER PRIMARY KEY, row_id INT, stitch_id INT, repeat_x_time INT, color INT, FOREIGN KEY (row_id) REFERENCES pattern_row(row_id) ON DELETE CASCADE, FOREIGN KEY (stitch_id) REFERENCES stitch(id) ON DELETE CASCADE)''',
+      '''CREATE TABLE IF NOT EXISTS pattern_row_detail(row_detail_id INTEGER PRIMARY KEY, row_id INT, stitch_id INT, repeat_x_time INT, color INT, FOREIGN KEY (row_id) REFERENCES pattern_row(row_id) ON DELETE CASCADE, FOREIGN KEY (stitch_id) REFERENCES stitch(id))''',
     );
     await insertDefaultStitchesInDb(db);
     await insertJellyFishPattern(db);

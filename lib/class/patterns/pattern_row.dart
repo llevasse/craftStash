@@ -74,6 +74,25 @@ class PatternRow {
     }
     return tmp;
   }
+
+  void printDetails([int tab = 0]) {
+    String s = "";
+    for (int i = 0; i < tab; i++) {
+      s += "\t";
+    }
+    print("${s}row_id $rowId");
+    print("${s}part_id $partId");
+    print("${s}in_same_stitch $inSameStitch");
+    print("${s}start_row $startRow");
+    print("${s}number_of_rows $numberOfRows");
+    print("${s}stitches_per_row $stitchesPerRow");
+    for (PatternRowDetail detail in details) {
+      detail.printDetail(tab + 1);
+    }
+
+    print("${s}hash $hashCode");
+    print("\r\n");
+  }
 }
 
 PatternRow _fromMap(Map<String, Object?> map) {

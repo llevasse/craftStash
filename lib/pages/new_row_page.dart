@@ -82,7 +82,6 @@ class _NewRowPageState extends State<NewRowPage> {
       customActions: [
         NewSubrowButton(
           rowId: row.rowId,
-          partId: row.partId,
           onPressed: (PatternRowDetail? detail) async {
             if (detail == null) return;
             if (row.details.isNotEmpty &&
