@@ -1,5 +1,5 @@
 import 'package:craft_stash/class/patterns/pattern_part.dart';
-import 'package:craft_stash/pages/new_row_page.dart';
+import 'package:craft_stash/pages/row_page.dart';
 
 import 'package:flutter/material.dart';
 
@@ -35,7 +35,7 @@ class _AddRowButton extends State<AddRowButton> {
           context,
           MaterialPageRoute<void>(
             settings: RouteSettings(name: "row"),
-            builder: (BuildContext context) => NewRowPage(
+            builder: (BuildContext context) => RowPage(
               part: widget.part,
               updatePattern: widget.updatePattern,
               startRow: widget.startRow,

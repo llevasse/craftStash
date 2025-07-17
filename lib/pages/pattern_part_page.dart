@@ -2,15 +2,15 @@ import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
 import 'package:craft_stash/widgets/patternButtons/add_row_button.dart';
-import 'package:craft_stash/pages/new_row_page.dart';
+import 'package:craft_stash/pages/row_page.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-class NewPatternPartPage extends StatefulWidget {
+class PatternPartPage extends StatefulWidget {
   final Future<void> Function() updatePatternListView;
   PatternPart? part;
   craft.Pattern pattern;
-  NewPatternPartPage({
+  PatternPartPage({
     super.key,
     required this.updatePatternListView,
     this.part,
@@ -18,10 +18,10 @@ class NewPatternPartPage extends StatefulWidget {
   });
 
   @override
-  State<StatefulWidget> createState() => _NewPatternPartPageState();
+  State<StatefulWidget> createState() => _PatternPartPageState();
 }
 
-class _NewPatternPartPageState extends State<NewPatternPartPage> {
+class _PatternPartPageState extends State<PatternPartPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String title = "New part";
   PatternPart part = PatternPart(name: "New part", patternId: 0);
@@ -109,7 +109,7 @@ class _NewPatternPartPageState extends State<NewPatternPartPage> {
           MaterialPageRoute<void>(
             settings: RouteSettings(name: "row"),
             builder: (BuildContext context) =>
-                NewRowPage(part: part, updatePattern: updateListView, row: row),
+                RowPage(part: part, updatePattern: updateListView, row: row),
           ),
         );
       },

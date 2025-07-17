@@ -1,4 +1,4 @@
-import 'package:craft_stash/pages/new_pattern_page.dart';
+import 'package:craft_stash/pages/pattern_page.dart';
 import 'package:flutter/material.dart';
 
 class AddPatternButton extends StatefulWidget {
@@ -24,8 +24,9 @@ class _AddPatternButton extends State<AddPatternButton> {
         Navigator.push(
           context,
           MaterialPageRoute<void>(
-            builder: (BuildContext context) =>
-                NewPatternPage(updatePatternListView: widget.updatePatternListView),
+            builder: (BuildContext context) => PatternPage(
+              updatePatternListView: widget.updatePatternListView,
+            ),
           ),
         );
       },

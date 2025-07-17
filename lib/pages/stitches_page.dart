@@ -1,5 +1,5 @@
 import 'package:craft_stash/class/stitch.dart';
-import 'package:craft_stash/pages/new_sub_row_page.dart';
+import 'package:craft_stash/pages/sequence_page.dart';
 import 'package:craft_stash/widgets/stitches/stitch_form.dart';
 import 'package:craft_stash/widgets/stitches/stitch_list.dart';
 import 'package:flutter/material.dart';
@@ -60,7 +60,7 @@ class _StitchesPageState extends State<StitchesPage> {
                       context,
                       MaterialPageRoute<void>(
                         settings: RouteSettings(name: "subrow"),
-                        builder: (BuildContext context) => NewSubRowPage(
+                        builder: (BuildContext context) => SequencePage(
                           subrow: stitch.row,
                           stitchId: stitch.id,
                           stitch: stitch,

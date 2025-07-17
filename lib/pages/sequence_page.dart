@@ -7,12 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 /// if rowId is null, new subrow will be created but not added to any pattern or row
-class NewSubRowPage extends StatefulWidget {
+class SequencePage extends StatefulWidget {
   final int? stitchId;
   final Stitch? stitch;
   final PatternRow? subrow;
   final int? rowId;
-  const NewSubRowPage({
+  const SequencePage({
     super.key,
     this.subrow,
     this.rowId,
@@ -21,10 +21,10 @@ class NewSubRowPage extends StatefulWidget {
   });
 
   @override
-  State<StatefulWidget> createState() => _NewSubRowPageState();
+  State<StatefulWidget> createState() => _SequencePageState();
 }
 
-class _NewSubRowPageState extends State<NewSubRowPage> {
+class _SequencePageState extends State<SequencePage> {
   List<Stitch> stitches = [];
   List<int> blacklist = [];
   String stitchSearch = "";

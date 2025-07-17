@@ -7,13 +7,13 @@ import 'package:craft_stash/widgets/patternButtons/stitch_count_button.dart';
 import 'package:craft_stash/widgets/stitches/stitch_list.dart';
 import 'package:flutter/material.dart';
 
-class NewRowPage extends StatefulWidget {
+class RowPage extends StatefulWidget {
   final Future<void> Function() updatePattern;
   PatternPart part;
   PatternRow? row;
   int startRow;
   int numberOfRows;
-  NewRowPage({
+  RowPage({
     super.key,
     required this.part,
     required this.updatePattern,
@@ -23,10 +23,10 @@ class NewRowPage extends StatefulWidget {
   });
 
   @override
-  State<StatefulWidget> createState() => _NewRowPageState();
+  State<StatefulWidget> createState() => _RowPageState();
 }
 
-class _NewRowPageState extends State<NewRowPage> {
+class _RowPageState extends State<RowPage> {
   List<Stitch> stitches = [];
   String stitchSearch = "";
   double buttonHeight = 50;

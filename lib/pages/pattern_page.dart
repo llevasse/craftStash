@@ -1,24 +1,20 @@
 import 'package:craft_stash/add_part_button.dart';
 import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
-import 'package:craft_stash/pages/new_pattern_part_page.dart';
+import 'package:craft_stash/pages/pattern_part_page.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-class NewPatternPage extends StatefulWidget {
+class PatternPage extends StatefulWidget {
   final Future<void> Function() updatePatternListView;
   craft.Pattern? pattern;
-  NewPatternPage({
-    super.key,
-    required this.updatePatternListView,
-    this.pattern,
-  });
+  PatternPage({super.key, required this.updatePatternListView, this.pattern});
 
   @override
-  State<StatefulWidget> createState() => _NewPatternPageState();
+  State<StatefulWidget> createState() => _PatternPageState();
 }
 
-class _NewPatternPageState extends State<NewPatternPage> {
+class _PatternPageState extends State<PatternPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String title = "New pattern";
   craft.Pattern pattern = craft.Pattern();
@@ -116,7 +112,7 @@ class _NewPatternPageState extends State<NewPatternPage> {
               context,
               MaterialPageRoute<void>(
                 settings: RouteSettings(name: "part"),
-                builder: (BuildContext context) => NewPatternPartPage(
+                builder: (BuildContext context) => PatternPartPage(
                   updatePatternListView: updatePattern,
                   pattern: pattern,
                   part: part,
