@@ -2,6 +2,7 @@ import 'package:craft_stash/add_part_button.dart';
 import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
 import 'package:craft_stash/pages/pattern_part_page.dart';
+import 'package:craft_stash/widgets/yarn/yarn_list.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
@@ -19,6 +20,7 @@ class _PatternPageState extends State<PatternPage> {
   String title = "New pattern";
   craft.Pattern pattern = craft.Pattern();
   List<Widget> patternListView = List.empty(growable: true);
+  double spacing = 10;
 
   void _insertPattern() async {
     int patternId = await craft.insertPatternInDb(pattern);
@@ -102,6 +104,20 @@ class _PatternPageState extends State<PatternPage> {
     List<Widget> tmp = List.empty(growable: true);
 
     pattern.parts = await getAllPatternPartsByPatternId(pattern.patternId);
+    tmp.add(
+      Container(
+        padding: EdgeInsets.all(10),
+        child: Column(
+          spacing: spacing / 2,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Yarns used :"),
+            YarnList(onAddYarnPress: (yanr) {}),
+          ],
+        ),
+      ),
+    );
+
     for (PatternPart part in pattern.parts) {
       tmp.add(
         ListTile(
@@ -188,7 +204,11 @@ class _PatternPageState extends State<PatternPage> {
       ),
       body: Form(
         key: _formKey,
-        child: Column(children: patternListView),
+        child: Column(
+          spacing: spacing,
+          mainAxisSize: MainAxisSize.min,
+          children: patternListView,
+        ),
       ),
       floatingActionButton: AddPartButton(
         updatePatternListView: updatePattern,
