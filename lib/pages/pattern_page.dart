@@ -23,8 +23,7 @@ class _PatternPageState extends State<PatternPage> {
   double spacing = 10;
 
   void _insertPattern() async {
-    int patternId = await craft.insertPatternInDb(pattern);
-    pattern.patternId = patternId;
+    pattern.patternId = await craft.insertPatternInDb(pattern);
   }
 
   @override
@@ -112,7 +111,7 @@ class _PatternPageState extends State<PatternPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text("Yarns used :"),
-            YarnList(onAddYarnPress: (yanr) {}),
+            YarnList(onAddYarnPress: (yarn) {}, patternId: pattern.patternId),
           ],
         ),
       ),
