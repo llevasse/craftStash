@@ -3,6 +3,7 @@ import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
 import 'package:craft_stash/class/stitch.dart';
+import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:sqflite/sqflite.dart';
 
 Map<String, Stitch> _stitchesMap = {};
@@ -154,6 +155,10 @@ Future<void> insertJellyFishPattern([Database? db]) async {
   // print(_stitchesMap);
   craft.Pattern pattern = craft.Pattern(name: "Jellyfish");
   pattern.patternId = await craft.insertPatternInDb(pattern, db);
+  List<Yarn> y = await getAllYarn(db);
+  if (y.isNotEmpty) {
+    await craft.insertYarnInPattern(y.first.id, pattern.patternId, db);
+  }
   pattern.parts.add(await _createHeadPart(pattern.patternId, db));
   pattern.parts.add(await _createShortTentacles(pattern.patternId, db));
   pattern.parts.add(await _createLongTentacles(pattern.patternId, db));

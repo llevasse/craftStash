@@ -27,7 +27,7 @@ class YarnListState extends State<YarnList> {
   late ThemeData theme;
   List<Yarn> yarns = [];
   List<Widget> list = List.empty(growable: true);
-  double buttonSize = 24 * 2;
+  double buttonSize = 48;
 
   void init() async {
     await getAllYarns();
@@ -50,8 +50,7 @@ class YarnListState extends State<YarnList> {
     if (widget.patternId == null) {
       yarns = await getAllYarn();
     } else {
-      yarns = await getAllYarn();
-      // yarns = await getAllYarnByPatternId();
+      yarns = await getAllYarnByPatternId(widget.patternId!);
     }
     list.clear();
 

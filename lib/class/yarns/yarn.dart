@@ -53,6 +53,21 @@ class Yarn {
   );
 }
 
+Yarn _fromMap(Map<String, Object?> map) {
+  return Yarn(
+    id: map["id"] as int,
+    collectionId: map["collection_id"] as int,
+    color: map["color"] as int,
+    brand: map["brand"] as String,
+    material: map["material"] as String,
+    colorName: map["color_name"] as String,
+    minHook: map["min_hook"] as double,
+    maxHook: map["max_hook"] as double,
+    thickness: map["thickness"] as double,
+    nbOfSkeins: map["number_of_skeins"] as int,
+  );
+}
+
 Future<void> insertYarnInDb(Yarn yarn, [Database? db]) async {
   db ??= (await DbService().database);
   if (db != null) {
@@ -120,36 +135,41 @@ Future<void> deleteYarnsByCollectionId(int id) async {
   }
 }
 
-Future<List<Yarn>> getAllYarn() async {
-  final db = (await DbService().database);
+Future<List<Yarn>> getAllYarn([Database? db]) async {
+  db ??= (await DbService().database);
   if (db != null) {
     final List<Map<String, Object?>> yarnMaps = await db.query('yarn');
+    return [for (Map<String, Object?> map in yarnMaps) _fromMap(map)];
+  } else {
+    throw DatabaseDoesNotExistException("Could not get database");
+  }
+}
+
+Future<Yarn> getYarnById(int id, [Database? db]) async {
+  db ??= (await DbService().database);
+  if (db != null) {
+    final List<Map<String, Object?>> yarnMaps = await db.query(
+      'yarn',
+      where: "id = ?",
+      whereArgs: [id],
+    );
+    return _fromMap(yarnMaps.first);
+  } else {
+    throw DatabaseDoesNotExistException("Could not get database");
+  }
+}
+
+Future<List<Yarn>> getAllYarnByPatternId(int patternId, [Database? db]) async {
+  db ??= (await DbService().database);
+  if (db != null) {
+    final List<Map<String, Object?>> connectionsMaps = await db.query(
+      'yarn_in_pattern',
+      where: "pattern_id = ?",
+      whereArgs: [patternId],
+    );
     return [
-      for (final {
-            'id': id as int,
-            "collection_id": collentionId as int,
-            "color": color as int,
-            "brand": brand as String,
-            "material": material as String,
-            "color_name": colorName as String,
-            "min_hook": minHook as double,
-            "max_hook": maxHook as double,
-            "thickness": thickness as double,
-            "number_of_skeins": nbOfSkeins as int,
-          }
-          in yarnMaps)
-        Yarn(
-          id: id,
-          collectionId: collentionId,
-          color: color,
-          brand: brand,
-          material: material,
-          colorName: colorName,
-          minHook: minHook,
-          maxHook: maxHook,
-          thickness: thickness,
-          nbOfSkeins: nbOfSkeins,
-        ),
+      for (final {'yarn_id': yarnId as int} in connectionsMaps)
+        await getYarnById(yarnId),
     ];
   } else {
     throw DatabaseDoesNotExistException("Could not get database");

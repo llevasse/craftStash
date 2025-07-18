@@ -124,3 +124,19 @@ Future<void> removeAllPattern() async {
     throw DatabaseDoesNotExistException("Could not get database");
   }
 }
+
+Future<int> insertYarnInPattern(
+  int yarnId,
+  int patternId, [
+  Database? db,
+]) async {
+  db ??= (await DbService().database);
+  if (db != null) {
+    return db.insert("yarn_in_pattern", {
+      'pattern_id': patternId,
+      'yarn_id': yarnId,
+    });
+  } else {
+    throw DatabaseDoesNotExistException("Could not get database");
+  }
+}
