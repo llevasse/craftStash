@@ -4,7 +4,7 @@ import 'package:craft_stash/widgets/yarnButtons/edit_yarn_button.dart';
 import 'package:flutter/material.dart';
 
 class YarnListDialog extends StatefulWidget {
-  final Function(Yarn yarn) onPressed;
+  final Future<void> Function(Yarn yarn) onPressed;
   const YarnListDialog({super.key, required this.onPressed});
 
   @override
@@ -82,6 +82,10 @@ class _YarnListDialogState extends State<YarnListDialog> {
               showMinHook: false,
               showThickness: false,
               showSkeins: false,
+              onClick: () async {
+                await widget.onPressed(yarn);
+                Navigator.pop(context);
+              },
             ),
           );
         }

@@ -117,8 +117,12 @@ class _PatternPageState extends State<PatternPage> {
                 await showDialog(
                   context: context,
                   builder: (BuildContext context) => YarnListDialog(
-                    onPressed: (yarn) {
-                      print(yarn);
+                    onPressed: (yarn) async {
+                      await craft.insertYarnInPattern(
+                        yarn.id,
+                        pattern.patternId,
+                      );
+                      await updateListView(); //TODO optimize to just update PatternYarnList
                     },
                   ),
                 );

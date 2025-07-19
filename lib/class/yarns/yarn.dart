@@ -25,6 +25,11 @@ class Yarn {
   int color; // ex : 0xFFFFC107
   int nbOfSkeins; // ex : 1
 
+  @override
+  String toString() {
+    return ("color: $color\ncollection_id: $collectionId\nbrand: $brand\nmaterial: $material\ncolor_name: $colorName\nmin_hook: $minHook\nmax_hook: $maxHook\nthickness: $thickness\nnumber_of_skeins: $nbOfSkeins\nhash: $hashCode\n");
+  }
+
   Map<String, dynamic> toMap() {
     return {
       "color": color,
