@@ -5,6 +5,8 @@ import 'package:sqflite/sqflite.dart';
 
 final String _tableName = "stitch";
 
+Map<String, int> stitchToIdMap = {};
+
 class Stitch {
   Stitch({
     this.id = 0,
@@ -76,6 +78,14 @@ Stitch _fromMap(Map<String, Object?> map) {
   );
 }
 
+Future<void> setStitchToIdMap() async {
+  List<Stitch> l = await getAllStitchesInDb();
+  stitchToIdMap.clear();
+  for (Stitch s in l) {
+    stitchToIdMap.addAll({s.abreviation: s.id});
+  }
+}
+
 Future<void> insertDefaultStitchesInDb([Database? db]) async {
   List<Stitch> stitches = [
     Stitch(abreviation: "ch", name: "chain", description: null),
@@ -87,19 +97,16 @@ Future<void> insertDefaultStitchesInDb([Database? db]) async {
     Stitch(abreviation: "inc", name: "increase", description: null),
     Stitch(abreviation: "dec", name: "decrease", description: null),
     Stitch(abreviation: "sk", name: "skip", description: null),
-  ];
-  await insertStitchInDbWithDefinedId(
     Stitch(
-      id: 0,
       abreviation: "color change",
       name: null,
       description: null,
       hidden: 1,
     ),
-    db,
-  );
+  ];
   for (Stitch s in stitches) {
     s.id = await insertStitchInDb(s, db);
+    stitchToIdMap[s.abreviation] = s.id;
   }
 
   PatternRow row = PatternRow(startRow: 0, numberOfRows: 0, stitchesPerRow: 3);

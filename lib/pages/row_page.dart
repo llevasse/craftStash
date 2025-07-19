@@ -51,7 +51,7 @@ class _RowPageState extends State<RowPage> {
       detailsString = "";
       for (PatternRowDetail detail in row.details) {
         String text = detail.stitch!.abreviation;
-        if (detail.yarnColorName != null && detail.stitchId == 0) {
+        if (detail.yarnColorName != null) {
           text = "change to ${detail.yarnColorName}";
         }
         details.add(

@@ -11,7 +11,7 @@ class PatternRowDetail {
   int stitchId;
   Stitch? stitch;
   int repeatXTime;
-  int? yarnId;
+  int? yarnId;  //only used for color change
   String? yarnColorName;
   PatternRowDetail({
     required this.rowId,
@@ -33,7 +33,7 @@ class PatternRowDetail {
 
   @override
   String toString() {
-    if (stitchId == 0 && yarnId != null) {
+    if (yarnId != null) {
       return ("change to $yarnColorName");
     }
     if (stitch != null && repeatXTime >= 1) {
