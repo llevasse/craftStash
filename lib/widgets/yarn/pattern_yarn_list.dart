@@ -58,7 +58,7 @@ class PatternYarnListState extends State<PatternYarnList> {
       list.add(
         TextButton(
           onPressed: () {
-            print(yarn.id);
+            if (widget.onPress != null) widget.onPress!(yarn);
           },
           style: ButtonStyle(
             minimumSize: WidgetStatePropertyAll(Size(buttonSize, buttonSize)),

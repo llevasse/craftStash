@@ -13,6 +13,7 @@ class Stitch {
     this.description,
     this.isSequence = 0,
     this.sequenceId,
+    this.hidden = 0,
   });
   int id;
   String abreviation;
@@ -21,6 +22,7 @@ class Stitch {
   int isSequence;
   int? sequenceId;
   PatternRow? row;
+  int hidden;
 
   Map<String, dynamic> toMap() {
     return {
@@ -29,6 +31,7 @@ class Stitch {
       "description": description,
       "is_sequence": isSequence,
       "sequence_id": sequenceId,
+      "hidden": hidden,
       "hash": hashCode,
     };
   }
@@ -43,6 +46,7 @@ class Stitch {
     for (int i = 0; i < tab; i++) {
       s += "\t";
     }
+    print("${s}id $id");
     print("${s}abreviation $abreviation");
     print("${s}name $name");
     print("${s}description $description");
@@ -51,7 +55,7 @@ class Stitch {
       print("${s}sequence_id $sequenceId");
       row?.printDetails(tab + 1);
     }
-
+    print("${s}hidden $hidden");
     print("${s}hash $hashCode");
     print("\r\n");
   }
@@ -62,11 +66,13 @@ class Stitch {
 
 Stitch _fromMap(Map<String, Object?> map) {
   return Stitch(
+    id: map["id"] as int,
     abreviation: map["abreviation"] as String,
     name: map["name"] as String?,
     description: map["description"] as String?,
     isSequence: map["is_sequence"] as int,
     sequenceId: map["sequence_id"] as int?,
+    hidden: map["hidden"] as int,
   );
 }
 
@@ -82,6 +88,16 @@ Future<void> insertDefaultStitchesInDb([Database? db]) async {
     Stitch(abreviation: "dec", name: "decrease", description: null),
     Stitch(abreviation: "sk", name: "skip", description: null),
   ];
+  await insertStitchInDbWithDefinedId(
+    Stitch(
+      id: 0,
+      abreviation: "color change",
+      name: null,
+      description: null,
+      hidden: 1,
+    ),
+    db,
+  );
   for (Stitch s in stitches) {
     s.id = await insertStitchInDb(s, db);
   }
@@ -135,6 +151,24 @@ Future<int> insertStitchInDb(Stitch stitch, [Database? db]) async {
   }
 }
 
+Future<void> insertStitchInDbWithDefinedId(
+  Stitch stitch, [
+  Database? db,
+]) async {
+  db ??= (await DbService().database);
+  if (db != null) {
+    Map<String, Object?> m = stitch.toMap();
+    m.addAll({'id': stitch.id});
+    await db.insert(
+      _tableName,
+      m,
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  } else {
+    throw DatabaseDoesNotExistException("Could not get database");
+  }
+}
+
 Future<void> updateStitchInDb(Stitch stitch) async {
   final db = (await DbService().database);
   if (db != null) {
@@ -168,27 +202,31 @@ Future<List<Stitch>> getAllStitchesInDb([Database? db]) async {
   if (db != null) {
     final List<Map<String, Object?>> stitchMaps = await db.query(_tableName);
     List<Stitch> l = List.empty(growable: true);
-    for (final {
-          'id': id as int,
-          'abreviation': abreviation as String,
-          'name': name as String?,
-          'description': description as String?,
-          "is_sequence": isSequence as int,
-          "sequence_id": sequenceId as int?,
-        }
-        in stitchMaps) {
-      l.add(
-        Stitch(
-          id: id,
-          abreviation: abreviation,
-          name: name,
-          description: description,
-          isSequence: isSequence,
-          sequenceId: sequenceId,
-        ),
-      );
-      if (isSequence != 0 && sequenceId != null) {
-        l.last.row = await getPatternRowByRowId(sequenceId, db);
+    for (Map<String, Object?> map in stitchMaps) {
+      l.add(_fromMap(map));
+      if (l.last.sequenceId != null) {
+        l.last.row = await getPatternRowByRowId(l.last.sequenceId!, db);
+      }
+    }
+    return l;
+  } else {
+    throw DatabaseDoesNotExistException("Could not get database");
+  }
+}
+
+Future<List<Stitch>> getAllVisibleStitchesInDb([Database? db]) async {
+  db ??= (await DbService().database);
+  if (db != null) {
+    final List<Map<String, Object?>> stitchMaps = await db.query(
+      _tableName,
+      where: "hidden = ?",
+      whereArgs: [0],
+    );
+    List<Stitch> l = List.empty(growable: true);
+    for (Map<String, Object?> map in stitchMaps) {
+      l.add(_fromMap(map));
+      if (l.last.sequenceId != null) {
+        l.last.row = await getPatternRowByRowId(l.last.sequenceId!, db);
       }
     }
     return l;

@@ -2,6 +2,7 @@ import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/class/stitch.dart';
+import 'package:craft_stash/widgets/patternButtons/color_change_button.dart';
 import 'package:craft_stash/widgets/patternButtons/new_subrow_button.dart';
 import 'package:craft_stash/widgets/patternButtons/stitch_count_button.dart';
 import 'package:craft_stash/widgets/stitches/stitch_list.dart';
@@ -39,6 +40,7 @@ class _RowPageState extends State<RowPage> {
   TextEditingController previewControler = TextEditingController();
   StitchList stitchList = StitchList();
   late void Function() stitchListInitFunction;
+
   @override
   void initState() {
     getAllStitches();
@@ -48,10 +50,14 @@ class _RowPageState extends State<RowPage> {
       row = widget.row!;
       detailsString = "";
       for (PatternRowDetail detail in row.details) {
+        String text = detail.stitch!.abreviation;
+        if (detail.yarnColorName != null && detail.stitchId == 0) {
+          text = "change to ${detail.yarnColorName}";
+        }
         details.add(
           StitchCountButton(
             signed: false,
-            text: detail.stitch?.abreviation,
+            text: text,
             count: detail.repeatXTime,
             increase: () {
               detail.repeatXTime += 1;
@@ -96,6 +102,22 @@ class _RowPageState extends State<RowPage> {
             await getAllStitches();
             stitchListInitFunction();
           },
+        ),
+        ColorChangeButton(
+          onPressed: (PatternRowDetail? detail) async {
+            if (detail == null) return;
+            if (row.details.isNotEmpty &&
+                row.details.last.hashCode == detail.hashCode) {
+              await deletePatternRowDetailInDb(detail.rowDetailId);
+            } else {
+              row.details.add(detail);
+              details.add(_createStitchCountButton(detail.toString()));
+            }
+            await getAllStitches();
+            stitchListInitFunction();
+          },
+          rowId: row.rowId,
+          patternId: widget.part.patternId,
         ),
       ],
       builder: (BuildContext context, void Function() methodFromChild) {
