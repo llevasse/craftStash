@@ -2,6 +2,7 @@ import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:craft_stash/class/yarns/yarn_collection.dart';
 import 'package:craft_stash/widgets/page_select_dropdown_button.dart';
 import 'package:craft_stash/widgets/yarnButtons/edit_yarn_button.dart';
+import 'package:craft_stash/widgets/yarnButtons/yarn_form.dart';
 import 'package:flutter/material.dart';
 
 typedef MyBuilder =
@@ -66,7 +67,24 @@ class _YarnStashPageState extends State<YarnStashPage> {
           ),
         );
         for (var yarn in yarns) {
-          tmp.add(EditYarnButton(updateYarn: getAllYarns, currentYarn: yarn));
+          tmp.add(
+            EditYarnButton(
+              updateYarn: getAllYarns,
+              currentYarn: yarn,
+              onClick: () => showDialog(
+                context: context,
+                builder: (BuildContext context) => YarnForm(
+                  base: yarn,
+                  updateYarn: getAllYarns,
+                  ifValideFunction: updateYarnInDb,
+                  title: "Edit yarn",
+                  cancel: "Cancel",
+                  confirm: "Edit",
+                  fill: true,
+                ),
+              ),
+            ),
+          );
         }
       }
     });

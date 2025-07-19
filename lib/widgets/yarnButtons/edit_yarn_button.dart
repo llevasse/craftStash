@@ -1,9 +1,9 @@
 import 'package:craft_stash/class/yarns/yarn.dart';
-import 'package:craft_stash/widgets/yarnButtons/yarn_form.dart';
 import 'package:flutter/material.dart';
 
 class EditYarnButton extends StatefulWidget {
   final Future<void> Function() updateYarn;
+  final Future<void> Function()? onClick;
   final bool showBrand;
   final bool showMaterial;
   final bool showThickness;
@@ -15,6 +15,7 @@ class EditYarnButton extends StatefulWidget {
   EditYarnButton({
     super.key,
     required this.updateYarn,
+    this.onClick,
     required this.currentYarn,
     this.showBrand = true,
     this.showMaterial = true,
@@ -71,18 +72,7 @@ class _EditYarnButton extends State<EditYarnButton> {
       title: Text("${widget.currentYarn.colorName}$brand$material$thickness"),
       subtitle: subtitle,
       trailing: trailing,
-      onTap: () => showDialog(
-        context: context,
-        builder: (BuildContext context) => YarnForm(
-          base: widget.currentYarn,
-          updateYarn: widget.updateYarn,
-          ifValideFunction: updateYarnInDb,
-          title: "Edit yarn",
-          cancel: "Cancel",
-          confirm: "Edit",
-          fill: true,
-        ),
-      ),
+      onTap: widget.onClick,
       onLongPress: () {
         showDialog(
           context: context,
