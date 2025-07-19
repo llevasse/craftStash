@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 typedef MyBuilder =
     void Function(BuildContext context, void Function() methodFromChild);
 
-class YarnList extends StatefulWidget {
+class PatternYarnList extends StatefulWidget {
   void Function(Yarn yarn)? onPress;
   final MyBuilder? builder;
-  void Function(Yarn yarn)? onAddYarnPress;
+  void Function()? onAddYarnPress;
   final int? patternId;
-  YarnList({
+  PatternYarnList({
     super.key,
     this.onPress,
     this.spacing = 10,
@@ -20,10 +20,10 @@ class YarnList extends StatefulWidget {
 
   double spacing;
   @override
-  State<StatefulWidget> createState() => YarnListState();
+  State<StatefulWidget> createState() => PatternYarnListState();
 }
 
-class YarnListState extends State<YarnList> {
+class PatternYarnListState extends State<PatternYarnList> {
   late ThemeData theme;
   List<Yarn> yarns = [];
   List<Widget> list = List.empty(growable: true);
@@ -75,7 +75,9 @@ class YarnListState extends State<YarnList> {
     if (widget.onAddYarnPress != null) {
       list.add(
         TextButton(
-          onPressed: () async {},
+          onPressed: () {
+            widget.onAddYarnPress!();
+          },
           style: ButtonStyle(
             minimumSize: WidgetStatePropertyAll(Size(buttonSize, buttonSize)),
             fixedSize: WidgetStatePropertyAll(Size.fromHeight(buttonSize)),
