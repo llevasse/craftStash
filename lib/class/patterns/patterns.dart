@@ -132,6 +132,13 @@ Future<int> insertYarnInPattern(
 ]) async {
   db ??= (await DbService().database);
   if (db != null) {
+    if ((await db.query(
+      "yarn_in_pattern",
+      where: "pattern_id = ? AND yarn_id = ?",
+      whereArgs: [patternId, yarnId],
+    )).isNotEmpty) {
+      throw EntryAlreadyExist("yarn_in_table");
+    }
     return db.insert("yarn_in_pattern", {
       'pattern_id': patternId,
       'yarn_id': yarnId,

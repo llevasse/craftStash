@@ -128,6 +128,15 @@ class DatabaseDoesNotExistException implements Exception {
   String cause;
 }
 
+class EntryAlreadyExist implements Exception {
+  EntryAlreadyExist(this.table);
+  String table;
+  @override
+  String toString() {
+    return ("Entry in $table already exists");
+  }
+}
+
 class DatabaseNoElementsMeetConditionException implements Exception {
   DatabaseNoElementsMeetConditionException(this.condition, this.table);
   String condition;
