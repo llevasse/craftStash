@@ -29,25 +29,21 @@ class _PatternPartPageState extends State<PatternPartPage> {
 
   void _insertPart() async {
     part.patternId = widget.pattern.patternId;
-    int partId = await insertPatternPartInDb(part);
-    part.partId = partId;
+    part.partId = await insertPatternPartInDb(part);
   }
 
   @override
   void initState() {
     if (widget.part == null) {
       _insertPart();
+      patternListView.add(_titleInput());
+      patternListView.add(_numbersToMakeInput());
     } else {
       part = widget.part!;
       title = part.name;
+      updateListView();
     }
-    patternListView.add(_titleInput());
-    patternListView.add(_numbersToMakeInput());
-    for (PatternRow row in part.rows) {
-      if (row.startRow != 0) {
-        patternListView.add(_patternRowTile(row));
-      }
-    }
+
     super.initState();
   }
 
