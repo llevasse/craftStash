@@ -50,6 +50,7 @@ class _RowPageState extends State<RowPage> {
       row = widget.row!;
       detailsString = "";
       for (PatternRowDetail detail in row.details) {
+        print(detail.stitch);
         String text = detail.stitch!.abreviation;
         if (detail.yarnColorName != null) {
           text = "change to ${detail.yarnColorName}";
@@ -109,6 +110,14 @@ class _RowPageState extends State<RowPage> {
             if (row.details.isNotEmpty &&
                 row.details.last.hashCode == detail.hashCode) {
               await deletePatternRowDetailInDb(detail.rowDetailId);
+            } else if (row.details.isNotEmpty &&
+                row.details.last.yarnId != null) {
+              // if previous stitch is already a color change
+              await deletePatternRowDetailInDb(row.details.last.rowDetailId);
+              row.details.removeLast();
+              details.removeLast();
+              row.details.add(detail);
+              details.add(_createStitchCountButton(detail.toString()));
             } else {
               row.details.add(detail);
               details.add(_createStitchCountButton(detail.toString()));

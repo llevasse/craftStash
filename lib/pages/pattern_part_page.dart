@@ -98,14 +98,15 @@ class _PatternPartPageState extends State<PatternPartPage> {
     }
     return ListTile(
       title: Text(title),
-      subtitle: Text(row.detailsAsString()),
+      // subtitle: Text(row.detailsAsString()),
       onTap: () async {
+        PatternRow r = await getPatternRowByRowId(row.rowId);
         await Navigator.push(
           context,
           MaterialPageRoute<void>(
             settings: RouteSettings(name: "row"),
             builder: (BuildContext context) =>
-                RowPage(part: part, updatePattern: updateListView, row: row),
+                RowPage(part: part, updatePattern: updateListView, row: r),
           ),
         );
       },

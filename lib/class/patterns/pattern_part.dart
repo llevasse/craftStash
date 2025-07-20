@@ -181,7 +181,7 @@ Future<PatternPart> getPatternPartByPartId(int id) async {
       name: patternPartMaps[0]['name'] as String,
       numbersToMake: patternPartMaps[0]['numbers_to_make'] as int,
     );
-    p.rows = await getAllPatternRowByPartId(id);
+    p.rows = await getAllPatternRowByPartIdWithoutDetails(id);
     return (p);
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
