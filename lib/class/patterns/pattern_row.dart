@@ -7,6 +7,7 @@ final String _tableName = "pattern_row";
 class PatternRow {
   int rowId;
   int? partId;
+  String? preview;
   int inSameStitch;
   int startRow, numberOfRows;
   int stitchesPerRow;
@@ -18,6 +19,7 @@ class PatternRow {
     required this.startRow,
     required this.numberOfRows,
     required this.stitchesPerRow,
+    this.preview,
   });
 
   Map<String, dynamic> toMap() {
@@ -25,6 +27,7 @@ class PatternRow {
       'part_id': partId,
       'start_row': startRow,
       'number_of_rows': numberOfRows,
+      'preview': preview,
       'in_same_stitch': inSameStitch,
       'stitches_count_per_row': stitchesPerRow,
       // 'hash': hashCode,
@@ -103,6 +106,7 @@ PatternRow _fromMap(Map<String, Object?> map) {
     numberOfRows: map['number_of_rows'] as int,
     inSameStitch: map['in_same_stitch'] as int,
     stitchesPerRow: map['stitches_count_per_row'] as int,
+    preview: map['preview'] as String?,
   );
 }
 
@@ -205,7 +209,6 @@ Future<List<PatternRow>> getAllPatternRowByPartIdWithoutDetails(int id) async {
     throw DatabaseDoesNotExistException("Could not get database");
   }
 }
-
 
 Future<PatternRow> getPatternRowByDetailId(int id, [Database? db]) async {
   db ??= (await DbService().database);

@@ -17,6 +17,7 @@ Future<PatternPart> _createHeadPart(int patternId, Database? db) async {
     startRow: 1,
     numberOfRows: 1,
     stitchesPerRow: 6,
+    preview: "6sc",
   );
   r1.rowId = await insertPatternRowInDb(r1, db);
   await insertPatternRowDetailInDb(
@@ -33,6 +34,7 @@ Future<PatternPart> _createHeadPart(int patternId, Database? db) async {
     startRow: 2,
     numberOfRows: 1,
     stitchesPerRow: 12,
+    preview: "6inc",
   );
   r2.rowId = await insertPatternRowInDb(r2, db);
   await insertPatternRowDetailInDb(
@@ -49,6 +51,7 @@ Future<PatternPart> _createHeadPart(int patternId, Database? db) async {
     startRow: 3,
     numberOfRows: 1,
     stitchesPerRow: 18,
+    preview: "(sc, inc)x6",
   );
   r3.rowId = await insertPatternRowInDb(r3, db);
   PatternRowDetail dr3 = PatternRowDetail(
@@ -63,6 +66,7 @@ Future<PatternPart> _createHeadPart(int patternId, Database? db) async {
     startRow: 4,
     numberOfRows: 2,
     stitchesPerRow: 18,
+    preview: "18sc",
   );
   r4.rowId = await insertPatternRowInDb(r4, db);
   await insertPatternRowDetailInDb(
@@ -79,6 +83,7 @@ Future<PatternPart> _createHeadPart(int patternId, Database? db) async {
     startRow: 6,
     numberOfRows: 1,
     stitchesPerRow: 9,
+    preview: "9dec",
   );
   r6.rowId = await insertPatternRowInDb(r6, db);
   await insertPatternRowDetailInDb(
@@ -106,6 +111,7 @@ Future<PatternPart> _createShortTentacles(int patternId, Database? db) async {
     startRow: 1,
     numberOfRows: 1,
     stitchesPerRow: 8,
+    preview: "8ch",
   );
   r1.rowId = await insertPatternRowInDb(r1, db);
   await insertPatternRowDetailInDb(
@@ -132,6 +138,7 @@ Future<PatternPart> _createLongTentacles(int patternId, Database? db) async {
     startRow: 1,
     numberOfRows: 1,
     stitchesPerRow: 12,
+    preview: "12ch",
   );
   r1.rowId = await insertPatternRowInDb(r1, db);
   await insertPatternRowDetailInDb(

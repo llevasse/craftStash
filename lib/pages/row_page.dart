@@ -50,7 +50,6 @@ class _RowPageState extends State<RowPage> {
       row = widget.row!;
       detailsString = "";
       for (PatternRowDetail detail in row.details) {
-        print(detail.stitch);
         String text = detail.stitch!.abreviation;
         if (detail.yarnColorName != null) {
           text = "change to ${detail.yarnColorName}";
@@ -268,6 +267,8 @@ class _RowPageState extends State<RowPage> {
       onPressed: () async {
         if (_formKey.currentState!.validate()) {
           _formKey.currentState!.save();
+          row.preview = row.detailsAsString();
+          await updatePatternRowInDb(row);
           if (widget.row == null) {
             for (PatternRowDetail e in row.details) {
               if (e.repeatXTime != 0) {
@@ -276,7 +277,6 @@ class _RowPageState extends State<RowPage> {
               }
             }
           } else {
-            await updatePatternRowInDb(row);
             for (PatternRowDetail e in row.details) {
               if (e.repeatXTime != 0) {
                 e.rowId = row.rowId;

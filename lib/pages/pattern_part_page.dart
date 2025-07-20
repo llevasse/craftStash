@@ -96,9 +96,10 @@ class _PatternPartPageState extends State<PatternPartPage> {
       title +=
           "-${row.startRow + row.numberOfRows - 1} (${row.numberOfRows} rows)";
     }
+    Widget? subtitle = row.preview != null ? Text(row.preview!) : null;
     return ListTile(
       title: Text(title),
-      // subtitle: Text(row.detailsAsString()),
+      subtitle: subtitle,
       onTap: () async {
         PatternRow r = await getPatternRowByRowId(row.rowId);
         await Navigator.push(
