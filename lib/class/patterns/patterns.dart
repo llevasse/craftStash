@@ -71,25 +71,17 @@ Future<void> deletePatternInDb(int id) async {
   }
 }
 
-Future<List<Pattern>> getAllPattern() async {
+Future<List<Pattern>> getAllPattern([bool withParts = false]) async {
   final db = (await DbService().database);
   if (db != null) {
     final List<Map<String, Object?>> patternMaps = await db.query('pattern');
     List<Pattern> p = [for (final map in patternMaps) _fromMap(map)];
-    for (Pattern pattern in p) {
-      pattern.parts = await getAllPatternPartsByPatternId(pattern.patternId);
+    if (withParts == true) {
+      for (Pattern pattern in p) {
+        pattern.parts = await getAllPatternPart(pattern.patternId);
+      }
     }
     return (p);
-  } else {
-    throw DatabaseDoesNotExistException("Could not get database");
-  }
-}
-
-Future<List<Pattern>> getAllPatternWithoutParts() async {
-  final db = (await DbService().database);
-  if (db != null) {
-    final List<Map<String, Object?>> patternMaps = await db.query('pattern');
-    return [for (final map in patternMaps) _fromMap(map)];
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }
@@ -105,7 +97,7 @@ Future<Pattern> getPatternById(int id) async {
       limit: 1,
     );
     Pattern p = _fromMap(patternMaps[0]);
-    p.parts = await getAllPatternPartsByPatternId(id);
+    p.parts = await getAllPatternPart(id);
     return (p);
   } else {
     throw DatabaseDoesNotExistException("Could not get database");

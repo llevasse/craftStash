@@ -90,31 +90,30 @@ Future<void> deletePatternPartInDb(int id) async {
   }
 }
 
-Future<List<PatternPart>> getAllPatternPart() async {
-  final db = (await DbService().database);
+Future<List<PatternPart>> getAllPatternPart([
+  int? patternId,
+  bool withRow = false,
+  bool withDetails = false,
+  Database? db,
+]) async {
+  db ??= (await DbService().database);
   if (db != null) {
+    String? where;
+    List<Object?>? whereArgs;
+    if (patternId != null) {
+      where = "pattern_id = ?";
+      whereArgs = [patternId];
+    }
     final List<Map<String, Object?>> patternPartMaps = await db.query(
       'pattern_part',
-    );
-    return [for (final map in patternPartMaps) _fromMap(map)];
-  } else {
-    throw DatabaseDoesNotExistException("Could not get database");
-  }
-}
-
-Future<List<PatternPart>> getAllPatternPartsByPatternId(int id) async {
-  final db = (await DbService().database);
-  if (db != null) {
-    final List<Map<String, Object?>> patternPartMaps = await db.query(
-      'pattern_part',
-      where: "pattern_id = ?",
-      whereArgs: [id],
-      columns: ["pattern_id", "part_id", "name", "numbers_to_make"],
+      where: where,
+      whereArgs: whereArgs,
     );
     List<PatternPart> l = [for (final map in patternPartMaps) _fromMap(map)];
-    for (PatternPart part in l) {
-      part.patternId = id;
-      part.rows = await getAllPatternRowByPartId(part.partId);
+    if (withRow == true) {
+      for (PatternPart part in l) {
+        part.rows = await getAllPatternRow(part.partId, withDetails, db);
+      }
     }
     return (l);
   } else {
@@ -122,26 +121,8 @@ Future<List<PatternPart>> getAllPatternPartsByPatternId(int id) async {
   }
 }
 
-Future<List<PatternPart>> getAllPatternPartsByPatternIdWithoutRows(
-  int id,
-) async {
-  final db = (await DbService().database);
-  if (db != null) {
-    final List<Map<String, Object?>> patternPartMaps = await db.query(
-      'pattern_part',
-      where: "pattern_id = ?",
-      whereArgs: [id],
-      columns: ["pattern_id", "part_id", "name", "numbers_to_make"],
-    );
-    List<PatternPart> l = [for (final map in patternPartMaps) _fromMap(map)];
-    return (l);
-  } else {
-    throw DatabaseDoesNotExistException("Could not get database");
-  }
-}
-
-Future<PatternPart> getPatternPartByPartId(int id) async {
-  final db = (await DbService().database);
+Future<PatternPart> getPatternPartByPartId(int id, [Database? db]) async {
+  db ??= (await DbService().database);
   if (db != null) {
     final List<Map<String, Object?>> patternPartMaps = await db.query(
       'pattern_part',
@@ -150,7 +131,7 @@ Future<PatternPart> getPatternPartByPartId(int id) async {
       limit: 1,
     );
     PatternPart p = _fromMap(patternPartMaps[0]);
-    p.rows = await getAllPatternRowByPartIdWithoutDetails(id);
+    p.rows = await getAllPatternRow(id, false, db);
     return (p);
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
