@@ -66,7 +66,8 @@ class StitchListState extends State<StitchList> {
   }
 
   Future<void> getAllStitches() async {
-    stitches = await getAllStitchesInDb();
+    stitches = await getAllVisibleStitchesInDb();
+    // stitches = await getAllStitchesInDb();
     list.clear();
     if (widget.customActions != null) {
       for (AddCustomDetailButton action in widget.customActions!) {

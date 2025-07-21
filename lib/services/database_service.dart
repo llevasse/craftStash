@@ -54,20 +54,25 @@ class DbService {
     );
 
     await db.execute(
-      '''CREATE TABLE IF NOT EXISTS pattern(pattern_id INTEGER PRIMARY KEY, name TEXT, hash INT UNIQUE)''',
+      '''CREATE TABLE IF NOT EXISTS pattern(pattern_id INTEGER PRIMARY KEY, name TEXT, assembly TEXT, hook_size REAL, note TEXT, hash INT UNIQUE)''',
     );
     await db.execute(
-      '''CREATE TABLE IF NOT EXISTS pattern_part(part_id INTEGER PRIMARY KEY, name TEXT, numbers_to_make INT, pattern_id INT, FOREIGN KEY (pattern_id) REFERENCES pattern(pattern_id) ON DELETE CASCADE)''',
+      '''CREATE TABLE IF NOT EXISTS pattern_part(part_id INTEGER PRIMARY KEY, name TEXT, numbers_to_make INT, pattern_id INT, note TEXT, FOREIGN KEY (pattern_id) REFERENCES pattern(pattern_id) ON DELETE CASCADE)''',
     );
     await db.execute(
-      '''CREATE TABLE IF NOT EXISTS pattern_row(row_id INTEGER PRIMARY KEY, part_id INT, start_row INT, number_of_rows INT, stitches_count_per_row INT, in_same_stitch INT, FOREIGN KEY (part_id) REFERENCES pattern_part(part_id) ON DELETE CASCADE)''',
+      '''CREATE TABLE IF NOT EXISTS pattern_row(row_id INTEGER PRIMARY KEY, part_id INT, start_row INT, number_of_rows INT, stitches_count_per_row INT, in_same_stitch INT, preview TEXT, note TEXT, FOREIGN KEY (part_id) REFERENCES pattern_part(part_id) ON DELETE CASCADE)''',
     );
     await db.execute(
-      '''CREATE TABLE IF NOT EXISTS stitch(id INTEGER PRIMARY KEY, sequence_id INT, abreviation TEXT, name TEXT, description TEXT, is_sequence INT, hash INT, FOREIGN KEY (sequence_id) REFERENCES pattern_row(row_id) ON DELETE CASCADE)''',
+      '''CREATE TABLE IF NOT EXISTS stitch(id INTEGER PRIMARY KEY, sequence_id INT, abreviation TEXT, name TEXT, description TEXT, is_sequence INT, hidden INT, hash INT, FOREIGN KEY (sequence_id) REFERENCES pattern_row(row_id) ON DELETE CASCADE)''',
     );
     await db.execute(
-      '''CREATE TABLE IF NOT EXISTS pattern_row_detail(row_detail_id INTEGER PRIMARY KEY, row_id INT, stitch_id INT, repeat_x_time INT, color INT, FOREIGN KEY (row_id) REFERENCES pattern_row(row_id) ON DELETE CASCADE, FOREIGN KEY (stitch_id) REFERENCES stitch(id))''',
+      '''CREATE TABLE IF NOT EXISTS pattern_row_detail(row_detail_id INTEGER PRIMARY KEY, row_id INT, stitch_id INT, repeat_x_time INT, yarn_id INT, FOREIGN KEY (row_id) REFERENCES pattern_row(row_id) ON DELETE CASCADE, FOREIGN KEY (stitch_id) REFERENCES stitch(id), FOREIGN KEY (yarn_id) REFERENCES yarn(id))''',
     );
+
+    await db.execute(
+      '''CREATE TABLE IF NOT EXISTS yarn_in_pattern(id INTEGER PRIMARY KEY, pattern_id INT, yarn_id INT, FOREIGN KEY (pattern_id) REFERENCES pattern(pattern_id), FOREIGN KEY (yarn_id) REFERENCES yarn(id))''',
+    );
+
     await insertDefaultStitchesInDb(db);
     await insertPhildarYarn(db);
     await insertJellyFishPattern(db);
@@ -75,30 +80,6 @@ class DbService {
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     Batch batch = db.batch();
-    // if (oldVersion < 2) {
-    //   await dbV2(batch);
-    // }
-    // if (oldVersion < 3) {
-    //   await dbV3(batch);
-    // }
-    // if (oldVersion < 4) {
-    //   await dbV4(batch);
-    // }
-    // if (oldVersion < 5) {
-    //   await dbV5(batch);
-    // }
-    // if (oldVersion < 6) {
-    //   await dbV6(batch);
-    // }
-    // if (oldVersion < 7) {
-    //   await dbV7(batch);
-    // }
-    // if (oldVersion < 8) {
-    //   await dbV8(batch);
-    // }
-    // if (oldVersion < 9) {
-    //   await dbV9(batch);
-    // }
     batch.commit();
   }
 
@@ -121,6 +102,15 @@ class DbService {
 class DatabaseDoesNotExistException implements Exception {
   DatabaseDoesNotExistException(this.cause);
   String cause;
+}
+
+class EntryAlreadyExist implements Exception {
+  EntryAlreadyExist(this.table);
+  String table;
+  @override
+  String toString() {
+    return ("Entry in $table already exists");
+  }
 }
 
 class DatabaseNoElementsMeetConditionException implements Exception {

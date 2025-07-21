@@ -43,7 +43,7 @@ class _YarnCollectionForm extends State<YarnCollectionForm> {
             builder: (BuildContext context) => YarnForm(
               base: Yarn(color: Colors.amber.toARGB32()),
               updateYarn: widget.updateYarn,
-              ifValideFunction: insertYarnInDb,
+              ifValidFunction: insertYarnInDb,
               title: "Add yarn",
               cancel: "Cancel",
               confirm: "Add",
@@ -96,7 +96,7 @@ class _YarnCollectionForm extends State<YarnCollectionForm> {
                   thickness: element.thickness,
                 ),
                 updateYarn: widget.updateYarn,
-                ifValideFunction: insertYarnInDb,
+                ifValidFunction: insertYarnInDb,
                 title: "Add yarn",
                 cancel: "Cancel",
                 confirm: "Add",

@@ -19,7 +19,7 @@ class _PatternsStashPageState extends State<PatternsStashPage> {
   List<craft.Pattern> patterns = List.empty(growable: true);
 
   Future<void> updateListView() async {
-    patterns = await craft.getAllPatternWithoutParts();
+    patterns = await craft.getAllPattern();
     List<Widget> tmp = List.empty(growable: true);
     for (craft.Pattern pattern in patterns) {
       tmp.add(

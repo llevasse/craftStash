@@ -6,24 +6,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class YarnForm extends StatefulWidget {
-  final Future<void> Function() updateYarn;
-  final Future<void> Function(Yarn) ifValideFunction;
+  final Future<void> Function()? updateYarn;
+  final Future<void> Function(Yarn)? ifValidFunction;
+  final Future<void> Function(Yarn)? onCancel;
   String confirm;
   String cancel;
   String title;
   Yarn base;
   bool fill;
+  bool readOnly;
   bool fromCategory;
 
   YarnForm({
     super.key,
     required this.base,
-    required this.updateYarn,
-    required this.ifValideFunction,
+    this.updateYarn,
+    this.ifValidFunction,
+    this.onCancel,
     required this.confirm,
     required this.cancel,
     required this.title,
     this.fill = false,
+    this.readOnly = false,
     this.fromCategory = true,
   });
 
@@ -228,6 +232,28 @@ class _YarnForm extends State<YarnForm> {
     widget.base.nbOfSkeins -= 1;
   }
 
+  Widget _colorSelector() {
+    return Row(
+      children: [
+        Expanded(child: Container(height: 20, color: Color(widget.base.color))),
+
+        TextButton(
+          onPressed: widget.readOnly
+              ? null
+              : () {
+                  _createColorPickerPopup(context);
+                },
+          child: Text(
+            widget.readOnly ? widget.base.colorName : "Pick a color",
+            softWrap: false,
+            overflow: TextOverflow.visible,
+          ),
+        ),
+        Expanded(child: Container(height: 20, color: Color(widget.base.color))),
+      ],
+    );
+  }
+
   Form _createForm() {
     return Form(
       key: _formKey,
@@ -238,33 +264,7 @@ class _YarnForm extends State<YarnForm> {
           child: ListView(
             //spacing: spacing,
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      height: 20,
-                      color: Color(widget.base.color),
-                    ),
-                  ),
-
-                  TextButton(
-                    onPressed: () {
-                      _createColorPickerPopup(context);
-                    },
-                    child: const Text(
-                      "Pick a color",
-                      softWrap: false,
-                      overflow: TextOverflow.visible,
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      height: 20,
-                      color: Color(widget.base.color),
-                    ),
-                  ),
-                ],
-              ),
+              _colorSelector(),
 
               getBrandDropdownMenu(),
 
@@ -285,11 +285,12 @@ class _YarnForm extends State<YarnForm> {
                   }
                   widget.base.colorName = newValue;
                 },
+                readOnly: widget.readOnly,
               ),
 
               TextFormField(
                 keyboardType: TextInputType.numberWithOptions(),
-                readOnly: widget.fromCategory,
+                readOnly: widget.fromCategory || widget.readOnly,
                 style: TextStyle(
                   color: widget.fromCategory == true
                       ? Colors.grey
@@ -314,7 +315,7 @@ class _YarnForm extends State<YarnForm> {
               TextFormField(
                 keyboardType: TextInputType.numberWithOptions(),
                 decoration: InputDecoration(label: Text("Min hook size")),
-                readOnly: widget.fromCategory,
+                readOnly: widget.fromCategory || widget.readOnly,
                 style: TextStyle(
                   color: widget.fromCategory == true
                       ? Colors.grey
@@ -338,7 +339,7 @@ class _YarnForm extends State<YarnForm> {
               TextFormField(
                 keyboardType: TextInputType.numberWithOptions(),
                 decoration: InputDecoration(label: Text("Max hook size")),
-                readOnly: widget.fromCategory,
+                readOnly: widget.fromCategory || widget.readOnly,
                 style: TextStyle(
                   color: widget.fromCategory == true
                       ? Colors.grey
@@ -362,8 +363,8 @@ class _YarnForm extends State<YarnForm> {
               IntControlButton(
                 count: widget.base.nbOfSkeins,
                 text: "Skeins",
-                increase: increaseSkeins,
-                decrease: decreaseSkeins,
+                increase: widget.readOnly ? () {} : increaseSkeins,
+                decrease: widget.readOnly ? () {} : decreaseSkeins,
                 signed: false,
               ),
             ],
@@ -387,16 +388,25 @@ class _YarnForm extends State<YarnForm> {
       content: _createForm(),
       actions: <Widget>[
         TextButton(
-          onPressed: () => Navigator.pop(context),
+          onPressed: () async {
+            if (widget.onCancel != null) {
+              await widget.onCancel!(widget.base);
+            }
+            Navigator.pop(context);
+          },
           child: Text(widget.cancel),
         ),
         TextButton(
           onPressed: () async {
-            if (_formKey.currentState!.validate()) {
-              _formKey.currentState!.save();
-              await widget.ifValideFunction(widget.base);
+            if (widget.ifValidFunction != null) {
+              if (_formKey.currentState!.validate()) {
+                _formKey.currentState!.save();
+                await widget.ifValidFunction!(widget.base);
+              }
             }
-            await widget.updateYarn();
+            if (widget.updateYarn != null) {
+              await widget.updateYarn!();
+            }
             Navigator.pop(context);
             setState(() {});
           },

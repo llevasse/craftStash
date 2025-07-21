@@ -7,12 +7,14 @@ class PatternPart {
   int patternId;
   int numbersToMake;
   String name;
+  String? note;
   List<PatternRow> rows = List.empty(growable: true);
   PatternPart({
     this.partId = 0,
     required this.name,
     required this.patternId,
     this.numbersToMake = 1,
+    this.note,
   });
 
   Map<String, dynamic> toMap() {
@@ -20,6 +22,7 @@ class PatternPart {
       'pattern_id': patternId,
       'numbers_to_make': numbersToMake,
       'name': name,
+      'note': note,
     };
   }
 
@@ -35,6 +38,16 @@ class PatternPart {
 
   @override
   int get hashCode => Object.hash(name, patternId, numbersToMake);
+}
+
+PatternPart _fromMap(Map<String, Object?> map) {
+  return PatternPart(
+    partId: map['part_id'] as int,
+    patternId: map['pattern_id'] as int,
+    name: map["name"] as String,
+    numbersToMake: map['numbers_to_make'] as int,
+    note: map['note'] as String?,
+  );
 }
 
 Future<int> insertPatternPartInDb(
@@ -77,57 +90,30 @@ Future<void> deletePatternPartInDb(int id) async {
   }
 }
 
-Future<List<PatternPart>> getAllPatternPart() async {
-  final db = (await DbService().database);
+Future<List<PatternPart>> getAllPatternPart([
+  int? patternId,
+  bool withRow = false,
+  bool withDetails = false,
+  Database? db,
+]) async {
+  db ??= (await DbService().database);
   if (db != null) {
+    String? where;
+    List<Object?>? whereArgs;
+    if (patternId != null) {
+      where = "pattern_id = ?";
+      whereArgs = [patternId];
+    }
     final List<Map<String, Object?>> patternPartMaps = await db.query(
       'pattern_part',
+      where: where,
+      whereArgs: whereArgs,
     );
-    return [
-      for (final {
-            'part_id': patternPartId as int,
-            'pattern_id': patternId as int,
-            "name": name as String,
-            'numbers_to_make': numbersToMake as int,
-          }
-          in patternPartMaps)
-        PatternPart(
-          name: name,
-          patternId: patternId,
-          partId: patternPartId,
-          numbersToMake: numbersToMake,
-        ),
-    ];
-  } else {
-    throw DatabaseDoesNotExistException("Could not get database");
-  }
-}
-
-Future<List<PatternPart>> getAllPatternPartsByPatternId(int id) async {
-  final db = (await DbService().database);
-  if (db != null) {
-    final List<Map<String, Object?>> patternPartMaps = await db.query(
-      'pattern_part',
-      where: "pattern_id = ?",
-      whereArgs: [id],
-    );
-    List<PatternPart> l = [
-      for (final {
-            'part_id': patternPartId as int,
-            'pattern_id': patternId as int,
-            "name": name as String,
-            'numbers_to_make': numbersToMake as int,
-          }
-          in patternPartMaps)
-        PatternPart(
-          name: name,
-          patternId: patternId,
-          partId: patternPartId,
-          numbersToMake: numbersToMake,
-        ),
-    ];
-    for (PatternPart part in l) {
-      part.rows = await getAllPatternRowByPartId(part.partId);
+    List<PatternPart> l = [for (final map in patternPartMaps) _fromMap(map)];
+    if (withRow == true) {
+      for (PatternPart part in l) {
+        part.rows = await getAllPatternRow(part.partId, withDetails, db);
+      }
     }
     return (l);
   } else {
@@ -135,8 +121,8 @@ Future<List<PatternPart>> getAllPatternPartsByPatternId(int id) async {
   }
 }
 
-Future<PatternPart> getPatternPartByPartId(int id) async {
-  final db = (await DbService().database);
+Future<PatternPart> getPatternPartByPartId(int id, [Database? db]) async {
+  db ??= (await DbService().database);
   if (db != null) {
     final List<Map<String, Object?>> patternPartMaps = await db.query(
       'pattern_part',
@@ -144,13 +130,8 @@ Future<PatternPart> getPatternPartByPartId(int id) async {
       whereArgs: [id],
       limit: 1,
     );
-    PatternPart p = PatternPart(
-      partId: patternPartMaps[0]['part_id'] as int,
-      patternId: patternPartMaps[0]['pattern_id'] as int,
-      name: patternPartMaps[0]['name'] as String,
-      numbersToMake: patternPartMaps[0]['numbers_to_make'] as int,
-    );
-    p.rows = await getAllPatternRowByPartId(id);
+    PatternPart p = _fromMap(patternPartMaps[0]);
+    p.rows = await getAllPatternRow(id, false, db);
     return (p);
   } else {
     throw DatabaseDoesNotExistException("Could not get database");

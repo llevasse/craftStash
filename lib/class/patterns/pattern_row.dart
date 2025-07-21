@@ -7,9 +7,11 @@ final String _tableName = "pattern_row";
 class PatternRow {
   int rowId;
   int? partId;
+  String? preview;
   int inSameStitch;
   int startRow, numberOfRows;
   int stitchesPerRow;
+  String? note;
   List<PatternRowDetail> details = List.empty(growable: true);
   PatternRow({
     this.rowId = 0,
@@ -18,6 +20,8 @@ class PatternRow {
     required this.startRow,
     required this.numberOfRows,
     required this.stitchesPerRow,
+    this.preview,
+    this.note,
   });
 
   Map<String, dynamic> toMap() {
@@ -25,8 +29,10 @@ class PatternRow {
       'part_id': partId,
       'start_row': startRow,
       'number_of_rows': numberOfRows,
+      'preview': preview,
       'in_same_stitch': inSameStitch,
       'stitches_count_per_row': stitchesPerRow,
+      'note': note,
       // 'hash': hashCode,
     };
   }
@@ -103,6 +109,8 @@ PatternRow _fromMap(Map<String, Object?> map) {
     numberOfRows: map['number_of_rows'] as int,
     inSameStitch: map['in_same_stitch'] as int,
     stitchesPerRow: map['stitches_count_per_row'] as int,
+    preview: map['preview'] as String?,
+    note: map['note'] as String?,
   );
 }
 
@@ -152,32 +160,30 @@ Future<void> deletePatternRowInDbByPartId(int id) async {
   }
 }
 
-Future<List<PatternRow>> getAllPatternRow() async {
-  final db = (await DbService().database);
+Future<List<PatternRow>> getAllPatternRow([
+  int? partId,
+  bool withDetails = false,
+  Database? db,
+]) async {
+  db ??= (await DbService().database);
   if (db != null) {
+    String? where;
+    List<Object?>? whereArgs;
+    if (partId != null) {
+      where = "part_id = ?";
+      whereArgs = [partId];
+    }
     final List<Map<String, Object?>> patternRowMaps = await db.query(
       _tableName,
-    );
-    return [for (Map<String, Object?> map in patternRowMaps) _fromMap(map)];
-  } else {
-    throw DatabaseDoesNotExistException("Could not get database");
-  }
-}
-
-Future<List<PatternRow>> getAllPatternRowByPartId(int id) async {
-  final db = (await DbService().database);
-  if (db != null) {
-    final List<Map<String, Object?>> patternRowMaps = await db.query(
-      _tableName,
-      where: "part_id = ?",
-      whereArgs: [id],
+      where: where,
+      whereArgs: whereArgs,
       orderBy: "start_row ASC",
     );
-    List<PatternRow> l = List.empty(growable: true);
-    for (Map<String, Object?> map in patternRowMaps) {
-      PatternRow tmp = _fromMap(map);
-      tmp.details = await getAllPatternRowDetailByRowId(tmp.rowId, db);
-      l.add(tmp);
+    List<PatternRow> l = [for (final map in patternRowMaps) _fromMap(map)];
+    if (withDetails == true) {
+      for (PatternRow row in l) {
+        row.details = await getAllPatternRowDetailByRowId(row.rowId);
+      }
     }
     return (l);
   } else {

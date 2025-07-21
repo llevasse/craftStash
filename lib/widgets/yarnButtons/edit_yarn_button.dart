@@ -1,15 +1,28 @@
 import 'package:craft_stash/class/yarns/yarn.dart';
-import 'package:craft_stash/widgets/yarnButtons/yarn_form.dart';
 import 'package:flutter/material.dart';
 
 class EditYarnButton extends StatefulWidget {
   final Future<void> Function() updateYarn;
+  final Future<void> Function()? onClick;
+  final bool showBrand;
+  final bool showMaterial;
+  final bool showThickness;
+  final bool showMinHook;
+  final bool showMaxHook;
+  final bool showSkeins;
   Yarn currentYarn;
 
   EditYarnButton({
     super.key,
     required this.updateYarn,
+    this.onClick,
     required this.currentYarn,
+    this.showBrand = true,
+    this.showMaterial = true,
+    this.showThickness = true,
+    this.showMinHook = true,
+    this.showMaxHook = true,
+    this.showSkeins = true,
   });
 
   @override
@@ -19,8 +32,32 @@ class EditYarnButton extends StatefulWidget {
 typedef MenuEntry = DropdownMenuEntry<String>;
 
 class _EditYarnButton extends State<EditYarnButton> {
+  String brand = "";
+  String material = "";
+  String thickness = "";
+  String minHook = "";
+  String maxHook = "";
+  Widget? subtitle;
+  Widget? trailing;
   @override
   void initState() {
+    if (widget.showBrand) brand = ", ${widget.currentYarn.brand}";
+    if (widget.showMaterial) material = ", ${widget.currentYarn.material}";
+    if (widget.showThickness) {
+      thickness = ", ${widget.currentYarn.thickness.toStringAsFixed(2)}mm";
+    }
+    if (widget.showMinHook || widget.showMaxHook) {
+      if (widget.showMinHook) {
+        minHook = "${widget.currentYarn.minHook.toStringAsFixed(2)}mm";
+      }
+      if (widget.showMaxHook) {
+        maxHook = "${widget.currentYarn.maxHook.toStringAsFixed(2)}mm";
+      }
+      subtitle = Text("Hook : $minHook${maxHook.isEmpty ? "" : "-$maxHook"}");
+    }
+    if (widget.showSkeins) {
+      trailing = Text("${widget.currentYarn.nbOfSkeins} skeins");
+    }
     super.initState();
   }
 
@@ -32,25 +69,10 @@ class _EditYarnButton extends State<EditYarnButton> {
         height: 30,
         color: Color(widget.currentYarn.color),
       ),
-      title: Text(
-        "${widget.currentYarn.colorName}, ${widget.currentYarn.brand}, ${widget.currentYarn.material}, ${widget.currentYarn.thickness.toStringAsFixed(2)}mm",
-      ),
-      subtitle: Text(
-        "Min hook : ${widget.currentYarn.minHook.toStringAsFixed(2)}mm, Max hook : ${widget.currentYarn.maxHook.toStringAsFixed(2)}mm",
-      ),
-      trailing: Text("${widget.currentYarn.nbOfSkeins} skeins"),
-      onTap: () => showDialog(
-        context: context,
-        builder: (BuildContext context) => YarnForm(
-          base: widget.currentYarn,
-          updateYarn: widget.updateYarn,
-          ifValideFunction: updateYarnInDb,
-          title: "Edit yarn",
-          cancel: "Cancel",
-          confirm: "Edit",
-          fill: true,
-        ),
-      ),
+      title: Text("${widget.currentYarn.colorName}$brand$material$thickness"),
+      subtitle: subtitle,
+      trailing: trailing,
+      onTap: widget.onClick,
       onLongPress: () {
         showDialog(
           context: context,

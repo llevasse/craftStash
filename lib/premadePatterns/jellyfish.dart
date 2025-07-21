@@ -3,6 +3,7 @@ import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
 import 'package:craft_stash/class/stitch.dart';
+import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:sqflite/sqflite.dart';
 
 Map<String, Stitch> _stitchesMap = {};
@@ -16,6 +17,7 @@ Future<PatternPart> _createHeadPart(int patternId, Database? db) async {
     startRow: 1,
     numberOfRows: 1,
     stitchesPerRow: 6,
+    preview: "6sc",
   );
   r1.rowId = await insertPatternRowInDb(r1, db);
   await insertPatternRowDetailInDb(
@@ -32,6 +34,7 @@ Future<PatternPart> _createHeadPart(int patternId, Database? db) async {
     startRow: 2,
     numberOfRows: 1,
     stitchesPerRow: 12,
+    preview: "6inc",
   );
   r2.rowId = await insertPatternRowInDb(r2, db);
   await insertPatternRowDetailInDb(
@@ -48,6 +51,7 @@ Future<PatternPart> _createHeadPart(int patternId, Database? db) async {
     startRow: 3,
     numberOfRows: 1,
     stitchesPerRow: 18,
+    preview: "(sc, inc)x6",
   );
   r3.rowId = await insertPatternRowInDb(r3, db);
   PatternRowDetail dr3 = PatternRowDetail(
@@ -62,6 +66,7 @@ Future<PatternPart> _createHeadPart(int patternId, Database? db) async {
     startRow: 4,
     numberOfRows: 2,
     stitchesPerRow: 18,
+    preview: "18sc",
   );
   r4.rowId = await insertPatternRowInDb(r4, db);
   await insertPatternRowDetailInDb(
@@ -78,6 +83,7 @@ Future<PatternPart> _createHeadPart(int patternId, Database? db) async {
     startRow: 6,
     numberOfRows: 1,
     stitchesPerRow: 9,
+    preview: "9dec",
   );
   r6.rowId = await insertPatternRowInDb(r6, db);
   await insertPatternRowDetailInDb(
@@ -105,6 +111,7 @@ Future<PatternPart> _createShortTentacles(int patternId, Database? db) async {
     startRow: 1,
     numberOfRows: 1,
     stitchesPerRow: 8,
+    preview: "8ch",
   );
   r1.rowId = await insertPatternRowInDb(r1, db);
   await insertPatternRowDetailInDb(
@@ -131,6 +138,7 @@ Future<PatternPart> _createLongTentacles(int patternId, Database? db) async {
     startRow: 1,
     numberOfRows: 1,
     stitchesPerRow: 12,
+    preview: "12ch",
   );
   r1.rowId = await insertPatternRowInDb(r1, db);
   await insertPatternRowDetailInDb(
@@ -154,6 +162,10 @@ Future<void> insertJellyFishPattern([Database? db]) async {
   // print(_stitchesMap);
   craft.Pattern pattern = craft.Pattern(name: "Jellyfish");
   pattern.patternId = await craft.insertPatternInDb(pattern, db);
+  List<Yarn> y = await getAllYarn(db);
+  if (y.isNotEmpty) {
+    await craft.insertYarnInPattern(y.first.id, pattern.patternId, db);
+  }
   pattern.parts.add(await _createHeadPart(pattern.patternId, db));
   pattern.parts.add(await _createShortTentacles(pattern.patternId, db));
   pattern.parts.add(await _createLongTentacles(pattern.patternId, db));

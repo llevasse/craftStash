@@ -2,6 +2,9 @@ import 'package:craft_stash/add_part_button.dart';
 import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
 import 'package:craft_stash/pages/pattern_part_page.dart';
+import 'package:craft_stash/widgets/yarn/pattern_yarn_list.dart';
+import 'package:craft_stash/widgets/yarn/yarn_list_dialog.dart';
+import 'package:craft_stash/widgets/yarnButtons/yarn_form.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
@@ -19,10 +22,11 @@ class _PatternPageState extends State<PatternPage> {
   String title = "New pattern";
   craft.Pattern pattern = craft.Pattern();
   List<Widget> patternListView = List.empty(growable: true);
+  double spacing = 10;
+  late void Function() yarnListInitFunction;
 
   void _insertPattern() async {
-    int patternId = await craft.insertPatternInDb(pattern);
-    pattern.patternId = patternId;
+    pattern.patternId = await craft.insertPatternInDb(pattern);
   }
 
   @override
@@ -93,6 +97,43 @@ class _PatternPageState extends State<PatternPage> {
     );
   }
 
+  Widget _hookSizeInput() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      child: TextFormField(
+        keyboardType: TextInputType.numberWithOptions(),
+        initialValue: widget.pattern?.hookSize?.toStringAsFixed(2),
+        decoration: InputDecoration(label: Text("Hook size")),
+        validator: (value) {
+          return null;
+        },
+        onSaved: (newValue) {
+          newValue = newValue?.trim();
+          if (newValue != null && newValue.isNotEmpty) {
+            pattern.hookSize = double.parse(newValue);
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _assemblyInput() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      child: TextFormField(
+        maxLines: 5,
+        initialValue: widget.pattern?.note,
+        decoration: InputDecoration(label: Text("Assembly")),
+        validator: (value) {
+          return null;
+        },
+        onSaved: (newValue) {
+          pattern.note = newValue?.trim();
+        },
+      ),
+    );
+  }
+
   Future<void> updatePattern() async {
     pattern = await craft.getPatternById(pattern.patternId);
     await updateListView();
@@ -101,7 +142,7 @@ class _PatternPageState extends State<PatternPage> {
   Future<void> updateListView() async {
     List<Widget> tmp = List.empty(growable: true);
 
-    pattern.parts = await getAllPatternPartsByPatternId(pattern.patternId);
+    pattern.parts = await getAllPatternPart(pattern.patternId);
     for (PatternPart part in pattern.parts) {
       tmp.add(
         ListTile(
@@ -149,8 +190,72 @@ class _PatternPageState extends State<PatternPage> {
       );
     }
     patternListView.clear();
-    patternListView.add(_titleInput());
+    patternListView.add(
+      Row(
+        children: [
+          Expanded(child: _titleInput()),
+          Expanded(child: _hookSizeInput()),
+        ],
+      ),
+    );
+    patternListView.add(
+      Container(
+        padding: EdgeInsets.all(10),
+        child: Column(
+          spacing: spacing / 2,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Text("Yarns used :"),
+            PatternYarnList(
+              onPress: (yarn) async {
+                print(yarn.toMap());
+                await showDialog(
+                  context: context,
+                  builder: (BuildContext context) => YarnForm(
+                    fill: true,
+                    readOnly: true,
+                    base: yarn,
+                    confirm: "close",
+                    cancel: "remove",
+                    title: yarn.colorName,
+                    onCancel: (yarn) async {
+                      await craft.deleteYarnInPattern(
+                        yarn.id,
+                        pattern.patternId,
+                      );
+                      yarnListInitFunction.call();
+                    },
+                  ),
+                );
+              },
+              onAddYarnPress: () async {
+                await showDialog(
+                  context: context,
+                  builder: (BuildContext context) => YarnListDialog(
+                    onPressed: (yarn) async {
+                      try {
+                        await craft.insertYarnInPattern(
+                          yarn.id,
+                          pattern.patternId,
+                        );
+                        yarnListInitFunction.call();
+                      } catch (e) {}
+                    },
+                  ),
+                );
+              },
+              builder: (BuildContext context, void Function() methodFromChild) {
+                yarnListInitFunction = methodFromChild;
+              },
+              patternId: pattern.patternId,
+            ),
+          ],
+        ),
+      ),
+    );
     patternListView.add(Expanded(child: ListView(children: tmp)));
+    patternListView.add(_assemblyInput());
     setState(() {});
   }
 
@@ -188,7 +293,12 @@ class _PatternPageState extends State<PatternPage> {
       ),
       body: Form(
         key: _formKey,
-        child: Column(children: patternListView),
+        child: Column(
+          spacing: spacing,
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: patternListView,
+        ),
       ),
       floatingActionButton: AddPartButton(
         updatePatternListView: updatePattern,

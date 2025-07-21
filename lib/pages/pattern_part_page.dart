@@ -29,25 +29,21 @@ class _PatternPartPageState extends State<PatternPartPage> {
 
   void _insertPart() async {
     part.patternId = widget.pattern.patternId;
-    int partId = await insertPatternPartInDb(part);
-    part.partId = partId;
+    part.partId = await insertPatternPartInDb(part);
   }
 
   @override
   void initState() {
     if (widget.part == null) {
       _insertPart();
+      patternListView.add(_titleInput());
+      patternListView.add(_numbersToMakeInput());
     } else {
       part = widget.part!;
       title = part.name;
+      updateListView();
     }
-    patternListView.add(_titleInput());
-    patternListView.add(_numbersToMakeInput());
-    for (PatternRow row in part.rows) {
-      if (row.startRow != 0) {
-        patternListView.add(_patternRowTile(row));
-      }
-    }
+
     super.initState();
   }
 
@@ -100,16 +96,18 @@ class _PatternPartPageState extends State<PatternPartPage> {
       title +=
           "-${row.startRow + row.numberOfRows - 1} (${row.numberOfRows} rows)";
     }
+    Widget? subtitle = row.preview != null ? Text(row.preview!) : null;
     return ListTile(
       title: Text(title),
-      subtitle: Text(row.detailsAsString()),
+      subtitle: subtitle,
       onTap: () async {
+        PatternRow r = await getPatternRowByRowId(row.rowId);
         await Navigator.push(
           context,
           MaterialPageRoute<void>(
             settings: RouteSettings(name: "row"),
             builder: (BuildContext context) =>
-                RowPage(part: part, updatePattern: updateListView, row: row),
+                RowPage(part: part, updatePattern: updateListView, row: r),
           ),
         );
       },

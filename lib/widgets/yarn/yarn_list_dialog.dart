@@ -1,22 +1,17 @@
 import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:craft_stash/class/yarns/yarn_collection.dart';
-import 'package:craft_stash/widgets/page_select_dropdown_button.dart';
 import 'package:craft_stash/widgets/yarnButtons/edit_yarn_button.dart';
-import 'package:craft_stash/widgets/yarnButtons/yarn_form.dart';
 import 'package:flutter/material.dart';
 
-typedef MyBuilder =
-    void Function(BuildContext context, Future<void> Function() updateYarn);
-
-class YarnStashPage extends StatefulWidget {
-  final MyBuilder builder;
-  const YarnStashPage({super.key, required this.builder});
+class YarnListDialog extends StatefulWidget {
+  final Future<void> Function(Yarn yarn) onPressed;
+  const YarnListDialog({super.key, required this.onPressed});
 
   @override
-  State<YarnStashPage> createState() => _YarnStashPageState();
+  State<StatefulWidget> createState() => _YarnListDialogState();
 }
 
-class _YarnStashPageState extends State<YarnStashPage> {
+class _YarnListDialogState extends State<YarnListDialog> {
   List<Widget> listViewContent = List.empty(growable: true);
   List<Yarn> yarns = List.empty(growable: true);
   List<YarnCollection> yarnCollection = List.empty(growable: true);
@@ -33,7 +28,7 @@ class _YarnStashPageState extends State<YarnStashPage> {
       collectionById[collection.id] = collection.name;
       yarnsByCollection[collection.name] = List.empty(growable: true);
     }
-    setState(() {});
+    if (mounted) setState(() {});
   }
 
   Future<void> getAllYarns() async {
@@ -43,7 +38,17 @@ class _YarnStashPageState extends State<YarnStashPage> {
       yarnsByCollection[collectionById[yarn.collectionId]]?.add(yarn);
     }
     updateListView();
-    setState(() {});
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void initState() {
+    try {
+      getAllYarns();
+    } catch (e) {
+      print(e);
+    }
+    super.initState();
   }
 
   void updateListView() {
@@ -71,56 +76,42 @@ class _YarnStashPageState extends State<YarnStashPage> {
             EditYarnButton(
               updateYarn: getAllYarns,
               currentYarn: yarn,
-              onClick: () => showDialog(
-                context: context,
-                builder: (BuildContext context) => YarnForm(
-                  base: yarn,
-                  updateYarn: getAllYarns,
-                  ifValidFunction: updateYarnInDb,
-                  title: "Edit yarn",
-                  cancel: "Cancel",
-                  confirm: "Edit",
-                  fill: true,
-                ),
-              ),
+              showBrand: false,
+              showMaterial: false,
+              showMaxHook: false,
+              showMinHook: false,
+              showThickness: false,
+              showSkeins: false,
+              onClick: () async {
+                await widget.onPressed(yarn);
+                Navigator.pop(context);
+              },
             ),
           );
         }
       }
     });
-    setState(() {
-      listViewContent.clear();
-      listViewContent = tmp;
-    });
-  }
-
-  @override
-  void initState() {
-    try {
-      getAllYarns();
-    } catch (e) {
-      print(e);
+    if (mounted) {
+      setState(() {
+        listViewContent.clear();
+        listViewContent = tmp;
+      });
     }
-    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    widget.builder.call(context, getAllYarns);
-    ThemeData theme = Theme.of(context);
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: theme.colorScheme.primary,
-        title: Text("Yarn stash"),
-        actions: [
-          PageSelectDropdownButton(
-            onQuit: () async {
-              await getAllYarns();
-            },
-          ),
-        ],
-      ),
-      body: ListView(children: listViewContent),
+    return AlertDialog(
+      title: Text("Yarns"),
+      content: ListView(children: listViewContent),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text("Cancel"),
+        ),
+      ],
     );
   }
 }
