@@ -95,6 +95,23 @@ class _PatternPageState extends State<PatternPage> {
     );
   }
 
+  Widget _assemblyInput() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      child: TextFormField(
+        maxLines: 5,
+        initialValue: widget.pattern?.note,
+        decoration: InputDecoration(label: Text("Assembly")),
+        validator: (value) {
+          return null;
+        },
+        onSaved: (newValue) {
+          pattern.note = newValue?.trim();
+        },
+      ),
+    );
+  }
+
   Future<void> updatePattern() async {
     pattern = await craft.getPatternById(pattern.patternId);
     await updateListView();
@@ -187,6 +204,7 @@ class _PatternPageState extends State<PatternPage> {
     patternListView.clear();
     patternListView.add(_titleInput());
     patternListView.add(Expanded(child: ListView(children: tmp)));
+    patternListView.add(_assemblyInput());
     setState(() {});
   }
 

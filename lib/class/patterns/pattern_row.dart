@@ -11,6 +11,7 @@ class PatternRow {
   int inSameStitch;
   int startRow, numberOfRows;
   int stitchesPerRow;
+  String? note;
   List<PatternRowDetail> details = List.empty(growable: true);
   PatternRow({
     this.rowId = 0,
@@ -20,6 +21,7 @@ class PatternRow {
     required this.numberOfRows,
     required this.stitchesPerRow,
     this.preview,
+    this.note
   });
 
   Map<String, dynamic> toMap() {
@@ -30,6 +32,7 @@ class PatternRow {
       'preview': preview,
       'in_same_stitch': inSameStitch,
       'stitches_count_per_row': stitchesPerRow,
+      'note': note,
       // 'hash': hashCode,
     };
   }
@@ -107,6 +110,7 @@ PatternRow _fromMap(Map<String, Object?> map) {
     inSameStitch: map['in_same_stitch'] as int,
     stitchesPerRow: map['stitches_count_per_row'] as int,
     preview: map['preview'] as String?,
+    note: map['note'] as String?,
   );
 }
 

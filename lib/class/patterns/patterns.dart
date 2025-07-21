@@ -5,12 +5,13 @@ import 'package:sqflite/sqflite.dart';
 class Pattern {
   int patternId;
   String name;
+  String? note;
   List<PatternPart> parts = List.empty(growable: true);
-  Pattern({this.patternId = 0, this.name = "New pattern"});
+  Pattern({this.patternId = 0, this.name = "New pattern", this.note});
 
   Map<String, dynamic> toMap() {
     // return {'pattern_id': patternId, 'name': name};
-    return {'name': name};
+    return {'name': name, 'note': note};
   }
 
   @override
@@ -19,12 +20,19 @@ class Pattern {
     for (PatternPart part in parts) {
       tmp += "\t${part.toString()}";
     }
-
     return tmp;
   }
 
   @override
   int get hashCode => Object.hash(name, 0);
+}
+
+Pattern _fromMap(Map<String, Object?> map) {
+  return Pattern(
+    patternId: map['pattern_id'] as int,
+    name: map['name'] as String,
+    note: map['note'] as String?,
+  );
 }
 
 Future<int> insertPatternInDb(Pattern pattern, [Database? db]) async {
@@ -67,11 +75,7 @@ Future<List<Pattern>> getAllPattern() async {
   final db = (await DbService().database);
   if (db != null) {
     final List<Map<String, Object?>> patternMaps = await db.query('pattern');
-    List<Pattern> p = [
-      for (final {'pattern_id': patternId as int, 'name': name as String}
-          in patternMaps)
-        Pattern(patternId: patternId, name: name),
-    ];
+    List<Pattern> p = [for (final map in patternMaps) _fromMap(map)];
     for (Pattern pattern in p) {
       pattern.parts = await getAllPatternPartsByPatternId(pattern.patternId);
     }
@@ -85,12 +89,7 @@ Future<List<Pattern>> getAllPatternWithoutParts() async {
   final db = (await DbService().database);
   if (db != null) {
     final List<Map<String, Object?>> patternMaps = await db.query('pattern');
-    List<Pattern> p = [
-      for (final {'pattern_id': patternId as int, 'name': name as String}
-          in patternMaps)
-        Pattern(patternId: patternId, name: name),
-    ];
-    return (p);
+    return [for (final map in patternMaps) _fromMap(map)];
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }
@@ -105,10 +104,7 @@ Future<Pattern> getPatternById(int id) async {
       whereArgs: [id],
       limit: 1,
     );
-    Pattern p = Pattern(
-      patternId: patternMaps[0]['pattern_id'] as int,
-      name: patternMaps[0]['name'] as String,
-    );
+    Pattern p = _fromMap(patternMaps[0]);
     p.parts = await getAllPatternPartsByPatternId(id);
     return (p);
   } else {
