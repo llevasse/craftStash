@@ -135,3 +135,20 @@ Future<int> insertYarnInPattern(
     throw DatabaseDoesNotExistException("Could not get database");
   }
 }
+
+Future<int> deleteYarnInPattern(
+  int yarnId,
+  int patternId, [
+  Database? db,
+]) async {
+  db ??= (await DbService().database);
+  if (db != null) {
+    return await db.delete(
+      "yarn_in_pattern",
+      where: "pattern_id = ? AND yarn_id = ?",
+      whereArgs: [patternId, yarnId],
+    );
+  } else {
+    throw DatabaseDoesNotExistException("Could not get database");
+  }
+}

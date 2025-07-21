@@ -76,7 +76,7 @@ class _YarnStashPageState extends State<YarnStashPage> {
                 builder: (BuildContext context) => YarnForm(
                   base: yarn,
                   updateYarn: getAllYarns,
-                  ifValideFunction: updateYarnInDb,
+                  ifValidFunction: updateYarnInDb,
                   title: "Edit yarn",
                   cancel: "Cancel",
                   confirm: "Edit",

@@ -1,9 +1,11 @@
 import 'package:craft_stash/add_part_button.dart';
 import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
+import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:craft_stash/pages/pattern_part_page.dart';
 import 'package:craft_stash/widgets/yarn/pattern_yarn_list.dart';
 import 'package:craft_stash/widgets/yarn/yarn_list_dialog.dart';
+import 'package:craft_stash/widgets/yarnButtons/yarn_form.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
@@ -180,6 +182,27 @@ class _PatternPageState extends State<PatternPage> {
           children: [
             Text("Yarns used :"),
             PatternYarnList(
+              onPress: (yarn) async {
+                print(yarn.toMap());
+                await showDialog(
+                  context: context,
+                  builder: (BuildContext context) => YarnForm(
+                    fill: true,
+                    readOnly: true,
+                    base: yarn,
+                    confirm: "close",
+                    cancel: "remove",
+                    title: yarn.colorName,
+                    onCancel: (yarn) async {
+                      await craft.deleteYarnInPattern(
+                        yarn.id,
+                        pattern.patternId,
+                      );
+                      yarnListInitFunction.call();
+                    },
+                  ),
+                );
+              },
               onAddYarnPress: () async {
                 await showDialog(
                   context: context,
