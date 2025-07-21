@@ -22,6 +22,7 @@ class _PatternPageState extends State<PatternPage> {
   craft.Pattern pattern = craft.Pattern();
   List<Widget> patternListView = List.empty(growable: true);
   double spacing = 10;
+  late void Function() yarnListInitFunction;
 
   void _insertPattern() async {
     pattern.patternId = await craft.insertPatternInDb(pattern);
@@ -189,11 +190,14 @@ class _PatternPageState extends State<PatternPage> {
                           yarn.id,
                           pattern.patternId,
                         );
-                        await updateListView(); //TODO optimize to just update PatternYarnList
+                        yarnListInitFunction.call();
                       } catch (e) {}
                     },
                   ),
                 );
+              },
+              builder: (BuildContext context, void Function() methodFromChild) {
+                yarnListInitFunction = methodFromChild;
               },
               patternId: pattern.patternId,
             ),
