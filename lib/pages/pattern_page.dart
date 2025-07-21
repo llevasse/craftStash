@@ -121,38 +121,6 @@ class _PatternPageState extends State<PatternPage> {
     List<Widget> tmp = List.empty(growable: true);
 
     pattern.parts = await getAllPatternPart(pattern.patternId);
-    tmp.add(
-      Container(
-        padding: EdgeInsets.all(10),
-        child: Column(
-          spacing: spacing / 2,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("Yarns used :"),
-            PatternYarnList(
-              onAddYarnPress: () async {
-                await showDialog(
-                  context: context,
-                  builder: (BuildContext context) => YarnListDialog(
-                    onPressed: (yarn) async {
-                      try {
-                        await craft.insertYarnInPattern(
-                          yarn.id,
-                          pattern.patternId,
-                        );
-                        await updateListView(); //TODO optimize to just update PatternYarnList
-                      } catch (e) {}
-                    },
-                  ),
-                );
-              },
-              patternId: pattern.patternId,
-            ),
-          ],
-        ),
-      ),
-    );
-
     for (PatternPart part in pattern.parts) {
       tmp.add(
         ListTile(
@@ -201,6 +169,38 @@ class _PatternPageState extends State<PatternPage> {
     }
     patternListView.clear();
     patternListView.add(_titleInput());
+    patternListView.add(
+      Container(
+        padding: EdgeInsets.all(10),
+        child: Column(
+          spacing: spacing / 2,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Text("Yarns used :"),
+            PatternYarnList(
+              onAddYarnPress: () async {
+                await showDialog(
+                  context: context,
+                  builder: (BuildContext context) => YarnListDialog(
+                    onPressed: (yarn) async {
+                      try {
+                        await craft.insertYarnInPattern(
+                          yarn.id,
+                          pattern.patternId,
+                        );
+                        await updateListView(); //TODO optimize to just update PatternYarnList
+                      } catch (e) {}
+                    },
+                  ),
+                );
+              },
+              patternId: pattern.patternId,
+            ),
+          ],
+        ),
+      ),
+    );
     patternListView.add(Expanded(child: ListView(children: tmp)));
     patternListView.add(_assemblyInput());
     setState(() {});
@@ -242,7 +242,8 @@ class _PatternPageState extends State<PatternPage> {
         key: _formKey,
         child: Column(
           spacing: spacing,
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: patternListView,
         ),
       ),
