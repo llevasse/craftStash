@@ -54,7 +54,7 @@ class DbService {
     );
 
     await db.execute(
-      '''CREATE TABLE IF NOT EXISTS pattern(pattern_id INTEGER PRIMARY KEY, name TEXT, assembly TEXT, hash INT UNIQUE, note TEXT)''',
+      '''CREATE TABLE IF NOT EXISTS pattern(pattern_id INTEGER PRIMARY KEY, name TEXT, assembly TEXT, hook_size REAL, note TEXT, hash INT UNIQUE)''',
     );
     await db.execute(
       '''CREATE TABLE IF NOT EXISTS pattern_part(part_id INTEGER PRIMARY KEY, name TEXT, numbers_to_make INT, pattern_id INT, note TEXT, FOREIGN KEY (pattern_id) REFERENCES pattern(pattern_id) ON DELETE CASCADE)''',

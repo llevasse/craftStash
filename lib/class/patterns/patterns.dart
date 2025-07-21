@@ -4,14 +4,20 @@ import 'package:sqflite/sqflite.dart';
 
 class Pattern {
   int patternId;
+  double? hookSize;
   String name;
   String? note;
   List<PatternPart> parts = List.empty(growable: true);
-  Pattern({this.patternId = 0, this.name = "New pattern", this.note});
+  Pattern({
+    this.patternId = 0,
+    this.name = "New pattern",
+    this.note,
+    this.hookSize,
+  });
 
   Map<String, dynamic> toMap() {
     // return {'pattern_id': patternId, 'name': name};
-    return {'name': name, 'note': note};
+    return {'name': name, 'note': note, 'hook_size': hookSize};
   }
 
   @override
@@ -32,6 +38,7 @@ Pattern _fromMap(Map<String, Object?> map) {
     patternId: map['pattern_id'] as int,
     name: map['name'] as String,
     note: map['note'] as String?,
+    hookSize: map['hook_size'] as double?,
   );
 }
 

@@ -1,7 +1,6 @@
 import 'package:craft_stash/add_part_button.dart';
 import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
-import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:craft_stash/pages/pattern_part_page.dart';
 import 'package:craft_stash/widgets/yarn/pattern_yarn_list.dart';
 import 'package:craft_stash/widgets/yarn/yarn_list_dialog.dart';
@@ -98,6 +97,26 @@ class _PatternPageState extends State<PatternPage> {
     );
   }
 
+  Widget _hookSizeInput() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      child: TextFormField(
+        keyboardType: TextInputType.numberWithOptions(),
+        initialValue: widget.pattern?.hookSize?.toStringAsFixed(2),
+        decoration: InputDecoration(label: Text("Hook size")),
+        validator: (value) {
+          return null;
+        },
+        onSaved: (newValue) {
+          newValue = newValue?.trim();
+          if (newValue != null && newValue.isNotEmpty) {
+            pattern.hookSize = double.parse(newValue);
+          }
+        },
+      ),
+    );
+  }
+
   Widget _assemblyInput() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10),
@@ -171,7 +190,14 @@ class _PatternPageState extends State<PatternPage> {
       );
     }
     patternListView.clear();
-    patternListView.add(_titleInput());
+    patternListView.add(
+      Row(
+        children: [
+          Expanded(child: _titleInput()),
+          Expanded(child: _hookSizeInput()),
+        ],
+      ),
+    );
     patternListView.add(
       Container(
         padding: EdgeInsets.all(10),
