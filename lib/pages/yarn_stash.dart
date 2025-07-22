@@ -27,39 +27,52 @@ class _YarnStashPageState extends State<YarnStashPage> {
     List<Widget> tmp = List.empty(growable: true);
     for (YarnCollection collection in yarnCollection) {
       if (collection.yarns != null && collection.yarns!.isNotEmpty) {
+        ExpansibleController controller = ExpansibleController();
         tmp.add(
-          Row(
-            children: [
-              Expanded(child: Divider(color: Colors.amber)),
-              TextButton(
-                onPressed: () async {
-                  await showDialog(
-                    context: context,
-                    builder: (BuildContext context) => CollectionForm(
-                      fill: true,
-                      base: collection,
-                      updateYarn: _getAllCollections,
-                      ifValideFunction: updateYarnCollection,
-                      title: "Edit collection",
-                      cancel: "Cancel",
-                      confirm: "Edit",
-                    ),
-                  );
-                },
-                child: Text(
-                  collection.name,
-                  style: TextStyle(color: Colors.black),
-                  textAlign: TextAlign.center,
-                  textScaler: TextScaler.linear(1.5),
+          ExpansionTile(
+            controller: controller,
+            showTrailingIcon: false,
+            initiallyExpanded: true,
+            shape: const Border(),
+            title: Row(
+              children: [
+                Expanded(child: Divider(color: Colors.amber)),
+                TextButton(
+                  onPressed: () {
+                    controller.isExpanded
+                        ? controller.collapse()
+                        : controller.expand();
+                  },
+                  onLongPress: () async {
+                    await showDialog(
+                      context: context,
+                      builder: (BuildContext context) => CollectionForm(
+                        fill: true,
+                        base: collection,
+                        updateYarn: _getAllCollections,
+                        ifValideFunction: updateYarnCollection,
+                        title: "Edit collection",
+                        cancel: "Cancel",
+                        confirm: "Edit",
+                      ),
+                    );
+                  },
+                  child: Text(
+                    collection.name,
+                    style: TextStyle(color: Colors.black),
+                    textAlign: TextAlign.center,
+                    textScaler: TextScaler.linear(1.5),
+                  ),
                 ),
-              ),
-              Expanded(child: Divider(color: Colors.amber)),
+                Expanded(child: Divider(color: Colors.amber)),
+              ],
+            ),
+            children: [
+              for (Yarn yarn in collection.yarns!)
+                _yarnButton(yarn, collection),
             ],
           ),
         );
-        for (Yarn yarn in collection.yarns!) {
-          tmp.add(_yarnButton(yarn, collection));
-        }
       }
     }
     setState(() {
