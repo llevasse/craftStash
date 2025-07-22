@@ -4,7 +4,7 @@ import 'package:sqflite/sqflite.dart';
 class Yarn {
   Yarn({
     this.id = 0,
-    this.collectionId = -1,
+    this.collectionId,
     required this.color,
     this.brand = "Unknown",
     this.material = "Unknown",
@@ -15,7 +15,7 @@ class Yarn {
     this.nbOfSkeins = 1,
   });
   int id;
-  int collectionId;
+  int? collectionId;
   String brand; // ex : "my brand"
   String material; // ex : "coton"
   String colorName; // ex : "ocean"
@@ -88,20 +88,9 @@ Future<void> insertYarnInDb(Yarn yarn, [Database? db]) async {
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
     } else {
-      updateYarnInDb(
-        Yarn(
-          id: list[0]['id'] as int,
-          color: list[0]['color'] as int,
-          collectionId: list[0]['collection_id'] as int,
-          brand: list[0]['brand'] as String,
-          material: list[0]['material'] as String,
-          colorName: list[0]['color_name'] as String,
-          minHook: list[0]['min_hook'] as double,
-          maxHook: list[0]['max_hook'] as double,
-          thickness: list[0]['thickness'] as double,
-          nbOfSkeins: (list[0]['number_of_skeins'] as int) + 1,
-        ),
-      );
+      yarn.id = list[0]['id'] as int;
+      yarn.nbOfSkeins = (list[0]['number_of_skeins'] as int) + 1;
+      updateYarnInDb(yarn);
     }
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
@@ -175,6 +164,39 @@ Future<List<Yarn>> getAllYarnByPatternId(int patternId, [Database? db]) async {
     return [
       for (final {'yarn_id': yarnId as int} in connectionsMaps)
         await getYarnById(yarnId),
+    ];
+  } else {
+    throw DatabaseDoesNotExistException("Could not get database");
+  }
+}
+
+Future<List<Yarn>> getAllYarnByCollectionId(
+  int collectionId, [
+  Database? db,
+]) async {
+  db ??= (await DbService().database);
+  if (db != null) {
+    final List<Map<String, Object?>> yarnMaps = await db.query(
+      'yarn',
+      where: "collection_id = ?",
+      whereArgs: [collectionId],
+      columns: ['id', 'color', 'color_name', 'number_of_skeins'],
+    );
+    return [
+      for (final {
+            'id': yarnId as int,
+            'color': color as int,
+            'color_name': colorName as String,
+            'number_of_skeins': nbSkeins as int,
+          }
+          in yarnMaps)
+        Yarn(
+          id: yarnId,
+          color: color,
+          colorName: colorName,
+          nbOfSkeins: nbSkeins,
+          collectionId: collectionId,
+        ),
     ];
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
