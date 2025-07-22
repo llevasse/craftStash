@@ -123,7 +123,12 @@ Future<void> deleteYarnInDb(int id) async {
 Future<void> deleteYarnsByCollectionId(int id) async {
   final db = (await DbService().database);
   if (db != null) {
-    await db.delete('yarn', where: "collection_id = ?", whereArgs: [id]);
+    try{
+      await db.delete('yarn', where: "collection_id = ?", whereArgs: [id]);
+    }
+    catch (e){
+      throw "Can't delete yarn from this collection, it may be used somewhere else";
+    }
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }

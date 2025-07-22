@@ -47,6 +47,7 @@ class _YarnStashPageState extends State<YarnStashPage> {
                     await showDialog(
                       context: context,
                       builder: (BuildContext context) => CollectionForm(
+                        allowDelete: true,
                         fill: true,
                         base: collection,
                         updateYarn: _getAllCollections,

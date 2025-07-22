@@ -2,6 +2,7 @@ import 'package:craft_stash/class/yarns/brand.dart';
 import 'package:craft_stash/class/yarns/material.dart';
 import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:craft_stash/class/yarns/yarn_collection.dart';
+import 'package:craft_stash/widgets/errors/error_dialog.dart';
 import 'package:flutter/material.dart';
 
 class CollectionForm extends StatefulWidget {
@@ -297,9 +298,17 @@ class _CollectionForm extends State<CollectionForm> {
                         ),
                         TextButton(
                           onPressed: () async {
-                            await deleteYarnsByCollectionId(widget.base.id);
-                            await deleteYarnCollection(widget.base.id);
-                            await widget.updateYarn();
+                            try {
+                              await deleteYarnsByCollectionId(widget.base.id);
+                              await deleteYarnCollection(widget.base.id);
+                              await widget.updateYarn();
+                            } catch (e) {
+                              await showDialog(
+                                context: context,
+                                builder: (context) =>
+                                    ErrorDialog(error: e.toString()),
+                              );
+                            }
                             Navigator.pop(context, "delete");
                           },
                           child: Text("Delete"),
