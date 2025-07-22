@@ -1,6 +1,7 @@
 import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:craft_stash/class/yarns/yarn_collection.dart';
 import 'package:craft_stash/widgets/page_select_dropdown_button.dart';
+import 'package:craft_stash/widgets/yarnButtons/collection_form.dart';
 import 'package:craft_stash/widgets/yarnButtons/edit_yarn_button.dart';
 import 'package:craft_stash/widgets/yarnButtons/yarn_form.dart';
 import 'package:flutter/material.dart';
@@ -30,9 +31,24 @@ class _YarnStashPageState extends State<YarnStashPage> {
           Row(
             children: [
               Expanded(child: Divider(color: Colors.amber)),
-              Expanded(
+              TextButton(
+                onPressed: () async {
+                  await showDialog(
+                    context: context,
+                    builder: (BuildContext context) => CollectionForm(
+                      fill: true,
+                      base: collection,
+                      updateYarn: _getAllCollections,
+                      ifValideFunction: updateYarnCollection,
+                      title: "Edit collection",
+                      cancel: "Cancel",
+                      confirm: "Edit",
+                    ),
+                  );
+                },
                 child: Text(
                   collection.name,
+                  style: TextStyle(color: Colors.black),
                   textAlign: TextAlign.center,
                   textScaler: TextScaler.linear(1.5),
                 ),
@@ -42,36 +58,39 @@ class _YarnStashPageState extends State<YarnStashPage> {
           ),
         );
         for (Yarn yarn in collection.yarns!) {
-          yarn.brand = collection.brand;
-          yarn.material = collection.material;
-          yarn.maxHook = collection.maxHook;
-          yarn.minHook = collection.minHook;
-          yarn.thickness = collection.thickness;
-          tmp.add(
-            EditYarnButton(
-              updateYarn: _getAllCollections,
-              currentYarn: yarn,
-              onClick: () => showDialog(
-                context: context,
-                builder: (BuildContext context) => YarnForm(
-                  base: yarn,
-                  updateYarn: _getAllCollections,
-                  ifValidFunction: updateYarnInDb,
-                  title: "Edit yarn",
-                  cancel: "Cancel",
-                  confirm: "Edit",
-                  fill: true,
-                ),
-              ),
-            ),
-          );
+          tmp.add(_yarnButton(yarn, collection));
         }
       }
     }
     setState(() {
       listViewContent = tmp;
     });
-    setState(() {});
+  }
+
+  Widget _yarnButton(Yarn yarn, YarnCollection? collection) {
+    if (collection != null) {
+      yarn.brand = collection.brand;
+      yarn.material = collection.material;
+      yarn.maxHook = collection.maxHook;
+      yarn.minHook = collection.minHook;
+      yarn.thickness = collection.thickness;
+    }
+    return (EditYarnButton(
+      updateYarn: _getAllCollections,
+      currentYarn: yarn,
+      onClick: () => showDialog(
+        context: context,
+        builder: (BuildContext context) => YarnForm(
+          base: yarn,
+          updateYarn: _getAllCollections,
+          ifValidFunction: updateYarnInDb,
+          title: "Edit yarn",
+          cancel: "Cancel",
+          confirm: "Edit",
+          fill: true,
+        ),
+      ),
+    ));
   }
 
   @override
