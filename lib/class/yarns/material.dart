@@ -14,8 +14,11 @@ class YarnMaterial {
   int get hashCode => Object.hash(name.toLowerCase(), 0);
 }
 
-Future<void> insertYarnMaterialInDb(YarnMaterial yarnMaterial) async {
-  final db = (await DbService().database);
+Future<void> insertYarnMaterialInDb(
+  YarnMaterial yarnMaterial, [
+  Database? db,
+]) async {
+  db ??= (await DbService().database);
   if (db != null) {
     final list = await db.query(
       'material',
