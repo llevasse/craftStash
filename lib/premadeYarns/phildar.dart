@@ -1,9 +1,13 @@
+import 'package:craft_stash/class/yarns/brand.dart';
+import 'package:craft_stash/class/yarns/material.dart';
 import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:craft_stash/class/yarns/yarn_collection.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
 Future<void> insertPhildarYarn([Database? db]) async {
+  insertBrandInDb(Brand(name: "Phildar"), db);
+  insertYarnMaterialInDb(YarnMaterial(name: "Coton"), db);
   YarnCollection collection = YarnCollection(
     name: "Phil coton 3",
     brand: "Phildar",

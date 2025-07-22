@@ -14,8 +14,8 @@ class Brand {
   int get hashCode => Object.hash(name.toLowerCase(), 0);
 }
 
-Future<void> insertBrandInDb(Brand brand) async {
-  final db = (await DbService().database);
+Future<void> insertBrandInDb(Brand brand, [Database? db]) async {
+  db ??= (await DbService().database);
   if (db != null) {
     final list = await db.query(
       'brand',

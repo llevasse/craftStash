@@ -1,3 +1,4 @@
+import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -18,6 +19,7 @@ class YarnCollection {
   double thickness; // ex : "3mm"
   double minHook; // ex : "2.5mm"
   double maxHook; // ex : "3.5mm"
+  List<Yarn>? yarns;
 
   Map<String, dynamic> toMap() {
     return {
@@ -92,33 +94,41 @@ Future<void> deleteYarnCollection(int id) async {
   }
 }
 
-Future<List<YarnCollection>> getAllYarnCollection() async {
-  final db = (await DbService().database);
+Future<List<YarnCollection>> getAllYarnCollection({
+  bool getYarn = false,
+  Database? db,
+}) async {
+  db ??= (await DbService().database);
   if (db != null) {
     final List<Map<String, Object?>> yarnMaps = await db.query(
       'yarn_collection',
     );
-    return [
-      for (final {
-            'id': id as int,
-            "name": name as String,
-            "brand": brand as String,
-            "material": material as String,
-            "min_hook": minHook as double,
-            "max_hook": maxHook as double,
-            "thickness": thickness as double,
-          }
-          in yarnMaps)
-        YarnCollection(
-          id: id,
-          name: name,
-          brand: brand,
-          material: material,
-          minHook: minHook,
-          maxHook: maxHook,
-          thickness: thickness,
-        ),
-    ];
+    List<YarnCollection> l = List.empty(growable: true);
+    for (final {
+          'id': id as int,
+          "name": name as String,
+          "brand": brand as String,
+          "material": material as String,
+          "min_hook": minHook as double,
+          "max_hook": maxHook as double,
+          "thickness": thickness as double,
+        }
+        in yarnMaps) {
+      YarnCollection yarnCollection = YarnCollection(
+        id: id,
+        name: name,
+        brand: brand,
+        material: material,
+        minHook: minHook,
+        maxHook: maxHook,
+        thickness: thickness,
+      );
+      if (getYarn) {
+        yarnCollection.yarns = await getAllYarnByCollectionId(id);
+      }
+      l.add(yarnCollection);
+    }
+    return l;
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }

@@ -39,7 +39,7 @@ class DbService {
 
   Future<void> _onCreate(Database db, int version) async {
     await db.execute(
-      '''CREATE TABLE IF NOT EXISTS yarn(id INTEGER PRIMARY KEY, color INT, brand TEXT, material TEXT, color_name TEXT, min_hook REAL, max_hook REAL, thickness REAL, number_of_skeins INT, collection_id INT DEFAULT -1, hash INT)''',
+      '''CREATE TABLE IF NOT EXISTS yarn(id INTEGER PRIMARY KEY, color INT, brand TEXT, material TEXT, color_name TEXT, min_hook REAL, max_hook REAL, thickness REAL, number_of_skeins INT, collection_id INT, hash INT, FOREIGN KEY (collection_id) REFERENCES yarn_collection(id))''',
     );
 
     await db.execute(
