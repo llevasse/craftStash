@@ -11,8 +11,9 @@ class PatternRowDetail {
   int stitchId;
   Stitch? stitch;
   int repeatXTime;
-  int? yarnId;  //only used for color change
+  int? yarnId; //only used for color change
   String? yarnColorName;
+  int? order;
   PatternRowDetail({
     required this.rowId,
     required this.stitchId,
@@ -20,6 +21,7 @@ class PatternRowDetail {
     this.rowDetailId = 0,
     this.repeatXTime = 1,
     this.yarnId,
+    this.order,
   });
 
   Map<String, dynamic> toMap() {
@@ -28,13 +30,17 @@ class PatternRowDetail {
       'stitch_id': stitchId,
       'repeat_x_time': repeatXTime,
       'yarn_id': yarnId,
+      'in_row_order': order,
     };
   }
 
   @override
   String toString() {
-    if (yarnId != null) {
+    if (stitchId == stitchToIdMap['change color']) {
       return ("change to $yarnColorName");
+    }
+    if (stitchId == stitchToIdMap['start color']) {
+      return ("start with $yarnColorName");
     }
     if (stitch != null && repeatXTime >= 1) {
       if (repeatXTime == 1) return (stitch.toString());
@@ -153,6 +159,7 @@ Future<List<PatternRowDetail>> getAllPatternRowDetailByRowId(
       _tableName,
       where: "row_id = ?",
       whereArgs: [id],
+      orderBy: "in_row_order ASC",
     );
     List<PatternRowDetail> l = [
       for (Map<String, Object?> map in patternRowDetailMaps) _fromMap(map),

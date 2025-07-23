@@ -103,6 +103,12 @@ Future<void> insertDefaultStitchesInDb([Database? db]) async {
       description: null,
       hidden: 1,
     ),
+    Stitch(
+      abreviation: "start color",
+      name: null,
+      description: null,
+      hidden: 1,
+    ),
   ];
   for (Stitch s in stitches) {
     s.id = await insertStitchInDb(s, db);
