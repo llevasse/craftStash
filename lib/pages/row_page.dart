@@ -2,8 +2,10 @@ import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/class/stitch.dart';
+import 'package:craft_stash/widgets/patternButtons/add_custom_detail_button.dart';
 import 'package:craft_stash/widgets/patternButtons/color_change_button.dart';
 import 'package:craft_stash/widgets/patternButtons/new_subrow_button.dart';
+import 'package:craft_stash/widgets/patternButtons/start_color_button.dart';
 import 'package:craft_stash/widgets/patternButtons/stitch_count_button.dart';
 import 'package:craft_stash/widgets/stitches/stitch_list.dart';
 import 'package:flutter/material.dart';
@@ -51,8 +53,10 @@ class _RowPageState extends State<RowPage> {
       detailsString = "";
       for (PatternRowDetail detail in row.details) {
         String text = detail.stitch!.abreviation;
-        if (detail.yarnColorName != null) {
+        if (detail.stitchId == stitchToIdMap['color change']) {
           text = "change to ${detail.yarnColorName}";
+        } else if (detail.stitchId == stitchToIdMap['start color']) {
+          text = "start with ${detail.yarnColorName}";
         }
         details.add(
           StitchCountButton(
@@ -81,52 +85,90 @@ class _RowPageState extends State<RowPage> {
     super.initState();
   }
 
+  AddCustomDetailButton _SubrowButton() {
+    return NewSubrowButton(
+      rowId: row.rowId,
+      onPressed: (PatternRowDetail? detail) async {
+        if (detail == null) return;
+        if (row.details.isNotEmpty &&
+            row.details.last.hashCode == detail.hashCode) {
+          await deletePatternRowDetailInDb(detail.rowDetailId);
+          row.details.last.repeatXTime += 1;
+          details.removeLast();
+        } else {
+          row.details.add(detail);
+        }
+        details.add(_createStitchCountButton(detail));
+        await getAllStitches();
+        stitchListInitFunction();
+      },
+    );
+  }
+
+  AddCustomDetailButton _colorChangeButton() {
+    return ColorChangeButton(
+      onPressed: (PatternRowDetail? detail) async {
+        if (detail == null) return;
+        if (row.details.isNotEmpty) {
+          if (row.details.last.hashCode == detail.hashCode) {
+            await deletePatternRowDetailInDb(detail.rowDetailId);
+          } else if (row.details.last.stitchId ==
+              stitchToIdMap['color change']) {
+            await deletePatternRowDetailInDb(row.details.last.rowDetailId);
+            row.details.removeLast();
+            details.removeLast();
+            row.details.add(detail);
+            details.add(_createStitchCountButton(detail));
+          } else if (row.details.last.stitchId == 'start color') {
+            row.details.last.yarnId = detail.yarnId;
+            row.details.last.yarnColorName = detail.yarnColorName;
+            await updatePatternRowDetailInDb(row.details.last);
+          } else {
+            row.details.add(detail);
+            details.add(_createStitchCountButton(detail));
+          }
+        }
+        await getAllStitches();
+        stitchListInitFunction();
+      },
+      rowId: row.rowId,
+      patternId: widget.part.patternId,
+    );
+  }
+
+  AddCustomDetailButton _startColorButton() {
+    return StartColorButton(
+      onPressed: (PatternRowDetail? detail) async {
+        if (detail == null) return;
+        if (row.details.isNotEmpty) {
+          if (row.details.first.stitchId == stitchToIdMap["start color"]) {
+            row.details.first.yarnId = detail.yarnId;
+            row.details.first.yarnColorName = detail.yarnColorName;
+            await updatePatternRowDetailInDb(row.details.first);
+          } else {
+            row.details.insert(0, detail);
+            details.insert(0, _createStitchCountButton(detail));
+          }
+        } else {
+          row.details.add(detail);
+          details.add(_createStitchCountButton(detail));
+        }
+        await getAllStitches();
+        stitchListInitFunction();
+      },
+      rowId: row.rowId,
+      patternId: widget.part.patternId,
+    );
+  }
+
   StitchList _createStitchList() {
     StitchList s = StitchList(
       onStitchPressed: _addStitch,
       onSequencePressed: _addStitch,
       customActions: [
-        NewSubrowButton(
-          rowId: row.rowId,
-          onPressed: (PatternRowDetail? detail) async {
-            if (detail == null) return;
-            if (row.details.isNotEmpty &&
-                row.details.last.hashCode == detail.hashCode) {
-              await deletePatternRowDetailInDb(detail.rowDetailId);
-              row.details.last.repeatXTime += 1;
-              details.removeLast();
-            } else {
-              row.details.add(detail);
-            }
-            details.add(_createStitchCountButton(detail.toString()));
-            await getAllStitches();
-            stitchListInitFunction();
-          },
-        ),
-        ColorChangeButton(
-          onPressed: (PatternRowDetail? detail) async {
-            if (detail == null) return;
-            if (row.details.isNotEmpty &&
-                row.details.last.hashCode == detail.hashCode) {
-              await deletePatternRowDetailInDb(detail.rowDetailId);
-            } else if (row.details.isNotEmpty &&
-                row.details.last.yarnId != null) {
-              // if previous stitch is already a color change
-              await deletePatternRowDetailInDb(row.details.last.rowDetailId);
-              row.details.removeLast();
-              details.removeLast();
-              row.details.add(detail);
-              details.add(_createStitchCountButton(detail.toString()));
-            } else {
-              row.details.add(detail);
-              details.add(_createStitchCountButton(detail.toString()));
-            }
-            await getAllStitches();
-            stitchListInitFunction();
-          },
-          rowId: row.rowId,
-          patternId: widget.part.patternId,
-        ),
+        _SubrowButton(),
+        _colorChangeButton(),
+        ?row.startRow == 1 ? _startColorButton() : null,
       ],
       builder: (BuildContext context, void Function() methodFromChild) {
         stitchListInitFunction = methodFromChild;
@@ -232,19 +274,19 @@ class _RowPageState extends State<RowPage> {
     );
   }
 
-  StitchCountButton _createStitchCountButton(String stitch) {
+  StitchCountButton _createStitchCountButton(PatternRowDetail stitch) {
     int length = row.details.length;
     return StitchCountButton(
       signed: false,
-      text: stitch,
-      count: row.details[length - 1].repeatXTime,
+      text: stitch.toString(),
+      count: stitch.repeatXTime,
       increase: () {
-        row.details[length - 1].repeatXTime += 1;
+        stitch.repeatXTime += 1;
         row.stitchesPerRow += 1;
         setState(() {});
       },
       decrease: () {
-        row.details[length - 1].repeatXTime -= 1;
+        stitch.repeatXTime -= 1;
         row.stitchesPerRow -= 1;
         setState(() {});
       },
@@ -270,24 +312,26 @@ class _RowPageState extends State<RowPage> {
           row.preview = row.detailsAsString();
           await updatePatternRowInDb(row);
           if (widget.row == null) {
-            for (PatternRowDetail e in row.details) {
-              if (e.repeatXTime != 0) {
-                e.rowId = row.rowId;
-                await insertPatternRowDetailInDb(e);
+            for (int i = 0; i < row.details.length; i++) {
+              if (row.details[i].repeatXTime != 0) {
+                row.details[i].rowId = row.rowId;
+                row.details[i].order = i;
+                await insertPatternRowDetailInDb(row.details[i]);
               }
             }
           } else {
-            for (PatternRowDetail e in row.details) {
-              if (e.repeatXTime != 0) {
-                e.rowId = row.rowId;
-                if (e.rowDetailId == 0) {
-                  await insertPatternRowDetailInDb(e);
+            for (int i = 0; i < row.details.length; i++) {
+              if (row.details[i].repeatXTime != 0) {
+                row.details[i].rowId = row.rowId;
+                row.details[i].order = i;
+                if (row.details[i].rowDetailId == 0) {
+                  await insertPatternRowDetailInDb(row.details[i]);
                 } else {
-                  await updatePatternRowDetailInDb(e);
+                  await updatePatternRowDetailInDb(row.details[i]);
                 }
               } else {
-                if (e.rowDetailId != 0) {
-                  await deletePatternRowDetailInDb(e.rowDetailId);
+                if (row.details[i].rowDetailId != 0) {
+                  await deletePatternRowDetailInDb(row.details[i].rowDetailId);
                 }
               }
             }
@@ -310,7 +354,7 @@ class _RowPageState extends State<RowPage> {
         PatternRowDetail(rowId: -1, stitchId: stitch.id, stitch: stitch),
       );
     }
-    details.add(_createStitchCountButton(stitch.abreviation));
+    details.add(_createStitchCountButton(row.details.last));
     needScroll = true;
     setState(() {});
     return null;
@@ -345,7 +389,6 @@ class _RowPageState extends State<RowPage> {
             spacing: 10,
             children: [
               _rowNumberInput(),
-
               TextFormField(
                 controller: previewControler,
                 readOnly: true,

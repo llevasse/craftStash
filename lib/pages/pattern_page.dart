@@ -134,6 +134,59 @@ class _PatternPageState extends State<PatternPage> {
     );
   }
 
+  Widget _yarnList() {
+    return Container(
+      padding: EdgeInsets.all(10),
+      child: Column(
+        spacing: spacing / 2,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Text("Yarns used :"),
+          PatternYarnList(
+            onPress: (yarn) async {
+              await showDialog(
+                context: context,
+                builder: (BuildContext context) => YarnForm(
+                  fill: true,
+                  readOnly: true,
+                  base: yarn,
+                  confirm: "close",
+                  cancel: "remove",
+                  title: yarn.colorName,
+                  onCancel: (yarn) async {
+                    await craft.deleteYarnInPattern(yarn.id, pattern.patternId);
+                    yarnListInitFunction.call();
+                  },
+                ),
+              );
+            },
+            onAddYarnPress: () async {
+              await showDialog(
+                context: context,
+                builder: (BuildContext context) => YarnListDialog(
+                  onPressed: (yarn) async {
+                    try {
+                      await craft.insertYarnInPattern(
+                        yarn.id,
+                        pattern.patternId,
+                      );
+                      yarnListInitFunction.call();
+                    } catch (e) {}
+                  },
+                ),
+              );
+            },
+            builder: (BuildContext context, void Function() methodFromChild) {
+              yarnListInitFunction = methodFromChild;
+            },
+            patternId: pattern.patternId,
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> updatePattern() async {
     pattern = await craft.getPatternById(pattern.patternId);
     await updateListView();
@@ -198,62 +251,7 @@ class _PatternPageState extends State<PatternPage> {
         ],
       ),
     );
-    patternListView.add(
-      Container(
-        padding: EdgeInsets.all(10),
-        child: Column(
-          spacing: spacing / 2,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Text("Yarns used :"),
-            PatternYarnList(
-              onPress: (yarn) async {
-                print(yarn.toMap());
-                await showDialog(
-                  context: context,
-                  builder: (BuildContext context) => YarnForm(
-                    fill: true,
-                    readOnly: true,
-                    base: yarn,
-                    confirm: "close",
-                    cancel: "remove",
-                    title: yarn.colorName,
-                    onCancel: (yarn) async {
-                      await craft.deleteYarnInPattern(
-                        yarn.id,
-                        pattern.patternId,
-                      );
-                      yarnListInitFunction.call();
-                    },
-                  ),
-                );
-              },
-              onAddYarnPress: () async {
-                await showDialog(
-                  context: context,
-                  builder: (BuildContext context) => YarnListDialog(
-                    onPressed: (yarn) async {
-                      try {
-                        await craft.insertYarnInPattern(
-                          yarn.id,
-                          pattern.patternId,
-                        );
-                        yarnListInitFunction.call();
-                      } catch (e) {}
-                    },
-                  ),
-                );
-              },
-              builder: (BuildContext context, void Function() methodFromChild) {
-                yarnListInitFunction = methodFromChild;
-              },
-              patternId: pattern.patternId,
-            ),
-          ],
-        ),
-      ),
-    );
+    patternListView.add(_yarnList());
     patternListView.add(Expanded(child: ListView(children: tmp)));
     patternListView.add(_assemblyInput());
     setState(() {});
