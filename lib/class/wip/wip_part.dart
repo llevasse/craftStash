@@ -18,7 +18,7 @@ class WipPart {
     this.id = 0,
     required this.wipId,
     required this.partId,
-    this.madeXTime = 1,
+    this.madeXTime = 0,
     this.currentRowNumber = 1,
     this.currentStitchNumber = 0,
     this.finished = 0,
@@ -59,12 +59,12 @@ WipPart _fromMap(Map<String, Object?> map) {
   );
 }
 
-Future<int> insertWipPartInDb(WipPart patternPart, [Database? db]) async {
+Future<int> insertWipPartInDb(WipPart wipPart, [Database? db]) async {
   db ??= (await DbService().database);
   if (db != null) {
     return db.insert(
       _tableName,
-      patternPart.toMap(),
+      wipPart.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   } else {

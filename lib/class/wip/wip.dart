@@ -14,7 +14,7 @@ class Wip {
   Wip({this.id = 0, this.patternId = 0, this.finished = 0});
 
   Map<String, dynamic> toMap() {
-    return {'finished': finished};
+    return {'finished': finished, 'pattern_id': patternId};
   }
 
   @override

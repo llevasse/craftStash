@@ -5,6 +5,7 @@ import 'package:craft_stash/pages/patterns_stash.dart';
 import 'package:craft_stash/pages/wip_stash.dart';
 import 'package:craft_stash/pages/yarn_stash.dart';
 import 'package:craft_stash/widgets/patternButtons/add_pattern_button.dart';
+import 'package:craft_stash/widgets/wips/add_wip_button.dart';
 import 'package:craft_stash/widgets/yarnButtons/add_yarn_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -86,9 +87,9 @@ class _MyHomePageState extends State<MyHomePage>
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     List<Widget> actionButtons = [
-      AddPatternButton(
-        updatePatternListView: () async {
-          updatePatternListView.call();
+      AddWipButton(
+        updateWipListView: () async {
+          updateWipListView.call();
         },
       ),
 

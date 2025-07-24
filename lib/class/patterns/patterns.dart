@@ -78,7 +78,7 @@ Future<void> deletePatternInDb(int id) async {
   }
 }
 
-Future<List<Pattern>> getAllPattern([bool withParts = false]) async {
+Future<List<Pattern>> getAllPattern({bool withParts = false}) async {
   final db = (await DbService().database);
   if (db != null) {
     final List<Map<String, Object?>> patternMaps = await db.query('pattern');

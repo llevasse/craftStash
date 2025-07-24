@@ -1,4 +1,5 @@
 import 'package:craft_stash/class/wip/wip.dart';
+import 'package:craft_stash/pages/wip_page.dart';
 import 'package:craft_stash/widgets/page_select_dropdown_button.dart';
 import 'package:flutter/material.dart';
 
@@ -21,20 +22,19 @@ class _WipStashPageState extends State<WipStashPage> {
     wips = await getAllWip(withPattern: true);
     List<Widget> tmp = List.empty(growable: true);
     for (Wip wip in wips) {
+      if (wip.pattern == null) continue;
       tmp.add(
         ListTile(
-          title: Text(wip.toString()),
+          title: Text(wip.pattern!.name),
           onTap: () async {
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute<void>(
-            //     settings: RouteSettings(name: "/pattern"),
-            //     builder: (BuildContext context) => PatternPage(
-            //       updatePatternListView: updateListView,
-            //       pattern: wip,
-            //     ),
-            //   ),
-            // );
+            Navigator.push(
+              context,
+              MaterialPageRoute<void>(
+                settings: RouteSettings(name: "/wip"),
+                builder: (BuildContext context) =>
+                    WipPage(updateWipListView: updateListView, wip: wip),
+              ),
+            );
             await updateListView();
           },
           onLongPress: () async {
