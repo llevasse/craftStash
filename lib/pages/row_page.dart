@@ -275,7 +275,6 @@ class _RowPageState extends State<RowPage> {
   }
 
   StitchCountButton _createStitchCountButton(PatternRowDetail stitch) {
-    int length = row.details.length;
     return StitchCountButton(
       signed: false,
       text: stitch.toString(),

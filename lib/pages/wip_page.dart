@@ -1,12 +1,7 @@
 import 'package:craft_stash/class/wip/wip.dart';
 import 'package:craft_stash/class/wip/wip_part.dart';
-import 'package:craft_stash/widgets/add_part_button.dart';
-import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
-import 'package:craft_stash/pages/pattern_part_page.dart';
-import 'package:craft_stash/widgets/yarn/pattern_yarn_list.dart';
-import 'package:craft_stash/widgets/yarn/yarn_list_dialog.dart';
-import 'package:craft_stash/widgets/yarnButtons/yarn_form.dart';
+import 'package:craft_stash/pages/wip_part_page.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
@@ -85,6 +80,16 @@ class WipPageState extends State<WipPage> {
           subtitle: Text(
             "${wipPart.madeXTime} out of ${wipPart.part!.numbersToMake} made",
           ),
+          onTap: () async {
+            await Navigator.push(
+              context,
+              MaterialPageRoute<void>(
+                settings: RouteSettings(name: "/wip_part"),
+                builder: (BuildContext context) =>
+                    WipPartPage(wipPart: wipPart),
+              ),
+            );
+          },
         ),
       );
     }
