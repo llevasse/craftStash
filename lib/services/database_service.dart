@@ -4,6 +4,7 @@ import 'package:craft_stash/class/yarns/brand.dart';
 import 'package:craft_stash/class/yarns/material.dart';
 import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:craft_stash/class/yarns/yarn_collection.dart';
+import 'package:craft_stash/main.dart';
 import 'package:craft_stash/premadePatterns/jellyfish.dart';
 import 'package:craft_stash/premadeYarns/phildar.dart';
 import 'package:path/path.dart';
@@ -72,9 +73,10 @@ class DbService {
     await db.execute(
       '''CREATE TABLE IF NOT EXISTS yarn_in_pattern(id INTEGER PRIMARY KEY, pattern_id INT, yarn_id INT, FOREIGN KEY (pattern_id) REFERENCES pattern(pattern_id), FOREIGN KEY (yarn_id) REFERENCES yarn(id))''',
     );
-
     await insertDefaultStitchesInDb(db);
-    await insertPhildarYarn(db);
+    if (debug) {
+      await insertPhildarYarn(db);
+    }
     await insertJellyFishPattern(db);
   }
 

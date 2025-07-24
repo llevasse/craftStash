@@ -1,4 +1,4 @@
-package com.example.craft_stash
+package com.llevasse.craft_stash
 
 import io.flutter.embedding.android.FlutterActivity
 

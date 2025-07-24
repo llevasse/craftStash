@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/pages/patterns_stash.dart';
 import 'package:craft_stash/pages/yarn_stash.dart';
@@ -6,12 +8,26 @@ import 'package:craft_stash/widgets/patternButtons/add_pattern_button.dart';
 import 'package:craft_stash/widgets/yarnButtons/add_yarn_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+
+bool debug = DEBUG;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  if (Platform.isAndroid) {
+    PackageInfo.fromPlatform().then((value) {
+      if (value.packageName.endsWith(".dev")) {
+        debug = true;
+      } else if (value.packageName == "com.example.app.prod") {
+        debug = false;
+      }
+    });
+  }
+
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await setStitchToIdMap();
-  // await DbService().recreateDb();
+  await DbService().recreateDb();
   runApp(const MyApp());
 }
 
@@ -22,6 +38,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'craft stash',
+      debugShowCheckedModeBanner: debug,
       theme: ThemeData(
         colorScheme: ColorScheme.light(
           primary: Colors.amber,
