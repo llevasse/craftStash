@@ -7,6 +7,7 @@ import 'package:craft_stash/class/yarns/yarn_collection.dart';
 import 'package:craft_stash/main.dart';
 import 'package:craft_stash/premadePatterns/jellyfish.dart';
 import 'package:craft_stash/premadeYarns/phildar.dart';
+import 'package:craft_stash/services/database_versioning.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -33,7 +34,7 @@ class DbService {
       path,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
-      version: 1,
+      version: 2,
       onConfigure: (db) async => {await db.execute('PRAGMA foreign_keys = ON')},
     );
   }
@@ -78,10 +79,20 @@ class DbService {
       await insertPhildarYarn(db);
     }
     await insertJellyFishPattern(db);
+
+    await db.execute(
+      '''CREATE TABLE IF NOT EXISTS wip(id INTEGER PRIMARY KEY, pattern_id INT, finished INT, FOREIGN KEY (pattern_id) REFERENCES pattern(oattern_id))''',
+    );
+    await db.execute(
+      '''CREATE TABLE IF NOT EXISTS wip_part(id INTEGER PRIMARY KEY, wip_id INT, part_id INT, finished INT, made_x_time INT, current_row_number INT, current_stitch_number INT, FOREIGN KEY (wip_id) REFERENCES wip(id), FOREIGN KEY (part_id) REFERENCES pattern_part(part_id))''',
+    );
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     Batch batch = db.batch();
+    if (oldVersion < 2) {
+      dbUpgradeV2(batch);
+    }
     batch.commit();
   }
 

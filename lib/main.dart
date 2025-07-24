@@ -3,14 +3,13 @@ import 'dart:io';
 import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/pages/patterns_stash.dart';
 import 'package:craft_stash/pages/yarn_stash.dart';
-import 'package:craft_stash/services/database_service.dart';
 import 'package:craft_stash/widgets/patternButtons/add_pattern_button.dart';
 import 'package:craft_stash/widgets/yarnButtons/add_yarn_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-bool debug = DEBUG;
+bool debug = false;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,7 +26,6 @@ Future<void> main() async {
 
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await setStitchToIdMap();
-  await DbService().recreateDb();
   runApp(const MyApp());
 }
 
