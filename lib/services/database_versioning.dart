@@ -1,4 +1,3 @@
-import 'package:craft_stash/class/stitch.dart';
 import 'package:sqflite/sqflite.dart';
 
 Future<void> dbUpgradeV2(Batch batch) async {

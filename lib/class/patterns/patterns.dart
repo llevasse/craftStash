@@ -94,7 +94,10 @@ Future<List<Pattern>> getAllPattern([bool withParts = false]) async {
   }
 }
 
-Future<Pattern> getPatternById(int id) async {
+Future<Pattern> getPatternById({
+  required int id,
+  bool withParts = false,
+}) async {
   final db = (await DbService().database);
   if (db != null) {
     final List<Map<String, Object?>> patternMaps = await db.query(
@@ -104,7 +107,7 @@ Future<Pattern> getPatternById(int id) async {
       limit: 1,
     );
     Pattern p = _fromMap(patternMaps[0]);
-    p.parts = await getAllPatternPart(id);
+    if (withParts) p.parts = await getAllPatternPart(id);
     return (p);
   } else {
     throw DatabaseDoesNotExistException("Could not get database");

@@ -140,7 +140,7 @@ class _PatternPartPageState extends State<PatternPartPage> {
 
   Future<void> updateListView() async {
     List<Widget> tmp = List.empty(growable: true);
-    part = await getPatternPartByPartId(part.partId);
+    part = await getPatternPartByPartId(id :part.partId);
     tmp.add(_titleInput());
     tmp.add(_numbersToMakeInput());
     for (PatternRow row in part.rows) {
