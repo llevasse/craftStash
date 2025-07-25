@@ -77,8 +77,10 @@ class WipPageState extends State<WipPage> {
       tmp.add(
         ListTile(
           title: Text(wipPart.part!.name),
-          subtitle: Text(
-            "${wipPart.madeXTime} out of ${wipPart.part!.numbersToMake} made",
+          trailing: Text(
+            wipPart.finished == 1
+                ? "Finished"
+                : "${wipPart.madeXTime}/${wipPart.part!.numbersToMake}",
           ),
           onTap: () async {
             await Navigator.push(

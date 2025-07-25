@@ -18,7 +18,7 @@ class WipPartPageState extends State<WipPartPage> {
   int totalNumberOfRow = 0;
   double spacing = 10;
   String title = "";
-  late PatternPart part;
+  PatternPart part = PatternPart(name: "", patternId: 0);
 
   void getWipPartData() async {
     part = await getPatternPartByPartId(
@@ -62,7 +62,7 @@ class WipPartPageState extends State<WipPartPage> {
   }
 
   Widget _wipPartInput() {
-    return (Center(
+    return Center(
       child: Row(
         spacing: spacing,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -70,7 +70,7 @@ class WipPartPageState extends State<WipPartPage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [_rowCounter(), _stitchCounter()],
       ),
-    ));
+    );
   }
 
   Widget _rowCounter() {
@@ -122,6 +122,10 @@ class WipPartPageState extends State<WipPartPage> {
               if (widget.wipPart.madeXTime == part.numbersToMake) {
                 widget.wipPart.finished = 1;
               }
+              widget.wipPart.currentRowIndex = 0;
+              widget.wipPart.currentRowNumber = 0;
+              widget.wipPart.currentStitchNumber = 0;
+              updateListView();
             }
           },
           decrease: () {
@@ -152,6 +156,31 @@ class WipPartPageState extends State<WipPartPage> {
           },
           icon: Icon(Icons.arrow_back),
         ),
+        actions: [
+          ?part.numbersToMake > 1
+              ? CountButton(
+                  count: widget.wipPart.madeXTime,
+                  increase: () {
+                    widget.wipPart.madeXTime++;
+                    if (widget.wipPart.madeXTime == part.numbersToMake) {
+                      widget.wipPart.finished = 1;
+                    }
+                    widget.wipPart.currentRowIndex = 0;
+                    widget.wipPart.currentRowNumber = 0;
+                    widget.wipPart.currentStitchNumber = 0;
+                  },
+                  decrease: () {
+                    widget.wipPart.finished = 0;
+                    widget.wipPart.madeXTime--;
+                    widget.wipPart.currentRowIndex = 0;
+                    widget.wipPart.currentRowNumber = 0;
+                    widget.wipPart.currentStitchNumber = 0;
+                  },
+                  max: part.numbersToMake,
+                  signed: false,
+                )
+              : null,
+        ],
       ),
       body: Container(
         padding: EdgeInsets.all(spacing),

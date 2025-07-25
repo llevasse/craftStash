@@ -59,7 +59,7 @@ class _CountButtonState extends State<CountButton> {
             ),
             onPressed: () {
               if (widget.signed == false && widget.count == 0) return;
-              if (widget.max == null || widget.count > (widget.min as int)) {
+              if (widget.min == null || widget.count > (widget.min as int)) {
                 widget.decrease();
                 setState(() {
                   widget.count -= 1;
