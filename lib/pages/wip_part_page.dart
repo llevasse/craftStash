@@ -14,6 +14,7 @@ class WipPartPage extends StatefulWidget {
 }
 
 class WipPartPageState extends State<WipPartPage> {
+  late ThemeData theme;
   List<Widget> content = List.empty(growable: true);
   int totalNumberOfRow = 0;
   double spacing = 10;
@@ -144,7 +145,7 @@ class WipPartPageState extends State<WipPartPage> {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData theme = Theme.of(context);
+    theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
@@ -187,8 +188,33 @@ class WipPartPageState extends State<WipPartPage> {
         child: Column(
           spacing: spacing,
           mainAxisSize: MainAxisSize.max,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: content,
+        ),
+      ),
+      floatingActionButton: OutlinedButton(
+        onPressed: () async {
+          widget.wipPart.finished = 1;
+          await updateWipPartInDb(widget.wipPart);
+          Navigator.pop(context);
+        },
+        style: ButtonStyle(
+          side: WidgetStatePropertyAll(
+            BorderSide(color: theme.colorScheme.primary, width: 0),
+          ),
+          shape: WidgetStatePropertyAll(
+            RoundedSuperellipseBorder(
+              borderRadius: BorderRadiusGeometry.all(Radius.circular(18)),
+            ),
+          ),
+
+          backgroundColor: WidgetStateProperty.all(theme.colorScheme.primary),
+        ),
+        child: Text(
+          "Mark as finished",
+          style: TextStyle(color: theme.colorScheme.secondary),
+          textScaler: TextScaler.linear(1.25),
+          overflow: TextOverflow.ellipsis,
         ),
       ),
     );
