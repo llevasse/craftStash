@@ -44,7 +44,12 @@ class WipPartPageState extends State<WipPartPage> {
         rowNumber +=
             "-${row.startRow + row.numberOfRows - 1} (${row.numberOfRows}rows)";
       }
-      tmp.add(ListTile(title: Text("$rowNumber : ${row.preview!}")));
+      tmp.add(
+        ListTile(
+          title: Text("$rowNumber : ${row.preview!}"),
+          contentPadding: EdgeInsets.all(0),
+        ),
+      );
       totalNumberOfRow += row.numberOfRows;
     }
     // print("total number of rows : $totalNumberOfRow");
@@ -61,51 +66,76 @@ class WipPartPageState extends State<WipPartPage> {
       child: Row(
         spacing: spacing,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          CountButton(
-            text: "Current row",
-            count: widget.wipPart.currentRowNumber,
-            increase: () {
-              widget.wipPart.currentRowNumber++;
-              if (widget.wipPart.currentRowNumber >
-                  part.rows[widget.wipPart.currentRowIndex].startRow +
-                      (part.rows[widget.wipPart.currentRowIndex].numberOfRows -
-                          1)) {
-                widget.wipPart.currentRowIndex++;
-              }
-              widget.wipPart.currentStitchNumber = 0;
-              updateListView();
-            },
-            decrease: () {
-              widget.wipPart.currentRowNumber--;
-              if (widget.wipPart.currentRowNumber <
-                  part.rows[widget.wipPart.currentRowIndex].startRow) {
-                widget.wipPart.currentRowIndex--;
-              }
-              widget.wipPart.currentStitchNumber = 0;
-              updateListView();
-            },
-            min: 1,
-            max: totalNumberOfRow,
-            signed: false,
-          ),
-          CountButton(
-            text: "Current Stitch",
-            count: widget.wipPart.currentStitchNumber,
-            increase: () {
-              widget.wipPart.currentStitchNumber++;
-            },
-            decrease: () {
-              widget.wipPart.currentStitchNumber--;
-            },
-            max: part.rows[widget.wipPart.currentRowIndex].stitchesPerRow,
-            signed: false,
-          ),
-        ],
+        children: [_rowCounter(), _stitchCounter()],
       ),
     ));
+  }
+
+  Widget _rowCounter() {
+    return Column(
+      spacing: spacing,
+      children: [
+        _conterText("Current row"),
+        CountButton(
+          count: widget.wipPart.currentRowNumber,
+          increase: () {
+            widget.wipPart.currentRowNumber++;
+            if (widget.wipPart.currentRowNumber >
+                part.rows[widget.wipPart.currentRowIndex].startRow +
+                    (part.rows[widget.wipPart.currentRowIndex].numberOfRows -
+                        1)) {
+              widget.wipPart.currentRowIndex++;
+            }
+            widget.wipPart.currentStitchNumber = 0;
+            updateListView();
+          },
+          decrease: () {
+            widget.wipPart.currentRowNumber--;
+            if (widget.wipPart.currentRowNumber <
+                part.rows[widget.wipPart.currentRowIndex].startRow) {
+              widget.wipPart.currentRowIndex--;
+            }
+            widget.wipPart.currentStitchNumber = 0;
+            updateListView();
+          },
+          min: 1,
+          max: totalNumberOfRow,
+        ),
+      ],
+    );
+  }
+
+  Widget _stitchCounter() {
+    return Column(
+      spacing: spacing,
+      children: [
+        _conterText("Stitch count"),
+        CountButton(
+          count: widget.wipPart.currentStitchNumber,
+          increase: () {
+            widget.wipPart.currentStitchNumber++;
+            if (widget.wipPart.currentStitchNumber ==
+                part.rows[widget.wipPart.currentRowIndex].stitchesPerRow) {
+              widget.wipPart.madeXTime++;
+              if (widget.wipPart.madeXTime == part.numbersToMake) {
+                widget.wipPart.finished = 1;
+              }
+            }
+          },
+          decrease: () {
+            widget.wipPart.currentStitchNumber--;
+          },
+          max: part.rows[widget.wipPart.currentRowIndex].stitchesPerRow,
+          signed: false,
+        ),
+      ],
+    );
+  }
+
+  Widget _conterText(String text) {
+    return Text(text, textScaler: TextScaler.linear(1.5));
   }
 
   @override
@@ -115,12 +145,22 @@ class WipPartPageState extends State<WipPartPage> {
       appBar: AppBar(
         title: Text(title),
         backgroundColor: theme.colorScheme.primary,
+        leading: IconButton(
+          onPressed: () async {
+            await updateWipPartInDb(widget.wipPart);
+            Navigator.pop(context);
+          },
+          icon: Icon(Icons.arrow_back),
+        ),
       ),
-      body: Column(
-        spacing: spacing,
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: content,
+      body: Container(
+        padding: EdgeInsets.all(spacing),
+        child: Column(
+          spacing: spacing,
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: content,
+        ),
       ),
     );
   }
