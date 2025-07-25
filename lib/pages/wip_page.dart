@@ -69,6 +69,18 @@ class WipPageState extends State<WipPage> {
     );
   }
 
+  Widget _assembly() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      child: TextFormField(
+        maxLines: 5,
+        readOnly: true,
+        initialValue: wip.pattern?.note,
+        decoration: InputDecoration(label: Text("Assembly")),
+      ),
+    );
+  }
+
   Future<void> updateListView() async {
     List<Widget> tmp = List.empty(growable: true);
 
@@ -98,6 +110,7 @@ class WipPageState extends State<WipPage> {
     patternListView.clear();
 
     patternListView.add(Expanded(child: ListView(children: tmp)));
+    if (wip.pattern?.note != null) patternListView.add(_assembly());
     setState(() {});
   }
 

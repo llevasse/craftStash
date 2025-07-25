@@ -80,6 +80,7 @@ class WipPartPageState extends State<WipPartPage> {
       children: [
         _conterText("Current row"),
         CountButton(
+          textBackgroundColor: Colors.white,
           count: widget.wipPart.currentRowNumber,
           increase: () {
             widget.wipPart.currentRowNumber++;
@@ -114,6 +115,7 @@ class WipPartPageState extends State<WipPartPage> {
       children: [
         _conterText("Stitch count"),
         CountButton(
+          textBackgroundColor: Colors.white,
           count: widget.wipPart.currentStitchNumber,
           increase: () {
             widget.wipPart.currentStitchNumber++;
@@ -194,7 +196,7 @@ class WipPartPageState extends State<WipPartPage> {
       ),
       floatingActionButton: OutlinedButton(
         onPressed: () async {
-          widget.wipPart.finished = 1;
+          widget.wipPart.finished = widget.wipPart.finished == 0 ? 1 : 0;
           await updateWipPartInDb(widget.wipPart);
           Navigator.pop(context);
         },
@@ -211,7 +213,9 @@ class WipPartPageState extends State<WipPartPage> {
           backgroundColor: WidgetStateProperty.all(theme.colorScheme.primary),
         ),
         child: Text(
-          "Mark as finished",
+          widget.wipPart.finished == 0
+              ? "Mark as finished"
+              : "Mark as unfinished",
           style: TextStyle(color: theme.colorScheme.secondary),
           textScaler: TextScaler.linear(1.25),
           overflow: TextOverflow.ellipsis,

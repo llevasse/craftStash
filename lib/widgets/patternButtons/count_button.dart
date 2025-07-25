@@ -6,6 +6,7 @@ class CountButton extends StatefulWidget {
   int? max;
   bool signed;
   String? text;
+  Color? textBackgroundColor;
   void Function() increase;
   void Function() decrease;
   CountButton({
@@ -17,6 +18,7 @@ class CountButton extends StatefulWidget {
     required this.increase,
     required this.decrease,
     this.signed = true,
+    this.textBackgroundColor,
   });
 
   @override
@@ -47,7 +49,7 @@ class _CountButtonState extends State<CountButton> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          TextButton(
+          IconButton(
             style: ButtonStyle(
               shape: WidgetStatePropertyAll(RoundedRectangleBorder()),
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -66,23 +68,20 @@ class _CountButtonState extends State<CountButton> {
                 });
               }
             },
-            child: Text(
-              "-",
-              textScaler: TextScaler.linear(1.25),
-              style: TextStyle(color: theme.colorScheme.secondary),
-            ),
+            icon: Icon(Icons.remove, color: theme.colorScheme.secondary),
           ),
 
           Container(
+            color: widget.textBackgroundColor,
             constraints: BoxConstraints(maxWidth: 200),
-            margin: EdgeInsets.symmetric(horizontal: 10),
+            padding: EdgeInsets.all(10),
             child: Text(
-              "${widget.count.toString()}${widget.text ?? ""}",
+              "${widget.count}${widget.text ?? ""}",
               textAlign: TextAlign.center,
               style: TextStyle(color: theme.colorScheme.secondary),
             ),
           ),
-          TextButton(
+          IconButton(
             style: ButtonStyle(
               shape: WidgetStatePropertyAll(RoundedRectangleBorder()),
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -100,11 +99,7 @@ class _CountButtonState extends State<CountButton> {
                 });
               }
             },
-            child: Text(
-              "+",
-              textScaler: TextScaler.linear(1.25),
-              style: TextStyle(color: theme.colorScheme.secondary),
-            ),
+            icon: Icon(Icons.add, color: theme.colorScheme.secondary),
           ),
         ],
       ),
