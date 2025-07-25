@@ -1,25 +1,29 @@
 import 'package:flutter/material.dart';
 
-class StitchCountButton extends StatefulWidget {
+class CountButton extends StatefulWidget {
   int count;
+  int? min;
+  int? max;
   bool signed;
   String? text;
   void Function() increase;
   void Function() decrease;
-  StitchCountButton({
+  CountButton({
     super.key,
     required this.count,
     this.text,
+    this.min,
+    this.max,
     required this.increase,
     required this.decrease,
     this.signed = true,
   });
 
   @override
-  State<StatefulWidget> createState() => _StitchCountButtonState();
+  State<StatefulWidget> createState() => _CountButtonState();
 }
 
-class _StitchCountButtonState extends State<StitchCountButton> {
+class _CountButtonState extends State<CountButton> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
@@ -55,10 +59,12 @@ class _StitchCountButtonState extends State<StitchCountButton> {
             ),
             onPressed: () {
               if (widget.signed == false && widget.count == 0) return;
-              widget.decrease();
-              setState(() {
-                widget.count -= 1;
-              });
+              if (widget.max == null || widget.count > (widget.min as int)) {
+                widget.decrease();
+                setState(() {
+                  widget.count -= 1;
+                });
+              }
             },
             child: Text(
               "-",
@@ -68,7 +74,7 @@ class _StitchCountButtonState extends State<StitchCountButton> {
           ),
 
           Container(
-          constraints: BoxConstraints(maxWidth: 200),
+            constraints: BoxConstraints(maxWidth: 200),
             margin: EdgeInsets.symmetric(horizontal: 10),
             child: Text(
               "${widget.count.toString()}${widget.text ?? ""}",
@@ -87,10 +93,12 @@ class _StitchCountButtonState extends State<StitchCountButton> {
               }),
             ),
             onPressed: () {
-              widget.increase();
-              setState(() {
-                widget.count += 1;
-              });
+              if (widget.max == null || widget.count < (widget.max as int)) {
+                widget.increase();
+                setState(() {
+                  widget.count += 1;
+                });
+              }
             },
             child: Text(
               "+",

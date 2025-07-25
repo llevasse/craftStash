@@ -2,7 +2,7 @@ import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/widgets/errors/error_dialog.dart';
-import 'package:craft_stash/widgets/patternButtons/stitch_count_button.dart';
+import 'package:craft_stash/widgets/patternButtons/count_button.dart';
 import 'package:craft_stash/widgets/stitches/stitch_list.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -32,7 +32,7 @@ class _SequencePageState extends State<SequencePage> {
   double buttonHeight = 50;
   bool needScroll = false;
   ScrollController stitchDetailsScrollController = ScrollController();
-  List<StitchCountButton> details = List.empty(growable: true);
+  List<CountButton> details = List.empty(growable: true);
   String detailsString = "";
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   PatternRow row = PatternRow(startRow: 0, numberOfRows: 0, stitchesPerRow: 0);
@@ -56,7 +56,7 @@ class _SequencePageState extends State<SequencePage> {
           detailsString += "${detail.stitch}, ";
         }
         details.add(
-          StitchCountButton(
+          CountButton(
             signed: false,
             count: detail.repeatXTime,
             text: detail.stitch?.abreviation,
@@ -112,9 +112,9 @@ class _SequencePageState extends State<SequencePage> {
     );
   }
 
-  StitchCountButton _createStitchCountButton(String stitch) {
+  CountButton _createStitchCountButton(String stitch) {
     int length = row.details.length;
-    return StitchCountButton(
+    return CountButton(
       signed: false,
       text: stitch,
       count: row.details[length - 1].repeatXTime,

@@ -6,7 +6,7 @@ import 'package:craft_stash/widgets/patternButtons/add_custom_detail_button.dart
 import 'package:craft_stash/widgets/patternButtons/color_change_button.dart';
 import 'package:craft_stash/widgets/patternButtons/new_subrow_button.dart';
 import 'package:craft_stash/widgets/patternButtons/start_color_button.dart';
-import 'package:craft_stash/widgets/patternButtons/stitch_count_button.dart';
+import 'package:craft_stash/widgets/patternButtons/count_button.dart';
 import 'package:craft_stash/widgets/stitches/stitch_list.dart';
 import 'package:flutter/material.dart';
 
@@ -35,7 +35,7 @@ class _RowPageState extends State<RowPage> {
   double buttonHeight = 50;
   bool needScroll = false;
   ScrollController stitchDetailsScrollController = ScrollController();
-  List<StitchCountButton> details = List.empty(growable: true);
+  List<CountButton> details = List.empty(growable: true);
   String detailsString = "";
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   PatternRow row = PatternRow(startRow: 0, numberOfRows: 0, stitchesPerRow: 0);
@@ -59,7 +59,7 @@ class _RowPageState extends State<RowPage> {
           text = "start with ${detail.yarnColorName}";
         }
         details.add(
-          StitchCountButton(
+          CountButton(
             signed: false,
             text: text,
             count: detail.repeatXTime,
@@ -274,8 +274,8 @@ class _RowPageState extends State<RowPage> {
     );
   }
 
-  StitchCountButton _createStitchCountButton(PatternRowDetail stitch) {
-    return StitchCountButton(
+  CountButton _createStitchCountButton(PatternRowDetail stitch) {
+    return CountButton(
       signed: false,
       text: stitch.toString(),
       count: stitch.repeatXTime,

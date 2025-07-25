@@ -12,6 +12,7 @@ class WipPart {
   int madeXTime;
   int finished;
   int currentRowNumber;
+  int currentRowIndex;
   int currentStitchNumber;
   PatternPart? part;
   WipPart({
@@ -20,6 +21,7 @@ class WipPart {
     required this.partId,
     this.madeXTime = 0,
     this.currentRowNumber = 1,
+    this.currentRowIndex = 0,
     this.currentStitchNumber = 0,
     this.finished = 0,
   });
@@ -31,6 +33,7 @@ class WipPart {
       'made_x_time': madeXTime,
       'finished': finished,
       'current_row_number': currentRowNumber,
+      'current_row_index': currentRowIndex,
       'current_stitch_number': currentStitchNumber,
     };
   }
@@ -55,6 +58,7 @@ WipPart _fromMap(Map<String, Object?> map) {
     madeXTime: map['made_x_time'] as int,
     finished: map['finished'] as int,
     currentRowNumber: map['current_row_number'] as int,
+    currentRowIndex: map['current_row_index'] as int,
     currentStitchNumber: map['current_stitch_number'] as int,
   );
 }
