@@ -114,7 +114,15 @@ Future<void> insertDefaultStitchesInDb([Database? db]) async {
     s.id = await insertStitchInDb(s, db);
     stitchToIdMap[s.abreviation] = s.id;
   }
+  await _insertScIncInDb(stitches: stitches, db: db);
+  await _insertScDecInDb(stitches: stitches, db: db);
+  print("INSERTED DEFAULT STITCHES");
+}
 
+Future<void> _insertScIncInDb({
+  required List<Stitch> stitches,
+  Database? db,
+}) async {
   PatternRow row = PatternRow(startRow: 0, numberOfRows: 0, stitchesPerRow: 3);
   row.rowId = await insertPatternRowInDb(row, db);
   row.details = [
@@ -137,8 +145,34 @@ Future<void> insertDefaultStitchesInDb([Database? db]) async {
     ),
     db,
   );
+}
 
-  print("INSERTED DEFAULT STITCHES");
+Future<void> _insertScDecInDb({
+  required List<Stitch> stitches,
+  Database? db,
+}) async {
+  PatternRow row = PatternRow(startRow: 0, numberOfRows: 0, stitchesPerRow: 2);
+  row.rowId = await insertPatternRowInDb(row, db);
+  row.details = [
+    PatternRowDetail(rowId: row.rowId, stitchId: stitches[2].id),
+    PatternRowDetail(rowId: row.rowId, stitchId: stitches[7].id),
+  ];
+  for (PatternRowDetail e in row.details) {
+    if (e.repeatXTime != 0) {
+      e.rowId = row.rowId;
+      await insertPatternRowDetailInDb(e, db);
+    }
+  }
+  await insertStitchInDb(
+    Stitch(
+      abreviation: "(sc, dec)",
+      name: null,
+      description: null,
+      isSequence: 1,
+      sequenceId: row.rowId,
+    ),
+    db,
+  );
 }
 
 Future<int> insertStitchInDb(Stitch stitch, [Database? db]) async {
