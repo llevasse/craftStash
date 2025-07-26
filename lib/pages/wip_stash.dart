@@ -1,4 +1,5 @@
 import 'package:craft_stash/class/wip/wip.dart';
+import 'package:craft_stash/main.dart';
 import 'package:craft_stash/pages/wip_page.dart';
 import 'package:craft_stash/widgets/page_select_dropdown_button.dart';
 import 'package:flutter/material.dart';
@@ -23,8 +24,11 @@ class _WipStashPageState extends State<WipStashPage> {
     List<Widget> tmp = List.empty(growable: true);
     for (Wip wip in wips) {
       if (wip.pattern == null) continue;
-      print(wip.pattern!.totalStitchNb);
-      print(wip.stitchDoneNb);
+      if (debug) {
+        print(
+          "Wip ${wip.pattern!.name} : stitches ${wip.stitchDoneNb}/${wip.pattern!.totalStitchNb}",
+        );
+      }
       tmp.add(
         ListTile(
           title: Text(
