@@ -8,6 +8,7 @@ class PatternPart {
   int numbersToMake;
   String name;
   String? note;
+  int totalStitchNb;
   List<PatternRow> rows = List.empty(growable: true);
   PatternPart({
     this.partId = 0,
@@ -15,6 +16,7 @@ class PatternPart {
     required this.patternId,
     this.numbersToMake = 1,
     this.note,
+    this.totalStitchNb = 0,
   });
 
   Map<String, dynamic> toMap() {
@@ -23,6 +25,7 @@ class PatternPart {
       'numbers_to_make': numbersToMake,
       'name': name,
       'note': note,
+      'total_stitch_nb': totalStitchNb,
     };
   }
 
@@ -47,6 +50,7 @@ PatternPart _fromMap(Map<String, Object?> map) {
     name: map["name"] as String,
     numbersToMake: map['numbers_to_make'] as int,
     note: map['note'] as String?,
+    totalStitchNb: map['total_stitch_nb'] as int,
   );
 }
 
@@ -90,12 +94,12 @@ Future<void> deletePatternPartInDb(int id) async {
   }
 }
 
-Future<List<PatternPart>> getAllPatternPart([
+Future<List<PatternPart>> getAllPatternPart({
   int? patternId,
   bool withRow = false,
   bool withDetails = false,
   Database? db,
-]) async {
+}) async {
   db ??= (await DbService().database);
   if (db != null) {
     String? where;
@@ -136,7 +140,7 @@ Future<PatternPart> getPatternPartByPartId({
       limit: 1,
     );
     PatternPart p = _fromMap(patternPartMaps[0]);
-    if (withRows)p.rows = await getAllPatternRow(id, withDetails, db);
+    if (withRows) p.rows = await getAllPatternRow(id, withDetails, db);
     return (p);
   } else {
     throw DatabaseDoesNotExistException("Could not get database");

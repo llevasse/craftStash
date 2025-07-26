@@ -10,6 +10,8 @@ Map<String, Stitch> _stitchesMap = {};
 
 Future<PatternPart> _createHeadPart(int patternId, Database? db) async {
   PatternPart head = PatternPart(name: "head", patternId: patternId);
+  head.totalStitchNb = 9 + 18 * 3 + 12 + 6;
+
   head.partId = await insertPatternPartInDb(head, db);
 
   PatternRow r1 = PatternRow(
@@ -104,6 +106,8 @@ Future<PatternPart> _createShortTentacles(int patternId, Database? db) async {
     patternId: patternId,
     numbersToMake: 4,
   );
+  short.totalStitchNb = 8 * 4;
+
   short.partId = await insertPatternPartInDb(short, db);
 
   PatternRow r1 = PatternRow(
@@ -131,6 +135,8 @@ Future<PatternPart> _createLongTentacles(int patternId, Database? db) async {
     patternId: patternId,
     numbersToMake: 4,
   );
+  long.totalStitchNb = 12 * 4;
+
   long.partId = await insertPatternPartInDb(long, db);
 
   PatternRow r1 = PatternRow(
@@ -149,6 +155,7 @@ Future<PatternPart> _createLongTentacles(int patternId, Database? db) async {
     ),
     db,
   );
+
   return (long);
 }
 
@@ -161,6 +168,7 @@ Future<void> insertJellyFishPattern([Database? db]) async {
   }
   // print(_stitchesMap);
   craft.Pattern pattern = craft.Pattern(name: "Jellyfish");
+  pattern.totalStitchNb = (12 * 4) + (8 * 4) + (9 + 18 * 3 + 12 + 6);
   pattern.patternId = await craft.insertPatternInDb(pattern, db);
   List<Yarn> y = await getAllYarn(db);
   if (y.isNotEmpty) {

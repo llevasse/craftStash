@@ -88,21 +88,32 @@ class WipPageState extends State<WipPage> {
       if (wipPart.part == null) continue;
       tmp.add(
         ListTile(
-          title: Text(wipPart.part!.name),
+          title: Text(
+            "${wipPart.part!.name} (${((wipPart.stitchDoneNb / (wipPart.part!.totalStitchNb)) * 100).toStringAsFixed(2)}%)",
+          ),
           trailing: Text(
             wipPart.finished == 1
                 ? "Finished"
                 : "${wipPart.madeXTime}/${wipPart.part!.numbersToMake}",
           ),
           onTap: () async {
-            await Navigator.push(
-              context,
-              MaterialPageRoute<void>(
-                settings: RouteSettings(name: "/wip_part"),
-                builder: (BuildContext context) =>
-                    WipPartPage(wipPart: wipPart),
-              ),
-            );
+            int currentStitchNb = wipPart.stitchDoneNb;
+            wipPart =
+                await Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        settings: RouteSettings(name: "/wip_part"),
+                        builder: (BuildContext context) =>
+                            WipPartPage(wipPart: wipPart),
+                      ),
+                    )
+                    as WipPart;
+            if (currentStitchNb != wipPart.stitchDoneNb) {
+              wip.stitchDoneNb -= currentStitchNb;
+              wip.stitchDoneNb += wipPart.stitchDoneNb;
+              await updateWipInDb(wip);
+              updateListView();
+            }
           },
         ),
       );

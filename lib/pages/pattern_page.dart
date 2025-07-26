@@ -188,14 +188,17 @@ class _PatternPageState extends State<PatternPage> {
   }
 
   Future<void> updatePattern() async {
-    pattern = await craft.getPatternById(id:pattern.patternId, withParts: true);
+    pattern = await craft.getPatternById(
+      id: pattern.patternId,
+      withParts: true,
+    );
     await updateListView();
   }
 
   Future<void> updateListView() async {
     List<Widget> tmp = List.empty(growable: true);
 
-    pattern.parts = await getAllPatternPart(pattern.patternId);
+    pattern.parts = await getAllPatternPart(patternId: pattern.patternId);
     for (PatternPart part in pattern.parts) {
       tmp.add(
         ListTile(

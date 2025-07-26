@@ -14,6 +14,7 @@ class WipPart {
   int currentRowNumber;
   int currentRowIndex;
   int currentStitchNumber;
+  int stitchDoneNb;
   PatternPart? part;
   WipPart({
     this.id = 0,
@@ -24,6 +25,7 @@ class WipPart {
     this.currentRowIndex = 0,
     this.currentStitchNumber = 0,
     this.finished = 0,
+    this.stitchDoneNb = 0,
   });
 
   Map<String, dynamic> toMap() {
@@ -35,6 +37,7 @@ class WipPart {
       'current_row_number': currentRowNumber,
       'current_row_index': currentRowIndex,
       'current_stitch_number': currentStitchNumber,
+      'stitch_done_nb': stitchDoneNb,
     };
   }
 
@@ -60,6 +63,7 @@ WipPart _fromMap(Map<String, Object?> map) {
     currentRowNumber: map['current_row_number'] as int,
     currentRowIndex: map['current_row_index'] as int,
     currentStitchNumber: map['current_stitch_number'] as int,
+    stitchDoneNb: map['stitch_done_nb'] as int,
   );
 }
 

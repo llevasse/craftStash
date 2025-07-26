@@ -26,6 +26,9 @@ class WipPartPageState extends State<WipPartPage> {
       id: widget.wipPart.partId,
       withRows: true,
     );
+    print(
+      "Part totalStitch : ${part.totalStitchNb} | totalStitchDone : ${widget.wipPart.stitchDoneNb}",
+    );
     title = part.name;
     updateListView();
   }
@@ -84,6 +87,9 @@ class WipPartPageState extends State<WipPartPage> {
           count: widget.wipPart.currentRowNumber,
           increase: () {
             widget.wipPart.currentRowNumber++;
+            widget.wipPart.stitchDoneNb -= widget.wipPart.currentStitchNumber;
+            widget.wipPart.stitchDoneNb +=
+                part.rows[widget.wipPart.currentRowIndex].stitchesPerRow;
             if (widget.wipPart.currentRowNumber >
                 part.rows[widget.wipPart.currentRowIndex].startRow +
                     (part.rows[widget.wipPart.currentRowIndex].numberOfRows -
@@ -95,6 +101,10 @@ class WipPartPageState extends State<WipPartPage> {
           },
           decrease: () {
             widget.wipPart.currentRowNumber--;
+
+            widget.wipPart.stitchDoneNb -= widget.wipPart.currentStitchNumber;
+            widget.wipPart.stitchDoneNb -=
+                part.rows[widget.wipPart.currentRowIndex].stitchesPerRow;
             if (widget.wipPart.currentRowNumber <
                 part.rows[widget.wipPart.currentRowIndex].startRow) {
               widget.wipPart.currentRowIndex--;
@@ -119,6 +129,7 @@ class WipPartPageState extends State<WipPartPage> {
           count: widget.wipPart.currentStitchNumber,
           increase: () {
             widget.wipPart.currentStitchNumber++;
+            widget.wipPart.stitchDoneNb++;
             if (widget.wipPart.currentStitchNumber ==
                 part.rows[widget.wipPart.currentRowIndex].stitchesPerRow) {
               widget.wipPart.madeXTime++;
@@ -133,6 +144,7 @@ class WipPartPageState extends State<WipPartPage> {
           },
           decrease: () {
             widget.wipPart.currentStitchNumber--;
+            widget.wipPart.stitchDoneNb--;
           },
           max: part.rows[widget.wipPart.currentRowIndex].stitchesPerRow,
           signed: false,
@@ -155,7 +167,7 @@ class WipPartPageState extends State<WipPartPage> {
         leading: IconButton(
           onPressed: () async {
             await updateWipPartInDb(widget.wipPart);
-            Navigator.pop(context);
+            Navigator.pop(context, widget.wipPart);
           },
           icon: Icon(Icons.arrow_back),
         ),
@@ -168,6 +180,11 @@ class WipPartPageState extends State<WipPartPage> {
                     if (widget.wipPart.madeXTime == part.numbersToMake) {
                       widget.wipPart.finished = 1;
                     }
+                    widget.wipPart.stitchDoneNb =
+                        ((part.totalStitchNb / part.numbersToMake) *
+                                widget.wipPart.madeXTime)
+                            .toInt();
+
                     widget.wipPart.currentRowIndex = 0;
                     widget.wipPart.currentRowNumber = 0;
                     widget.wipPart.currentStitchNumber = 0;
@@ -175,6 +192,9 @@ class WipPartPageState extends State<WipPartPage> {
                   decrease: () {
                     widget.wipPart.finished = 0;
                     widget.wipPart.madeXTime--;
+                    widget.wipPart.stitchDoneNb =
+                        ((part.totalStitchNb / part.numbersToMake) *
+                                widget.wipPart.madeXTime).toInt();
                     widget.wipPart.currentRowIndex = 0;
                     widget.wipPart.currentRowNumber = 0;
                     widget.wipPart.currentStitchNumber = 0;

@@ -9,12 +9,22 @@ class Wip {
   int id;
   int patternId;
   int finished;
+  int stitchDoneNb;
   craft.Pattern? pattern;
   List<WipPart> parts = List.empty(growable: true);
-  Wip({this.id = 0, this.patternId = 0, this.finished = 0});
+  Wip({
+    this.id = 0,
+    this.patternId = 0,
+    this.finished = 0,
+    this.stitchDoneNb = 0,
+  });
 
   Map<String, dynamic> toMap() {
-    return {'finished': finished, 'pattern_id': patternId};
+    return {
+      'finished': finished,
+      'pattern_id': patternId,
+      'stitch_done_nb': stitchDoneNb,
+    };
   }
 
   @override
@@ -32,6 +42,7 @@ Wip _fromMap(Map<String, Object?> map) {
     id: map['id'] as int,
     patternId: map['pattern_id'] as int,
     finished: map['finished'] as int,
+    stitchDoneNb: map['stitch_done_nb'] as int,
   );
 }
 

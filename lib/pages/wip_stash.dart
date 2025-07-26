@@ -23,9 +23,13 @@ class _WipStashPageState extends State<WipStashPage> {
     List<Widget> tmp = List.empty(growable: true);
     for (Wip wip in wips) {
       if (wip.pattern == null) continue;
+      print(wip.pattern!.totalStitchNb);
+      print(wip.stitchDoneNb);
       tmp.add(
         ListTile(
-          title: Text(wip.pattern!.name),
+          title: Text(
+            "${wip.pattern!.name} (${((wip.stitchDoneNb / wip.pattern!.totalStitchNb) * 100).toStringAsFixed(2)}%)",
+          ),
           onTap: () async {
             Navigator.push(
               context,
