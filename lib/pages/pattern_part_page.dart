@@ -140,7 +140,7 @@ class _PatternPartPageState extends State<PatternPartPage> {
 
   Future<void> updateListView() async {
     List<Widget> tmp = List.empty(growable: true);
-    part = await getPatternPartByPartId(id :part.partId);
+    part = await getPatternPartByPartId(id: part.partId);
     tmp.add(_titleInput());
     tmp.add(_numbersToMakeInput());
     for (PatternRow row in part.rows) {
@@ -196,6 +196,10 @@ class _PatternPartPageState extends State<PatternPartPage> {
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
+                part.totalStitchNb = 0;
+                for (PatternRow row in part.rows) {
+                  part.totalStitchNb += row.stitchesPerRow * row.numberOfRows;
+                }
                 await updatePatternPartInDb(part);
                 await widget.updatePatternListView();
                 Navigator.pop(context);

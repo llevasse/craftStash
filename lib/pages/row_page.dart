@@ -2,6 +2,7 @@ import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/class/stitch.dart';
+import 'package:craft_stash/main.dart';
 import 'package:craft_stash/widgets/patternButtons/add_custom_detail_button.dart';
 import 'package:craft_stash/widgets/patternButtons/color_change_button.dart';
 import 'package:craft_stash/widgets/patternButtons/new_subrow_button.dart';
@@ -65,12 +66,14 @@ class _RowPageState extends State<RowPage> {
             count: detail.repeatXTime,
             increase: () {
               detail.repeatXTime += 1;
-              row.stitchesPerRow += 1;
+              row.stitchesPerRow += detail.stitch!.stitchNb;
+              if (debug) print("Row stitch nb : ${row.stitchesPerRow}");
               setState(() {});
             },
             decrease: () {
               detail.repeatXTime -= 1;
-              row.stitchesPerRow -= 1;
+              row.stitchesPerRow -= detail.stitch!.stitchNb;
+              if (debug) print("Row stitch nb : ${row.stitchesPerRow}");
               setState(() {});
             },
           ),
@@ -98,6 +101,9 @@ class _RowPageState extends State<RowPage> {
         } else {
           row.details.add(detail);
         }
+        row.stitchesPerRow += detail.stitch!.stitchNb;
+        if (debug) print("Row stitch nb : ${row.stitchesPerRow}");
+
         details.add(_createStitchCountButton(detail));
         await getAllStitches();
         stitchListInitFunction();
@@ -281,12 +287,15 @@ class _RowPageState extends State<RowPage> {
       count: stitch.repeatXTime,
       increase: () {
         stitch.repeatXTime += 1;
-        row.stitchesPerRow += 1;
+        row.stitchesPerRow += stitch.stitch!.stitchNb;
+        if (debug) print("Row stitch nb : ${row.stitchesPerRow}");
+
         setState(() {});
       },
       decrease: () {
         stitch.repeatXTime -= 1;
-        row.stitchesPerRow -= 1;
+        row.stitchesPerRow -= stitch.stitch!.stitchNb;
+        if (debug) print("Row stitch nb : ${row.stitchesPerRow}");
         setState(() {});
       },
     );
@@ -308,6 +317,7 @@ class _RowPageState extends State<RowPage> {
       onPressed: () async {
         if (_formKey.currentState!.validate()) {
           _formKey.currentState!.save();
+          if (debug) print("Row stitch nb : ${row.stitchesPerRow}");
           row.preview = row.detailsAsString();
           await updatePatternRowInDb(row);
           if (widget.row == null) {
@@ -353,6 +363,10 @@ class _RowPageState extends State<RowPage> {
         PatternRowDetail(rowId: -1, stitchId: stitch.id, stitch: stitch),
       );
     }
+    row.stitchesPerRow += stitch.stitchNb;
+
+    if (debug) print("Row stitch nb : ${row.stitchesPerRow}");
+
     details.add(_createStitchCountButton(row.details.last));
     needScroll = true;
     setState(() {});

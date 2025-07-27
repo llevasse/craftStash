@@ -16,6 +16,7 @@ Future<void> dbUpgradeV2(Batch batch) async {
   batch.execute(
     '''ALTER TABLE pattern_part ADD COLUMN total_stitch_nb INT DEFAULT 0''',
   );
+  batch.execute('''ALTER TABLE stitch ADD COLUMN stitch_nb INT DEFAULT 1''');
   await batch.commit();
 
   // UPDATE pattern_part AND pattern table total_stitch_nb

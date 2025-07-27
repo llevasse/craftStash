@@ -283,6 +283,11 @@ class _PatternPageState extends State<PatternPage> {
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
+                pattern.totalStitchNb = 0;
+                for (PatternPart part in pattern.parts) {
+                  pattern.totalStitchNb +=
+                      part.totalStitchNb * part.numbersToMake;
+                }
                 await craft.updatePatternInDb(pattern);
                 await widget.updatePatternListView();
                 Navigator.pop(context);
