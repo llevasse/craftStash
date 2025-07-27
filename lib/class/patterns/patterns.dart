@@ -7,17 +7,24 @@ class Pattern {
   double? hookSize;
   String name;
   String? note;
+  int totalStitchNb;
   List<PatternPart> parts = List.empty(growable: true);
   Pattern({
     this.patternId = 0,
     this.name = "New pattern",
     this.note,
     this.hookSize,
+    this.totalStitchNb = 0,
   });
 
   Map<String, dynamic> toMap() {
     // return {'pattern_id': patternId, 'name': name};
-    return {'name': name, 'note': note, 'hook_size': hookSize};
+    return {
+      'name': name,
+      'note': note,
+      'hook_size': hookSize,
+      'total_stitch_nb': totalStitchNb,
+    };
   }
 
   @override
@@ -39,6 +46,7 @@ Pattern _fromMap(Map<String, Object?> map) {
     name: map['name'] as String,
     note: map['note'] as String?,
     hookSize: map['hook_size'] as double?,
+    totalStitchNb: map['total_stitch_nb'] as int,
   );
 }
 
@@ -78,14 +86,14 @@ Future<void> deletePatternInDb(int id) async {
   }
 }
 
-Future<List<Pattern>> getAllPattern([bool withParts = false]) async {
+Future<List<Pattern>> getAllPattern({bool withParts = false}) async {
   final db = (await DbService().database);
   if (db != null) {
     final List<Map<String, Object?>> patternMaps = await db.query('pattern');
     List<Pattern> p = [for (final map in patternMaps) _fromMap(map)];
     if (withParts == true) {
       for (Pattern pattern in p) {
-        pattern.parts = await getAllPatternPart(pattern.patternId);
+        pattern.parts = await getAllPatternPart(patternId: pattern.patternId);
       }
     }
     return (p);
@@ -94,7 +102,10 @@ Future<List<Pattern>> getAllPattern([bool withParts = false]) async {
   }
 }
 
-Future<Pattern> getPatternById(int id) async {
+Future<Pattern> getPatternById({
+  required int id,
+  bool withParts = false,
+}) async {
   final db = (await DbService().database);
   if (db != null) {
     final List<Map<String, Object?>> patternMaps = await db.query(
@@ -104,7 +115,7 @@ Future<Pattern> getPatternById(int id) async {
       limit: 1,
     );
     Pattern p = _fromMap(patternMaps[0]);
-    p.parts = await getAllPatternPart(id);
+    if (withParts) p.parts = await getAllPatternPart(patternId: id);
     return (p);
   } else {
     throw DatabaseDoesNotExistException("Could not get database");

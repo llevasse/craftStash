@@ -2,11 +2,12 @@ import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/class/stitch.dart';
+import 'package:craft_stash/main.dart';
 import 'package:craft_stash/widgets/patternButtons/add_custom_detail_button.dart';
 import 'package:craft_stash/widgets/patternButtons/color_change_button.dart';
 import 'package:craft_stash/widgets/patternButtons/new_subrow_button.dart';
 import 'package:craft_stash/widgets/patternButtons/start_color_button.dart';
-import 'package:craft_stash/widgets/patternButtons/stitch_count_button.dart';
+import 'package:craft_stash/widgets/patternButtons/count_button.dart';
 import 'package:craft_stash/widgets/stitches/stitch_list.dart';
 import 'package:flutter/material.dart';
 
@@ -35,7 +36,7 @@ class _RowPageState extends State<RowPage> {
   double buttonHeight = 50;
   bool needScroll = false;
   ScrollController stitchDetailsScrollController = ScrollController();
-  List<StitchCountButton> details = List.empty(growable: true);
+  List<CountButton> details = List.empty(growable: true);
   String detailsString = "";
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   PatternRow row = PatternRow(startRow: 0, numberOfRows: 0, stitchesPerRow: 0);
@@ -59,18 +60,20 @@ class _RowPageState extends State<RowPage> {
           text = "start with ${detail.yarnColorName}";
         }
         details.add(
-          StitchCountButton(
+          CountButton(
             signed: false,
             text: text,
             count: detail.repeatXTime,
             increase: () {
               detail.repeatXTime += 1;
-              row.stitchesPerRow += 1;
+              row.stitchesPerRow += detail.stitch!.stitchNb;
+              if (debug) print("Row stitch nb : ${row.stitchesPerRow}");
               setState(() {});
             },
             decrease: () {
               detail.repeatXTime -= 1;
-              row.stitchesPerRow -= 1;
+              row.stitchesPerRow -= detail.stitch!.stitchNb;
+              if (debug) print("Row stitch nb : ${row.stitchesPerRow}");
               setState(() {});
             },
           ),
@@ -98,6 +101,9 @@ class _RowPageState extends State<RowPage> {
         } else {
           row.details.add(detail);
         }
+        row.stitchesPerRow += detail.stitch!.stitchNb;
+        if (debug) print("Row stitch nb : ${row.stitchesPerRow}");
+
         details.add(_createStitchCountButton(detail));
         await getAllStitches();
         stitchListInitFunction();
@@ -274,20 +280,22 @@ class _RowPageState extends State<RowPage> {
     );
   }
 
-  StitchCountButton _createStitchCountButton(PatternRowDetail stitch) {
-    int length = row.details.length;
-    return StitchCountButton(
+  CountButton _createStitchCountButton(PatternRowDetail stitch) {
+    return CountButton(
       signed: false,
       text: stitch.toString(),
       count: stitch.repeatXTime,
       increase: () {
         stitch.repeatXTime += 1;
-        row.stitchesPerRow += 1;
+        row.stitchesPerRow += stitch.stitch!.stitchNb;
+        if (debug) print("Row stitch nb : ${row.stitchesPerRow}");
+
         setState(() {});
       },
       decrease: () {
         stitch.repeatXTime -= 1;
-        row.stitchesPerRow -= 1;
+        row.stitchesPerRow -= stitch.stitch!.stitchNb;
+        if (debug) print("Row stitch nb : ${row.stitchesPerRow}");
         setState(() {});
       },
     );
@@ -309,6 +317,7 @@ class _RowPageState extends State<RowPage> {
       onPressed: () async {
         if (_formKey.currentState!.validate()) {
           _formKey.currentState!.save();
+          if (debug) print("Row stitch nb : ${row.stitchesPerRow}");
           row.preview = row.detailsAsString();
           await updatePatternRowInDb(row);
           if (widget.row == null) {
@@ -354,6 +363,10 @@ class _RowPageState extends State<RowPage> {
         PatternRowDetail(rowId: -1, stitchId: stitch.id, stitch: stitch),
       );
     }
+    row.stitchesPerRow += stitch.stitchNb;
+
+    if (debug) print("Row stitch nb : ${row.stitchesPerRow}");
+
     details.add(_createStitchCountButton(row.details.last));
     needScroll = true;
     setState(() {});

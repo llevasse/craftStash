@@ -1,25 +1,31 @@
 import 'package:flutter/material.dart';
 
-class StitchCountButton extends StatefulWidget {
+class CountButton extends StatefulWidget {
   int count;
+  int? min;
+  int? max;
   bool signed;
   String? text;
+  Color? textBackgroundColor;
   void Function() increase;
   void Function() decrease;
-  StitchCountButton({
+  CountButton({
     super.key,
     required this.count,
     this.text,
+    this.min,
+    this.max,
     required this.increase,
     required this.decrease,
     this.signed = true,
+    this.textBackgroundColor,
   });
 
   @override
-  State<StatefulWidget> createState() => _StitchCountButtonState();
+  State<StatefulWidget> createState() => _CountButtonState();
 }
 
-class _StitchCountButtonState extends State<StitchCountButton> {
+class _CountButtonState extends State<CountButton> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
@@ -43,7 +49,7 @@ class _StitchCountButtonState extends State<StitchCountButton> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          TextButton(
+          IconButton(
             style: ButtonStyle(
               shape: WidgetStatePropertyAll(RoundedRectangleBorder()),
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -55,28 +61,27 @@ class _StitchCountButtonState extends State<StitchCountButton> {
             ),
             onPressed: () {
               if (widget.signed == false && widget.count == 0) return;
-              widget.decrease();
-              setState(() {
-                widget.count -= 1;
-              });
+              if (widget.min == null || widget.count > (widget.min as int)) {
+                widget.decrease();
+                setState(() {
+                  widget.count -= 1;
+                });
+              }
             },
-            child: Text(
-              "-",
-              textScaler: TextScaler.linear(1.25),
-              style: TextStyle(color: theme.colorScheme.secondary),
-            ),
+            icon: Icon(Icons.remove, color: theme.colorScheme.secondary),
           ),
 
           Container(
-          constraints: BoxConstraints(maxWidth: 200),
-            margin: EdgeInsets.symmetric(horizontal: 10),
+            color: widget.textBackgroundColor,
+            constraints: BoxConstraints(maxWidth: 200),
+            padding: EdgeInsets.all(10),
             child: Text(
-              "${widget.count.toString()}${widget.text ?? ""}",
+              "${widget.count}${widget.text ?? ""}",
               textAlign: TextAlign.center,
               style: TextStyle(color: theme.colorScheme.secondary),
             ),
           ),
-          TextButton(
+          IconButton(
             style: ButtonStyle(
               shape: WidgetStatePropertyAll(RoundedRectangleBorder()),
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -87,16 +92,14 @@ class _StitchCountButtonState extends State<StitchCountButton> {
               }),
             ),
             onPressed: () {
-              widget.increase();
-              setState(() {
-                widget.count += 1;
-              });
+              if (widget.max == null || widget.count < (widget.max as int)) {
+                widget.increase();
+                setState(() {
+                  widget.count += 1;
+                });
+              }
             },
-            child: Text(
-              "+",
-              textScaler: TextScaler.linear(1.25),
-              style: TextStyle(color: theme.colorScheme.secondary),
-            ),
+            icon: Icon(Icons.add, color: theme.colorScheme.secondary),
           ),
         ],
       ),

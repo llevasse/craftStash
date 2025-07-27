@@ -1,4 +1,4 @@
-import 'package:craft_stash/add_part_button.dart';
+import 'package:craft_stash/widgets/add_part_button.dart';
 import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
 import 'package:craft_stash/pages/pattern_part_page.dart';
@@ -188,14 +188,17 @@ class _PatternPageState extends State<PatternPage> {
   }
 
   Future<void> updatePattern() async {
-    pattern = await craft.getPatternById(pattern.patternId);
+    pattern = await craft.getPatternById(
+      id: pattern.patternId,
+      withParts: true,
+    );
     await updateListView();
   }
 
   Future<void> updateListView() async {
     List<Widget> tmp = List.empty(growable: true);
 
-    pattern.parts = await getAllPatternPart(pattern.patternId);
+    pattern.parts = await getAllPatternPart(patternId: pattern.patternId);
     for (PatternPart part in pattern.parts) {
       tmp.add(
         ListTile(
@@ -280,6 +283,11 @@ class _PatternPageState extends State<PatternPage> {
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
+                pattern.totalStitchNb = 0;
+                for (PatternPart part in pattern.parts) {
+                  pattern.totalStitchNb +=
+                      part.totalStitchNb * part.numbersToMake;
+                }
                 await craft.updatePatternInDb(pattern);
                 await widget.updatePatternListView();
                 Navigator.pop(context);

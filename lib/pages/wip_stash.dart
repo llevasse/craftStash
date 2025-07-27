@@ -1,39 +1,46 @@
-import 'package:craft_stash/class/patterns/patterns.dart' as craft;
-import 'package:craft_stash/pages/pattern_page.dart';
+import 'package:craft_stash/class/wip/wip.dart';
+import 'package:craft_stash/main.dart';
+import 'package:craft_stash/pages/wip_page.dart';
 import 'package:craft_stash/widgets/page_select_dropdown_button.dart';
 import 'package:flutter/material.dart';
 
 typedef MyBuilder =
-    void Function(BuildContext context, Future<void> Function() updateYarn);
+    void Function(BuildContext context, Future<void> Function() updateWips);
 
-class PatternsStashPage extends StatefulWidget {
+class WipStashPage extends StatefulWidget {
   final MyBuilder builder;
-  const PatternsStashPage({super.key, required this.builder});
+  const WipStashPage({super.key, required this.builder});
 
   @override
-  State<PatternsStashPage> createState() => _PatternsStashPageState();
+  State<WipStashPage> createState() => _WipStashPageState();
 }
 
-class _PatternsStashPageState extends State<PatternsStashPage> {
+class _WipStashPageState extends State<WipStashPage> {
   List<Widget> listViewContent = List.empty(growable: true);
-  List<craft.Pattern> patterns = List.empty(growable: true);
+  List<Wip> wips = List.empty(growable: true);
 
   Future<void> updateListView() async {
-    patterns = await craft.getAllPattern();
+    wips = await getAllWip(withPattern: true);
     List<Widget> tmp = List.empty(growable: true);
-    for (craft.Pattern pattern in patterns) {
+    for (Wip wip in wips) {
+      if (wip.pattern == null) continue;
+      if (debug) {
+        print(
+          "Wip ${wip.pattern!.name} : stitches ${wip.stitchDoneNb}/${wip.pattern!.totalStitchNb}",
+        );
+      }
       tmp.add(
         ListTile(
-          title: Text(pattern.name),
+          title: Text(
+            "${wip.pattern!.name} (${((wip.stitchDoneNb / wip.pattern!.totalStitchNb) * 100).toStringAsFixed(2)}%)",
+          ),
           onTap: () async {
             Navigator.push(
               context,
               MaterialPageRoute<void>(
-                settings: RouteSettings(name: "pattern"),
-                builder: (BuildContext context) => PatternPage(
-                  updatePatternListView: updateListView,
-                  pattern: pattern,
-                ),
+                settings: RouteSettings(name: "/wip"),
+                builder: (BuildContext context) =>
+                    WipPage(updateWipListView: updateListView, wip: wip),
               ),
             );
             await updateListView();
@@ -42,7 +49,7 @@ class _PatternsStashPageState extends State<PatternsStashPage> {
             await showDialog(
               context: context,
               builder: (BuildContext context) => AlertDialog(
-                title: Text("Do you want to delete this pattern"),
+                title: Text("Do you want to delete this wip"),
                 actions: [
                   TextButton(
                     onPressed: () {
@@ -52,7 +59,7 @@ class _PatternsStashPageState extends State<PatternsStashPage> {
                   ),
                   TextButton(
                     onPressed: () async {
-                      await craft.deletePatternInDb(pattern.patternId);
+                      await deleteWipInDb(wip.id);
                       await updateListView();
                       Navigator.pop(context);
                     },
@@ -95,7 +102,7 @@ class _PatternsStashPageState extends State<PatternsStashPage> {
           ),
         ],
 
-        title: Text("Patterns"),
+        title: Text("Wips"),
       ),
       body: ListView(children: listViewContent),
     );

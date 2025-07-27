@@ -1,8 +1,9 @@
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/class/stitch.dart';
+import 'package:craft_stash/main.dart';
 import 'package:craft_stash/widgets/errors/error_dialog.dart';
-import 'package:craft_stash/widgets/patternButtons/stitch_count_button.dart';
+import 'package:craft_stash/widgets/patternButtons/count_button.dart';
 import 'package:craft_stash/widgets/stitches/stitch_list.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -32,7 +33,7 @@ class _SequencePageState extends State<SequencePage> {
   double buttonHeight = 50;
   bool needScroll = false;
   ScrollController stitchDetailsScrollController = ScrollController();
-  List<StitchCountButton> details = List.empty(growable: true);
+  List<CountButton> details = List.empty(growable: true);
   String detailsString = "";
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   PatternRow row = PatternRow(startRow: 0, numberOfRows: 0, stitchesPerRow: 0);
@@ -56,18 +57,20 @@ class _SequencePageState extends State<SequencePage> {
           detailsString += "${detail.stitch}, ";
         }
         details.add(
-          StitchCountButton(
+          CountButton(
             signed: false,
             count: detail.repeatXTime,
             text: detail.stitch?.abreviation,
             increase: () {
               detail.repeatXTime += 1;
-              row.stitchesPerRow += 1;
+              row.stitchesPerRow += detail.stitch!.stitchNb;
+              if (debug) print("Row stitch nb : ${row.stitchesPerRow}");
               setState(() {});
             },
             decrease: () {
               detail.repeatXTime -= 1;
-              row.stitchesPerRow -= 1;
+              row.stitchesPerRow -= detail.stitch!.stitchNb;
+              if (debug) print("Row stitch nb : ${row.stitchesPerRow}");
               setState(() {});
             },
           ),
@@ -112,20 +115,22 @@ class _SequencePageState extends State<SequencePage> {
     );
   }
 
-  StitchCountButton _createStitchCountButton(String stitch) {
+  CountButton _createStitchCountButton(Stitch stitch) {
     int length = row.details.length;
-    return StitchCountButton(
+    return CountButton(
       signed: false,
-      text: stitch,
+      text: stitch.abreviation,
       count: row.details[length - 1].repeatXTime,
       increase: () {
         row.details[length - 1].repeatXTime += 1;
-        row.stitchesPerRow += 1;
+        row.stitchesPerRow += stitch.stitchNb;
+        if (debug) print("Row stitch nb : ${row.stitchesPerRow}");
         setState(() {});
       },
       decrease: () {
         row.details[length - 1].repeatXTime -= 1;
-        row.stitchesPerRow -= 1;
+        row.stitchesPerRow -= stitch.stitchNb;
+        if (debug) print("Row stitch nb : ${row.stitchesPerRow}");
         setState(() {});
       },
     );
@@ -141,7 +146,9 @@ class _SequencePageState extends State<SequencePage> {
         PatternRowDetail(rowId: -1, stitchId: stitch.id, stitch: stitch),
       );
     }
-    details.add(_createStitchCountButton(stitch.abreviation));
+    row.stitchesPerRow += stitch.stitchNb;
+    if (debug) print("Row stitch nb : ${row.stitchesPerRow}");
+    details.add(_createStitchCountButton(stitch));
     needScroll = true;
     setState(() {});
     return null;
@@ -152,6 +159,7 @@ class _SequencePageState extends State<SequencePage> {
       onPressed: () async {
         if (_formKey.currentState!.validate()) {
           _formKey.currentState!.save();
+          if (debug) print("Row stitch nb : ${row.stitchesPerRow}");
           PatternRowDetail detail = PatternRowDetail(rowId: 0, stitchId: 0);
 
           if (widget.rowId != null) {
@@ -169,6 +177,7 @@ class _SequencePageState extends State<SequencePage> {
               abreviation: row.toString(),
               isSequence: 1,
               sequenceId: row.rowId,
+              stitchNb: row.stitchesPerRow,
             );
             detail.stitchId = await insertStitchInDb(detail.stitch!);
           } else {

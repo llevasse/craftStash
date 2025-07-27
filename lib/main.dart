@@ -2,15 +2,16 @@ import 'dart:io';
 
 import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/pages/patterns_stash.dart';
+import 'package:craft_stash/pages/wip_stash.dart';
 import 'package:craft_stash/pages/yarn_stash.dart';
-import 'package:craft_stash/services/database_service.dart';
 import 'package:craft_stash/widgets/patternButtons/add_pattern_button.dart';
+import 'package:craft_stash/widgets/wips/add_wip_button.dart';
 import 'package:craft_stash/widgets/yarnButtons/add_yarn_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-bool debug = DEBUG;
+bool debug = false;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,7 +28,6 @@ Future<void> main() async {
 
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await setStitchToIdMap();
-  await DbService().recreateDb();
   runApp(const MyApp());
 }
 
@@ -61,6 +61,7 @@ class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
   late Future<void> Function() updateYarn;
   late Future<void> Function() updatePatternListView;
+  late Future<void> Function() updateWipListView;
   late TabController _tabController;
 
   void update() {
@@ -70,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
     _tabController.addListener(() {
       setState(() {});
     });
@@ -86,32 +87,43 @@ class _MyHomePageState extends State<MyHomePage>
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     List<Widget> actionButtons = [
-      AddYarnButton(
-        updateYarn: () async {
-          updateYarn.call();
+      AddWipButton(
+        updateWipListView: () async {
+          updateWipListView.call();
         },
       ),
+
       AddPatternButton(
         updatePatternListView: () async {
           updatePatternListView.call();
         },
       ),
+      AddYarnButton(
+        updateYarn: () async {
+          updateYarn.call();
+        },
+      ),
     ];
 
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         body: TabBarView(
           controller: _tabController,
           children: [
-            YarnStashPage(
+            WipStashPage(
               builder: (BuildContext context, Future<void> Function() method) {
-                updateYarn = method;
+                updateWipListView = method;
               },
             ),
             PatternsStashPage(
               builder: (BuildContext context, Future<void> Function() method) {
                 updatePatternListView = method;
+              },
+            ),
+            YarnStashPage(
+              builder: (BuildContext context, Future<void> Function() method) {
+                updateYarn = method;
               },
             ),
           ],
@@ -129,8 +141,9 @@ class _MyHomePageState extends State<MyHomePage>
             dividerColor: theme.colorScheme.primary,
             textScaler: TextScaler.linear(1.25),
             tabs: [
-              Tab(text: "Yarn"),
+              Tab(text: "Wips"),
               Tab(text: "Patterns"),
+              Tab(text: "Yarn"),
             ],
           ),
         ),
