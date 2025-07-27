@@ -60,6 +60,7 @@ class WipPageState extends State<WipPage> {
                   cancel: "",
                   title: yarn.colorName,
                   onCancel: (yarn) async {},
+                  showSkeins: false,
                 ),
               );
             },

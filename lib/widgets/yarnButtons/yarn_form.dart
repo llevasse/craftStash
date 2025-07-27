@@ -16,6 +16,7 @@ class YarnForm extends StatefulWidget {
   bool fill;
   bool readOnly;
   bool fromCategory;
+  bool showSkeins;
 
   YarnForm({
     super.key,
@@ -29,6 +30,7 @@ class YarnForm extends StatefulWidget {
     this.fill = false,
     this.readOnly = false,
     this.fromCategory = true,
+    this.showSkeins = true,
   });
 
   @override
@@ -123,7 +125,7 @@ class _YarnForm extends State<YarnForm> {
 
   Widget getBrandDropdownMenu() {
     if (brandMenuEntries.isEmpty) return Text("");
-    if (widget.fromCategory == true) {
+    if (widget.fromCategory) {
       return TextFormField(
         initialValue: widget.base.brand,
         readOnly: true,
@@ -173,7 +175,7 @@ class _YarnForm extends State<YarnForm> {
 
   Widget getMaterialDropdownMenu() {
     if (materialMenuEntries.isEmpty) return Text("");
-    if (widget.fromCategory == true) {
+    if (widget.fromCategory) {
       return TextFormField(
         initialValue: widget.base.material,
         readOnly: true,
@@ -272,9 +274,11 @@ class _YarnForm extends State<YarnForm> {
 
               TextFormField(
                 decoration: InputDecoration(label: Text("Color name")),
-                initialValue: widget.fill == true
-                    ? widget.base.colorName
-                    : null,
+                initialValue: widget.fill ? widget.base.colorName : null,
+
+                style: TextStyle(
+                  color: widget.readOnly ? Colors.grey : Colors.black,
+                ),
                 validator: (value) {
                   return null;
                 },
@@ -292,12 +296,10 @@ class _YarnForm extends State<YarnForm> {
                 keyboardType: TextInputType.numberWithOptions(),
                 readOnly: widget.fromCategory || widget.readOnly,
                 style: TextStyle(
-                  color: widget.fromCategory == true
-                      ? Colors.grey
-                      : Colors.black,
+                  color: widget.fromCategory ? Colors.grey : Colors.black,
                 ),
                 decoration: InputDecoration(label: Text("Thickness")),
-                initialValue: widget.fill == true
+                initialValue: widget.fill
                     ? widget.base.thickness.toStringAsFixed(2)
                     : null,
                 validator: (value) {
@@ -317,11 +319,9 @@ class _YarnForm extends State<YarnForm> {
                 decoration: InputDecoration(label: Text("Min hook size")),
                 readOnly: widget.fromCategory || widget.readOnly,
                 style: TextStyle(
-                  color: widget.fromCategory == true
-                      ? Colors.grey
-                      : Colors.black,
+                  color: widget.fromCategory ? Colors.grey : Colors.black,
                 ),
-                initialValue: widget.fill == true
+                initialValue: widget.fill
                     ? widget.base.minHook.toStringAsFixed(2)
                     : null,
                 validator: (value) {
@@ -341,11 +341,9 @@ class _YarnForm extends State<YarnForm> {
                 decoration: InputDecoration(label: Text("Max hook size")),
                 readOnly: widget.fromCategory || widget.readOnly,
                 style: TextStyle(
-                  color: widget.fromCategory == true
-                      ? Colors.grey
-                      : Colors.black,
+                  color: widget.fromCategory ? Colors.grey : Colors.black,
                 ),
-                initialValue: widget.fill == true
+                initialValue: widget.fill
                     ? widget.base.maxHook.toStringAsFixed(2)
                     : null,
                 validator: (value) {
@@ -360,13 +358,15 @@ class _YarnForm extends State<YarnForm> {
                 },
               ),
 
-              IntControlButton(
-                count: widget.base.nbOfSkeins,
-                text: "Skeins",
-                increase: widget.readOnly ? () {} : increaseSkeins,
-                decrease: widget.readOnly ? () {} : decreaseSkeins,
-                signed: false,
-              ),
+              ?widget.showSkeins
+                  ? IntControlButton(
+                      count: widget.base.nbOfSkeins,
+                      text: "Skeins",
+                      increase: widget.readOnly ? () {} : increaseSkeins,
+                      decrease: widget.readOnly ? () {} : decreaseSkeins,
+                      signed: false,
+                    )
+                  : null,
             ],
           ),
         ),
