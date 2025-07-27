@@ -171,7 +171,7 @@ class _PatternPartPageState extends State<PatternPartPage> {
                 onPressed: () async {
                   await deletePatternPartInDb(part.partId);
                   await widget.updatePatternListView();
-                  Navigator.popUntil(context, ModalRoute.withName("/pattern"));
+                  Navigator.popUntil(context, ModalRoute.withName("pattern"));
                 },
                 child: Text("Delete"),
               ),

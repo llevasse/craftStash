@@ -29,7 +29,7 @@ class _PatternsStashPageState extends State<PatternsStashPage> {
             Navigator.push(
               context,
               MaterialPageRoute<void>(
-                settings: RouteSettings(name: "/pattern"),
+                settings: RouteSettings(name: "pattern"),
                 builder: (BuildContext context) => PatternPage(
                   updatePatternListView: updateListView,
                   pattern: pattern,
