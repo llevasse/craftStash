@@ -36,7 +36,7 @@ class PatternRowDetail {
 
   @override
   String toString() {
-    if (stitchId == stitchToIdMap['change color']) {
+    if (stitchId == stitchToIdMap['color change']) {
       return ("change to $yarnColorName");
     }
     if (stitchId == stitchToIdMap['start color']) {

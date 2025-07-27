@@ -2,6 +2,8 @@ import 'package:craft_stash/class/wip/wip.dart';
 import 'package:craft_stash/class/wip/wip_part.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
 import 'package:craft_stash/pages/wip_part_page.dart';
+import 'package:craft_stash/widgets/yarn/pattern_yarn_list.dart';
+import 'package:craft_stash/widgets/yarnButtons/yarn_form.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
@@ -35,6 +37,40 @@ class WipPageState extends State<WipPage> {
     wip.pattern = craft.Pattern();
     super.initState();
     getWipData();
+  }
+
+  Widget _yarnList() {
+    return Container(
+      padding: EdgeInsets.all(10),
+      child: Column(
+        spacing: spacing / 2,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Text("Yarns used :"),
+          PatternYarnList(
+            onPress: (yarn) async {
+              await showDialog(
+                context: context,
+                builder: (BuildContext context) => YarnForm(
+                  fill: true,
+                  readOnly: true,
+                  base: yarn,
+                  confirm: "close",
+                  cancel: "",
+                  title: yarn.colorName,
+                  onCancel: (yarn) async {},
+                ),
+              );
+            },
+            builder: (BuildContext context, void Function() methodFromChild) {
+              yarnListInitFunction = methodFromChild;
+            },
+            patternId: wip.patternId,
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _deleteButton() {
@@ -119,7 +155,7 @@ class WipPageState extends State<WipPage> {
       );
     }
     patternListView.clear();
-
+    patternListView.add(_yarnList());
     patternListView.add(Expanded(child: ListView(children: tmp)));
     if (wip.pattern?.note != null) patternListView.add(_assembly());
     setState(() {});
