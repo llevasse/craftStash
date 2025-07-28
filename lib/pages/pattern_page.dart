@@ -25,19 +25,22 @@ class _PatternPageState extends State<PatternPage> {
   double spacing = 10;
   late void Function() yarnListInitFunction;
 
-  void _insertPattern() async {
-    pattern.patternId = await craft.insertPatternInDb(pattern);
+  void _setPattern() async {
+    if (widget.pattern == null) {
+      pattern.patternId = await craft.insertPatternInDb(pattern);
+    } else {
+      pattern = widget.pattern!;
+      pattern.yarnIdToNameMap = await craft.getYarnIdToNameMapByPatternId(
+        pattern.patternId,
+      );
+      title = pattern.name;
+    }
+    updateListView();
   }
 
   @override
   void initState() {
-    if (widget.pattern == null) {
-      _insertPattern();
-    } else {
-      pattern = widget.pattern!;
-      title = pattern.name;
-    }
-    updateListView();
+    _setPattern();
     super.initState();
   }
 
@@ -172,6 +175,9 @@ class _PatternPageState extends State<PatternPage> {
                         patternId: pattern.patternId,
                         inPatternId: numberOfYarns + 1,
                       );
+                      pattern.yarnIdToNameMap[numberOfYarns + 1] =
+                          yarn.colorName;
+
                       yarnListInitFunction.call();
                     } catch (e) {}
                   },
@@ -192,6 +198,7 @@ class _PatternPageState extends State<PatternPage> {
     pattern = await craft.getPatternById(
       id: pattern.patternId,
       withParts: true,
+      withYarnNames: true,
     );
     await updateListView();
   }

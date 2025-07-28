@@ -1,4 +1,5 @@
 import 'package:craft_stash/class/patterns/pattern_part.dart';
+import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -8,6 +9,7 @@ class Pattern {
   String name;
   String? note;
   int totalStitchNb;
+  Map<int, String> yarnIdToNameMap = {};
   List<PatternPart> parts = List.empty(growable: true);
   Pattern({
     this.patternId = 0,
@@ -105,6 +107,7 @@ Future<List<Pattern>> getAllPattern({bool withParts = false}) async {
 Future<Pattern> getPatternById({
   required int id,
   bool withParts = false,
+  bool withYarnNames = false,
 }) async {
   final db = (await DbService().database);
   if (db != null) {
@@ -116,10 +119,24 @@ Future<Pattern> getPatternById({
     );
     Pattern p = _fromMap(patternMaps[0]);
     if (withParts) p.parts = await getAllPatternPart(patternId: id);
+    if (withYarnNames) {
+      p.yarnIdToNameMap = await getYarnIdToNameMapByPatternId(id);
+    }
     return (p);
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }
+}
+
+Future<Map<int, String>> getYarnIdToNameMapByPatternId(int patternId) async {
+  Map<int, String> map = {};
+  List<Yarn> yarns = await getAllYarnByPatternId(patternId);
+  for (Yarn yarn in yarns) {
+    if (yarn.inPatternId != null) {
+      map[yarn.inPatternId!] = yarn.colorName;
+    }
+  }
+  return map;
 }
 
 Future<void> removeAllPattern() async {

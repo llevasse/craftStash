@@ -1,6 +1,7 @@
 import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
+import 'package:craft_stash/main.dart';
 import 'package:craft_stash/widgets/patternButtons/add_row_button.dart';
 import 'package:craft_stash/pages/row_page.dart';
 import 'package:flutter/material.dart';
@@ -92,11 +93,21 @@ class _PatternPartPageState extends State<PatternPartPage> {
 
   Widget _patternRowTile(PatternRow row) {
     String title = "row ${row.startRow}";
+    String? preview;
     if (row.numberOfRows > 1) {
       title +=
           "-${row.startRow + row.numberOfRows - 1} (${row.numberOfRows} rows)";
     }
-    Widget? subtitle = row.preview != null ? Text(row.preview!) : null;
+
+    if (row.preview != null) {
+      preview = row.preview;
+      for (MapEntry<int, String> entry
+          in widget.pattern.yarnIdToNameMap.entries) {
+        preview = preview!.replaceAll("\${${entry.key}}", entry.value);
+      }
+    }
+
+    Widget? subtitle = preview != null ? Text(preview) : null;
     return ListTile(
       title: Text(title),
       subtitle: subtitle,
