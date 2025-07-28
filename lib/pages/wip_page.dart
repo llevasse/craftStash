@@ -1,9 +1,11 @@
 import 'package:craft_stash/class/wip/wip.dart';
 import 'package:craft_stash/class/wip/wip_part.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
+import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:craft_stash/pages/wip_part_page.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:craft_stash/widgets/yarn/pattern_yarn_list.dart';
+import 'package:craft_stash/widgets/yarn/yarn_list_dialog.dart';
 import 'package:craft_stash/widgets/yarnButtons/yarn_form.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -24,7 +26,6 @@ class WipPageState extends State<WipPage> {
   late void Function() yarnListInitFunction;
 
   void getWipData() async {
-    await DbService().printDbTables(wip: true, yarnInWip: true, yarn: true);
     wip.pattern = await craft.getPatternById(
       id: wip.patternId,
       withParts: true,
@@ -52,27 +53,51 @@ class WipPageState extends State<WipPage> {
         children: [
           Text("Yarns used :"),
           PatternYarnList(
-            onPress: (yarn) async {
-              await showDialog(
-                context: context,
-                builder: (BuildContext context) => YarnForm(
-                  fill: true,
-                  readOnly: true,
-                  base: yarn,
-                  confirm: "close",
-                  cancel: "",
-                  title: yarn.colorName,
-                  onCancel: (yarn) async {},
-                  showSkeins: false,
-                ),
-              );
-            },
+            onPress: _yarnListOnPress,
+            onLongPress: _yarnListOnLongPress,
             builder: (BuildContext context, void Function() methodFromChild) {
               yarnListInitFunction = methodFromChild;
             },
             wipId: wip.id,
           ),
         ],
+      ),
+    );
+  }
+
+  void _yarnListOnPress(Yarn yarn) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) => YarnForm(
+        fill: true,
+        readOnly: true,
+        base: yarn,
+        confirm: "close",
+        cancel: "",
+        title: yarn.colorName,
+        showSkeins: false,
+      ),
+    );
+  }
+
+  void _yarnListOnLongPress(Yarn yarn) async {
+    int inPreviewId = yarn.inPreviewId!;
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) => YarnListDialog(
+        onPressed: (newYarn, numberOfYarns) async {
+          try {
+            await updateYarnInWip(
+              yarnId: newYarn.id,
+              wipId: wip.id,
+              inPreviewId: inPreviewId,
+            );
+            wip.yarnIdToNameMap[inPreviewId] = newYarn.colorName;
+            yarnListInitFunction.call();
+          } catch (e) {
+            print(e.toString());
+          }
+        },
       ),
     );
   }
