@@ -29,6 +29,7 @@ class WipPageState extends State<WipPage> {
       id: wip.patternId,
       withParts: true,
     );
+    wip.yarnIdToNameMap = await getYarnIdToNameMapByWipId(wip.id);
     wip.parts = await getAllWipPart(wipId: wip.id);
     updateListView();
   }
@@ -142,8 +143,10 @@ class WipPageState extends State<WipPage> {
                       context,
                       MaterialPageRoute<void>(
                         settings: RouteSettings(name: "/wip_part"),
-                        builder: (BuildContext context) =>
-                            WipPartPage(wipPart: wipPart),
+                        builder: (BuildContext context) => WipPartPage(
+                          wipPart: wipPart,
+                          yarnIdToNameMap: wip.yarnIdToNameMap,
+                        ),
                       ),
                     )
                     as WipPart;
