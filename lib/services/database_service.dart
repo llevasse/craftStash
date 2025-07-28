@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:io';
+import 'dart:math';
 import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/class/yarns/brand.dart';
 import 'package:craft_stash/class/yarns/material.dart';
@@ -69,7 +71,7 @@ class DbService {
       '''CREATE TABLE IF NOT EXISTS stitch(id INTEGER PRIMARY KEY, sequence_id INT, abreviation TEXT, name TEXT, description TEXT, is_sequence INT, hidden INT, stitch_nb INT, hash INT, FOREIGN KEY (sequence_id) REFERENCES pattern_row(row_id) ON DELETE CASCADE)''',
     );
     await db.execute(
-      '''CREATE TABLE IF NOT EXISTS pattern_row_detail(row_detail_id INTEGER PRIMARY KEY, row_id INT, stitch_id INT, repeat_x_time INT, in_row_order INT, yarn_id INT, FOREIGN KEY (row_id) REFERENCES pattern_row(row_id) ON DELETE CASCADE, FOREIGN KEY (stitch_id) REFERENCES stitch(id), FOREIGN KEY (yarn_id) REFERENCES yarn(id))''',
+      '''CREATE TABLE IF NOT EXISTS pattern_row_detail(row_detail_id INTEGER PRIMARY KEY, pattern_id INT, row_id INT, stitch_id INT, repeat_x_time INT, in_row_order INT, yarn_id INT, FOREIGN KEY (row_id) REFERENCES pattern_row(row_id) ON DELETE CASCADE, FOREIGN KEY (stitch_id) REFERENCES stitch(id), FOREIGN KEY (yarn_id) REFERENCES yarn(id))''',
     );
 
     await db.execute(
@@ -115,6 +117,74 @@ class DbService {
     _db = null;
     database;
   }
+
+  Future<void> printDbTables({
+    bool brand = false,
+    bool material = false,
+    bool pattern = false,
+    bool patternPart = false,
+    bool patternRow = false,
+    bool patternRowDetail = false,
+    bool stitch = false,
+    bool wip = false,
+    bool wipPart = false,
+    bool yarn = false,
+    bool yarnCollection = false,
+    bool yarnInPattern = false,
+    bool yarnInWip = false,
+  }) async {
+    List<String> tables = List.empty(growable: true);
+    if (brand) tables.add('brand');
+    if (material) tables.add('material');
+    if (pattern) tables.add('pattern');
+    if (patternPart) tables.add('pattern_part');
+    if (patternRow) tables.add('pattern_row');
+    if (patternRowDetail) tables.add('pattern_row_detail');
+    if (stitch) tables.add('stitch');
+    if (wip) tables.add('wip');
+    if (wipPart) tables.add('wip_part');
+    if (yarn) tables.add('yarn');
+    if (yarnCollection) tables.add('yarn_collection');
+    if (yarnInPattern) tables.add('yarn_in_pattern');
+    if (yarnInWip) tables.add('yarn_in_wip');
+    if (_db == null) return;
+    int padding = 2;
+    for (String table in tables) {
+      List<Map<String, Object?>>? l = await _db?.query(table);
+      if (l != null) {
+        print("_________${table.toUpperCase()}_________\n");
+        StringBuffer tmp = StringBuffer("");
+        Map<String, int> maxLengths = {};
+        for (MapEntry<String, Object?> entry in l[0].entries) {
+          maxLengths[entry.key] = entry.key.length;
+        }
+
+        for (Map<String, Object?> map in l) {
+          for (MapEntry<String, Object?> entry in map.entries) {
+            maxLengths[entry.key] = max(
+              maxLengths[entry.key]!,
+              entry.value.toString().length,
+            );
+          }
+        }
+
+        for (MapEntry<String, Object?> entry in l[0].entries) {
+          tmp.write("|${entry.key.padRight(maxLengths[entry.key]! + padding)}");
+        }
+        print(tmp);
+        tmp.clear();
+        for (Map<String, Object?> map in l) {
+          for (MapEntry<String, Object?> entry in map.entries) {
+            tmp.write(
+              "|${entry.value.toString().padRight(maxLengths[entry.key]! + padding)}",
+            );
+          }
+          print(tmp);
+          tmp.clear();
+        }
+      }
+    }
+  }
 }
 
 class DatabaseDoesNotExistException implements Exception {
@@ -138,5 +208,14 @@ class DatabaseNoElementsMeetConditionException implements Exception {
   @override
   String toString() {
     return "No elements in table `$table` meets condition $condition";
+  }
+}
+
+class ElementIsUsedSomewhereElse implements Exception {
+  ElementIsUsedSomewhereElse(this.table);
+  String table;
+  @override
+  String toString() {
+    return ("Element is used in $table");
   }
 }

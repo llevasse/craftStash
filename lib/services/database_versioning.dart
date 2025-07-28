@@ -23,6 +23,7 @@ Future<void> dbUpgradeV2(Batch batch) async {
   );
   batch.execute('''ALTER TABLE yarn ADD COLUMN in_pattern_id INT''');
   batch.execute('''ALTER TABLE yarn_in_pattern ADD COLUMN in_pattern_id INT''');
+  batch.execute('''ALTER TABLE pattern_row_detail ADD COLUMN pattern_id INT''');
 
   await batch.commit();
 

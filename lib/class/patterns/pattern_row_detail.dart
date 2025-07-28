@@ -13,12 +13,14 @@ class PatternRowDetail {
   int repeatXTime;
   int? inPatternYarnId; //only used for color change
   int? order;
+  int? patternId;
   PatternRowDetail({
     required this.rowId,
     required this.stitchId,
     this.stitch,
     this.rowDetailId = 0,
     this.repeatXTime = 1,
+    this.patternId,
     this.inPatternYarnId,
     this.order,
   });
@@ -30,6 +32,7 @@ class PatternRowDetail {
       'repeat_x_time': repeatXTime,
       'yarn_id': inPatternYarnId,
       'in_row_order': order,
+      'pattern_id': patternId
     };
   }
 
@@ -76,6 +79,7 @@ PatternRowDetail _fromMap(Map<String, dynamic> map) {
     stitchId: map['stitch_id'] as int,
     repeatXTime: map['repeat_x_time'] as int,
     inPatternYarnId: map['yarn_id'] as int?,
+    patternId: map['pattern_id'] as int?
   );
 }
 

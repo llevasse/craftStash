@@ -1,3 +1,4 @@
+import 'package:craft_stash/services/database_service.dart';
 import 'package:craft_stash/widgets/add_part_button.dart';
 import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
@@ -159,8 +160,14 @@ class _PatternPageState extends State<PatternPage> {
                   cancel: "remove",
                   title: yarn.colorName,
                   onCancel: (yarn) async {
-                    await craft.deleteYarnInPattern(yarn.id, pattern.patternId);
-                    yarnListInitFunction.call();
+                    try {
+                      await craft.deleteYarnInPattern(
+                        yarnId: yarn.id,
+                        patternId: pattern.patternId,
+                        inPatternYarnId: yarn.inPatternId!,
+                      );
+                      yarnListInitFunction.call();
+                    } catch (e) {}
                   },
                 ),
               );

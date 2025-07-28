@@ -173,13 +173,22 @@ Future<int> insertYarnInPattern({
   }
 }
 
-Future<int> deleteYarnInPattern(
-  int yarnId,
-  int patternId, [
+Future<int> deleteYarnInPattern({
+  required int yarnId,
+  required int inPatternYarnId,
+  required int patternId,
   Database? db,
-]) async {
+}) async {
   db ??= (await DbService().database);
   if (db != null) {
+    if ((await db.query(
+      "pattern_row_detail",
+      limit: 1,
+      where: "pattern_id = ? AND yarn_id = ?",
+      whereArgs: [patternId, inPatternYarnId],
+    )).isNotEmpty) {
+      throw ElementIsUsedSomewhereElse('pattern_row_detail');
+    }
     return await db.delete(
       "yarn_in_pattern",
       where: "pattern_id = ? AND yarn_id = ?",
