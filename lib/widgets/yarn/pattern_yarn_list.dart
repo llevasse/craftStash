@@ -6,12 +6,14 @@ typedef MyBuilder =
 
 class PatternYarnList extends StatefulWidget {
   void Function(Yarn yarn)? onPress;
+  void Function(Yarn yarn)? onLongPress;
   final MyBuilder? builder;
   void Function()? onAddYarnPress;
   final int? patternId;
   PatternYarnList({
     super.key,
     this.onPress,
+    this.onLongPress,
     this.spacing = 10,
     this.builder,
     this.onAddYarnPress,
@@ -59,6 +61,9 @@ class PatternYarnListState extends State<PatternYarnList> {
         TextButton(
           onPressed: () {
             if (widget.onPress != null) widget.onPress!(yarn);
+          },
+          onLongPress: () {
+            if (widget.onLongPress != null) widget.onLongPress!(yarn);
           },
           style: ButtonStyle(
             minimumSize: WidgetStatePropertyAll(Size(buttonSize, buttonSize)),

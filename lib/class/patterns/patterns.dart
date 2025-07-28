@@ -173,6 +173,41 @@ Future<int> insertYarnInPattern({
   }
 }
 
+Future<int> updateYarnInPattern({
+  required int yarnId,
+  required int patternId,
+  required int inPatternId,
+  Database? db,
+}) async {
+  db ??= (await DbService().database);
+  if (db != null) {
+    List<Map<String, Object?>> l = await db.query(
+      "yarn_in_pattern",
+      where: "pattern_id = ? AND in_pattern_id = ?",
+      limit: 1,
+      whereArgs: [patternId, inPatternId],
+    );
+    if (l.isEmpty) {
+      throw DatabaseNoElementsMeetConditionException(
+        "pattern_id = $patternId AND in_pattern_id = $inPatternId",
+        "yarn_in_pattern",
+      );
+    }
+    return db.update(
+      "yarn_in_pattern",
+      {
+        'pattern_id': patternId,
+        'yarn_id': yarnId,
+        'in_pattern_id': inPatternId,
+      },
+      where: "id = ?",
+      whereArgs: [l[0]['id'] as int],
+    );
+  } else {
+    throw DatabaseDoesNotExistException("Could not get database");
+  }
+}
+
 Future<int> deleteYarnInPattern({
   required int yarnId,
   required int inPatternYarnId,
