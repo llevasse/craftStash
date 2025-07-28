@@ -34,6 +34,7 @@ class _PatternPageState extends State<PatternPage> {
         pattern.patternId,
       );
       title = pattern.name;
+      setState(() {});
     }
     updateListView();
   }

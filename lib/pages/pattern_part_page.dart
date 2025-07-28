@@ -35,6 +35,8 @@ class _PatternPartPageState extends State<PatternPartPage> {
 
   @override
   void initState() {
+    if (debug) print("on PartPage ${widget.pattern.yarnIdToNameMap}");
+
     if (widget.part == null) {
       _insertPart();
       patternListView.add(_titleInput());
@@ -235,6 +237,7 @@ class _PatternPartPageState extends State<PatternPartPage> {
             ? 1
             : part.rows.last.startRow + part.rows.last.numberOfRows,
         numberOfRows: 1,
+        yarnIdToNameMap: widget.pattern.yarnIdToNameMap,
       ),
     );
   }

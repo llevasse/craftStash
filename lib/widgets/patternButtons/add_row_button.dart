@@ -8,12 +8,14 @@ class AddRowButton extends StatefulWidget {
   PatternPart part;
   int startRow;
   int numberOfRows;
+  Map<int, String> yarnIdToNameMap;
   AddRowButton({
     super.key,
     required this.part,
     required this.updatePattern,
     this.startRow = 1,
     this.numberOfRows = 1,
+    this.yarnIdToNameMap = const {}
   });
 
   @override
@@ -40,6 +42,7 @@ class _AddRowButton extends State<AddRowButton> {
               updatePattern: widget.updatePattern,
               startRow: widget.startRow,
               numberOfRows: widget.numberOfRows,
+              yarnIdToNameMap: widget.yarnIdToNameMap,
             ),
           ),
         );

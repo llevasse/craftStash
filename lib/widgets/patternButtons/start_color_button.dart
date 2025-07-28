@@ -35,6 +35,9 @@ class _StartWithColorButtonState extends State<StartColorButton> {
                         PatternRowDetail p = PatternRowDetail(
                           rowId: widget.rowId,
                           stitchId: stitchToIdMap["start color"]!,
+                          stitch: await getStitchInDbById(
+                            stitchToIdMap["start color"]!,
+                          ),
                           inPatternYarnId: yarn.inPatternId,
                         );
                         // await insertPatternRowDetailInDb(p);

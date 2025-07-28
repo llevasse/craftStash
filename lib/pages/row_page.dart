@@ -142,7 +142,6 @@ class _RowPageState extends State<RowPage> {
   }
 
   AddCustomDetailButton _startColorButton() {
-    // TODO fix button not working with 'freshly' created part
     return StartColorButton(
       onPressed: (PatternRowDetail? detail) async {
         if (detail == null) return;
