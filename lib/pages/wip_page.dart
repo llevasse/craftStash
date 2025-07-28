@@ -2,6 +2,7 @@ import 'package:craft_stash/class/wip/wip.dart';
 import 'package:craft_stash/class/wip/wip_part.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
 import 'package:craft_stash/pages/wip_part_page.dart';
+import 'package:craft_stash/services/database_service.dart';
 import 'package:craft_stash/widgets/yarn/pattern_yarn_list.dart';
 import 'package:craft_stash/widgets/yarnButtons/yarn_form.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,7 @@ class WipPageState extends State<WipPage> {
   late void Function() yarnListInitFunction;
 
   void getWipData() async {
+    await DbService().printDbTables(wip: true, yarnInWip: true, yarn: true);
     wip.pattern = await craft.getPatternById(
       id: wip.patternId,
       withParts: true,
@@ -67,7 +69,7 @@ class WipPageState extends State<WipPage> {
             builder: (BuildContext context, void Function() methodFromChild) {
               yarnListInitFunction = methodFromChild;
             },
-            patternId: wip.patternId,
+            wipId: wip.id,
           ),
         ],
       ),

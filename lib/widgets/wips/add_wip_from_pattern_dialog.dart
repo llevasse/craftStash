@@ -38,8 +38,13 @@ class _AddWipFromPatternDialogState extends State<AddWipFromPatternDialog> {
             List<Yarn> yarns = await getAllYarnByPatternId(
               patterns[index].patternId,
             );
-            for (Yarn yarn in yarns){
-              
+            for (Yarn yarn in yarns) {
+              if (yarn.inPreviewId == null) continue;
+              await insertYarnInWip(
+                yarnId: yarn.id,
+                wipId: newWip.id,
+                inPreviewId: yarn.inPreviewId!,
+              );
             }
             for (PatternPart part in patterns[index].parts) {
               await insertWipPartInDb(

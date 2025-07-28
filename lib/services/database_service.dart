@@ -44,7 +44,7 @@ class DbService {
 
   Future<void> _onCreate(Database db, int version) async {
     await db.execute(
-      '''CREATE TABLE IF NOT EXISTS yarn(id INTEGER PRIMARY KEY, color INT, brand TEXT, material TEXT, color_name TEXT, min_hook REAL, max_hook REAL, thickness REAL, number_of_skeins INT, collection_id INT, in_pattern_id INT, hash INT, FOREIGN KEY (collection_id) REFERENCES yarn_collection(id))''',
+      '''CREATE TABLE IF NOT EXISTS yarn(id INTEGER PRIMARY KEY, color INT, brand TEXT, material TEXT, color_name TEXT, min_hook REAL, max_hook REAL, thickness REAL, number_of_skeins INT, collection_id INT, in_preview_id INT, hash INT, FOREIGN KEY (collection_id) REFERENCES yarn_collection(id))''',
     );
 
     await db.execute(
@@ -75,7 +75,7 @@ class DbService {
     );
 
     await db.execute(
-      '''CREATE TABLE IF NOT EXISTS yarn_in_pattern(id INTEGER PRIMARY KEY, pattern_id INT, yarn_id INT, in_pattern_id INT, FOREIGN KEY (pattern_id) REFERENCES pattern(pattern_id), FOREIGN KEY (yarn_id) REFERENCES yarn(id))''',
+      '''CREATE TABLE IF NOT EXISTS yarn_in_pattern(id INTEGER PRIMARY KEY, pattern_id INT, yarn_id INT, in_preview_id INT, FOREIGN KEY (pattern_id) REFERENCES pattern(pattern_id), FOREIGN KEY (yarn_id) REFERENCES yarn(id))''',
     );
     await insertDefaultStitchesInDb(db);
     if (debug) {
@@ -91,7 +91,7 @@ class DbService {
       '''CREATE TABLE IF NOT EXISTS wip_part(id INTEGER PRIMARY KEY, wip_id INT, part_id INT, finished INT, stitch_done_nb INT, made_x_time INT, current_row_number INT, current_row_index INT, current_stitch_number INT, FOREIGN KEY (wip_id) REFERENCES wip(id) ON DELETE CASCADE, FOREIGN KEY (part_id) REFERENCES pattern_part(part_id) ON DELETE CASCADE)''',
     );
     await db.execute(
-      '''CREATE TABLE IF NOT EXISTS yarn_in_wip(id INTEGER PRIMARY KEY, wip_id INT, yarn_id INT, in_pattern_id INT, FOREIGN KEY (wip_id) REFERENCES wip(id), FOREIGN KEY (yarn_id) REFERENCES yarn(id))''',
+      '''CREATE TABLE IF NOT EXISTS yarn_in_wip(id INTEGER PRIMARY KEY, wip_id INT, yarn_id INT, in_preview_id INT, FOREIGN KEY (wip_id) REFERENCES wip(id), FOREIGN KEY (yarn_id) REFERENCES yarn(id))''',
     );
   }
 
@@ -153,6 +153,10 @@ class DbService {
       List<Map<String, Object?>>? l = await _db?.query(table);
       if (l != null) {
         print("_________${table.toUpperCase()}_________\n");
+        if (l.isEmpty) {
+          print("Empty");
+          continue;
+        }
         StringBuffer tmp = StringBuffer("");
         Map<String, int> maxLengths = {};
         for (MapEntry<String, Object?> entry in l[0].entries) {

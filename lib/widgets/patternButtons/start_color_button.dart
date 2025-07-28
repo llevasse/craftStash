@@ -38,7 +38,7 @@ class _StartWithColorButtonState extends State<StartColorButton> {
                           stitch: await getStitchInDbById(
                             stitchToIdMap["start color"]!,
                           ),
-                          inPatternYarnId: yarn.inPatternId,
+                          inPatternYarnId: yarn.inPreviewId,
                         );
                         // await insertPatternRowDetailInDb(p);
                         Navigator.pop(context, p);

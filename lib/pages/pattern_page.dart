@@ -187,7 +187,7 @@ class _PatternPageState extends State<PatternPage> {
           children: [
             TextButton(
               onPressed: () async {
-                int inPatternId = yarn.inPatternId!;
+                int inPreviewId = yarn.inPreviewId!;
                 await showDialog(
                   context: context,
                   builder: (BuildContext context) => YarnListDialog(
@@ -196,9 +196,9 @@ class _PatternPageState extends State<PatternPage> {
                         await craft.updateYarnInPattern(
                           yarnId: newYarn.id,
                           patternId: pattern.patternId,
-                          inPatternId: inPatternId,
+                          inPreviewId: inPreviewId,
                         );
-                        pattern.yarnIdToNameMap[inPatternId] =
+                        pattern.yarnIdToNameMap[inPreviewId] =
                             newYarn.colorName;
                         yarnListInitFunction.call();
                         Navigator.pop(context);
@@ -217,7 +217,7 @@ class _PatternPageState extends State<PatternPage> {
                   await craft.deleteYarnInPattern(
                     yarnId: yarn.id,
                     patternId: pattern.patternId,
-                    inPatternYarnId: yarn.inPatternId!,
+                    inPatternYarnId: yarn.inPreviewId!,
                   );
                   yarnListInitFunction.call();
                 } catch (e) {}
@@ -239,7 +239,7 @@ class _PatternPageState extends State<PatternPage> {
             await craft.insertYarnInPattern(
               yarnId: yarn.id,
               patternId: pattern.patternId,
-              inPatternId: numberOfYarns + 1,
+              inPreviewId: numberOfYarns + 1,
             );
             pattern.yarnIdToNameMap[numberOfYarns + 1] = yarn.colorName;
 

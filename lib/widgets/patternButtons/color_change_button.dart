@@ -38,7 +38,7 @@ class _ColorChangeButtonState extends State<ColorChangeButton> {
                           stitch: await getStitchInDbById(
                             stitchToIdMap["color change"]!,
                           ),
-                          inPatternYarnId: yarn.inPatternId,
+                          inPatternYarnId: yarn.inPreviewId,
                         );
                         // await insertPatternRowDetailInDb(p);
                         Navigator.pop(context, p);

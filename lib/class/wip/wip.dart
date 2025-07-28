@@ -1,5 +1,6 @@
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
 import 'package:craft_stash/class/wip/wip_part.dart';
+import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -11,6 +12,7 @@ class Wip {
   int finished;
   int stitchDoneNb;
   craft.Pattern? pattern;
+  Map<int, String> yarnIdToNameMap = {};
   List<WipPart> parts = List.empty(growable: true);
   Wip({
     this.id = 0,
@@ -85,6 +87,7 @@ Future<void> deleteWipInDb(int id) async {
 Future<List<Wip>> getAllWip({
   bool withPattern = true,
   bool withParts = false,
+  bool withYarnNames = false,
 }) async {
   final db = (await DbService().database);
   if (db != null) {
@@ -95,6 +98,9 @@ Future<List<Wip>> getAllWip({
         if (withParts) wip.parts = await getAllWipPart(wipId: wip.id);
         if (withPattern) {
           wip.pattern = await craft.getPatternById(id: wip.patternId);
+        }
+        if (withYarnNames) {
+          wip.yarnIdToNameMap = await getYarnIdToNameMapByWipId(wip.id);
         }
       }
     }
@@ -130,10 +136,10 @@ Future<void> removeAllWip() async {
   }
 }
 
-Future<int> insertYarnInPattern({
+Future<int> insertYarnInWip({
   required int yarnId,
   required int wipId,
-  required int inPatternId,
+  required int inPreviewId,
   Database? db,
 }) async {
   db ??= (await DbService().database);
@@ -146,9 +152,9 @@ Future<int> insertYarnInPattern({
       throw EntryAlreadyExist("yarn_in_wip");
     }
     return db.insert("yarn_in_wip", {
-      'pattern_id': wipId,
+      'wip_id': wipId,
       'yarn_id': yarnId,
-      'in_pattern_id': inPatternId,
+      'in_preview_id': inPreviewId,
     });
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
@@ -170,4 +176,46 @@ Future<int> deleteYarnInPattern(
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }
+}
+
+Future<int> updateYarnInWip({
+  required int yarnId,
+  required int wipId,
+  required int inPreviewId,
+  Database? db,
+}) async {
+  db ??= (await DbService().database);
+  if (db != null) {
+    List<Map<String, Object?>> l = await db.query(
+      "yarn_in_wip",
+      where: "wip_id = ? AND in_preview_id = ?",
+      limit: 1,
+      whereArgs: [wipId, inPreviewId],
+    );
+    if (l.isEmpty) {
+      throw DatabaseNoElementsMeetConditionException(
+        "wip_id = $wipId AND in_preview_id = $inPreviewId",
+        "yarn_in_wip",
+      );
+    }
+    return db.update(
+      "yarn_in_wip",
+      {'wip_id': wipId, 'yarn_id': yarnId, 'in_preview_id': inPreviewId},
+      where: "id = ?",
+      whereArgs: [l[0]['id'] as int],
+    );
+  } else {
+    throw DatabaseDoesNotExistException("Could not get database");
+  }
+}
+
+Future<Map<int, String>> getYarnIdToNameMapByWipId(int wipId) async {
+  Map<int, String> map = {};
+  List<Yarn> yarns = await getAllYarnByWipId(wipId);
+  for (Yarn yarn in yarns) {
+    if (yarn.inPreviewId != null) {
+      map[yarn.inPreviewId!] = yarn.colorName;
+    }
+  }
+  return map;
 }

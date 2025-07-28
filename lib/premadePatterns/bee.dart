@@ -19,7 +19,7 @@ Future<PatternPart> _createBody(int patternId, Database? db) async {
     startRow: 1,
     numberOfRows: 1,
     stitchesPerRow: 6,
-    preview: "start with \${${_yarns.first.inPatternId}}, 6sc",
+    preview: "start with \${${_yarns.first.inPreviewId}}, 6sc",
   );
   r1.rowId = await insertPatternRowInDb(r1, db);
   await insertPatternRowDetailInDb(
@@ -27,7 +27,7 @@ Future<PatternPart> _createBody(int patternId, Database? db) async {
       rowId: r1.rowId,
       repeatXTime: 1,
       stitchId: _stitchesMap["start color"]!.id,
-      inPatternYarnId: _yarns.first.inPatternId,
+      inPatternYarnId: _yarns.first.inPreviewId,
       patternId: patternId,
     ),
     db,
@@ -72,7 +72,7 @@ Future<PatternPart> _createBody(int patternId, Database? db) async {
     rowId: r3.rowId,
     repeatXTime: 6,
     stitchId: _stitchesMap["(sc, inc)"]!.id,
-      patternId: patternId,
+    patternId: patternId,
   );
   dr3.rowDetailId = await insertPatternRowDetailInDb(dr3, db);
 
@@ -81,7 +81,7 @@ Future<PatternPart> _createBody(int patternId, Database? db) async {
     startRow: 4,
     numberOfRows: 1,
     stitchesPerRow: 18,
-    preview: "18sc, change color to \${${_yarns.last.inPatternId}}",
+    preview: "18sc, change color to \${${_yarns.last.inPreviewId}}",
   );
   r4.rowId = await insertPatternRowInDb(r4, db);
   await insertPatternRowDetailInDb(
@@ -98,7 +98,7 @@ Future<PatternPart> _createBody(int patternId, Database? db) async {
       rowId: r4.rowId,
       repeatXTime: 1,
       stitchId: _stitchesMap["color change"]!.id,
-      inPatternYarnId: _yarns.last.inPatternId,
+      inPatternYarnId: _yarns.last.inPreviewId,
       patternId: patternId,
     ),
     db,
@@ -109,7 +109,7 @@ Future<PatternPart> _createBody(int patternId, Database? db) async {
     startRow: 5,
     numberOfRows: 1,
     stitchesPerRow: 18,
-    preview: "18sc, change color to \${${_yarns.first.inPatternId}}",
+    preview: "18sc, change color to \${${_yarns.first.inPreviewId}}",
   );
   r5.rowId = await insertPatternRowInDb(r5, db);
   await insertPatternRowDetailInDb(
@@ -126,7 +126,7 @@ Future<PatternPart> _createBody(int patternId, Database? db) async {
       rowId: r5.rowId,
       repeatXTime: 1,
       stitchId: _stitchesMap["color change"]!.id,
-      inPatternYarnId: _yarns.first.inPatternId,
+      inPatternYarnId: _yarns.first.inPreviewId,
       patternId: patternId,
     ),
     db,
@@ -137,7 +137,7 @@ Future<PatternPart> _createBody(int patternId, Database? db) async {
     startRow: 6,
     numberOfRows: 1,
     stitchesPerRow: 18,
-    preview: "18sc, change color to \${${_yarns.last.inPatternId}}",
+    preview: "18sc, change color to \${${_yarns.last.inPreviewId}}",
   );
   r6.rowId = await insertPatternRowInDb(r6, db);
   await insertPatternRowDetailInDb(
@@ -153,7 +153,7 @@ Future<PatternPart> _createBody(int patternId, Database? db) async {
       rowId: r6.rowId,
       repeatXTime: 1,
       stitchId: _stitchesMap["color change"]!.id,
-      inPatternYarnId: _yarns.last.inPatternId,
+      inPatternYarnId: _yarns.last.inPreviewId,
       patternId: patternId,
     ),
     db,
@@ -171,7 +171,7 @@ Future<PatternPart> _createBody(int patternId, Database? db) async {
     rowId: r7.rowId,
     repeatXTime: 6,
     stitchId: _stitchesMap["(sc, dec)"]!.id,
-      patternId: patternId,
+    patternId: patternId,
   );
   dr7.rowDetailId = await insertPatternRowDetailInDb(dr7, db);
 
@@ -211,17 +211,17 @@ Future<void> insertBeePattern([Database? db]) async {
     await craft.insertYarnInPattern(
       yarnId: _yarns.first.id,
       patternId: pattern.patternId,
-      inPatternId: 1,
+      inPreviewId: 1,
       db: db,
     );
-    _yarns.first.inPatternId = 1;
+    _yarns.first.inPreviewId = 1;
     await craft.insertYarnInPattern(
       yarnId: _yarns.last.id,
       patternId: pattern.patternId,
-      inPatternId: 2,
+      inPreviewId: 2,
       db: db,
     );
-    _yarns.last.inPatternId = 2;
+    _yarns.last.inPreviewId = 2;
   }
   pattern.parts.add(await _createBody(pattern.patternId, db));
   print("Bee created");

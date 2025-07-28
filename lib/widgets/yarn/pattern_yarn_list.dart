@@ -10,6 +10,7 @@ class PatternYarnList extends StatefulWidget {
   final MyBuilder? builder;
   void Function()? onAddYarnPress;
   final int? patternId;
+  final int? wipId;
   PatternYarnList({
     super.key,
     this.onPress,
@@ -18,6 +19,7 @@ class PatternYarnList extends StatefulWidget {
     this.builder,
     this.onAddYarnPress,
     this.patternId,
+    this.wipId,
   });
 
   double spacing;
@@ -49,10 +51,14 @@ class PatternYarnListState extends State<PatternYarnList> {
   }
 
   Future<void> getAllYarns() async {
-    if (widget.patternId == null) {
+    if (widget.patternId == null && widget.wipId == null) {
       yarns = await getAllYarn();
     } else {
-      yarns = await getAllYarnByPatternId(widget.patternId!);
+      if (widget.patternId != null) {
+        yarns = await getAllYarnByPatternId(widget.patternId!);
+      } else if (widget.wipId != null) {
+        yarns = await getAllYarnByWipId(widget.wipId!);
+      }
     }
     list.clear();
 

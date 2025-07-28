@@ -132,8 +132,8 @@ Future<Map<int, String>> getYarnIdToNameMapByPatternId(int patternId) async {
   Map<int, String> map = {};
   List<Yarn> yarns = await getAllYarnByPatternId(patternId);
   for (Yarn yarn in yarns) {
-    if (yarn.inPatternId != null) {
-      map[yarn.inPatternId!] = yarn.colorName;
+    if (yarn.inPreviewId != null) {
+      map[yarn.inPreviewId!] = yarn.colorName;
     }
   }
   return map;
@@ -151,7 +151,7 @@ Future<void> removeAllPattern() async {
 Future<int> insertYarnInPattern({
   required int yarnId,
   required int patternId,
-  required int inPatternId,
+  required int inPreviewId,
   Database? db,
 }) async {
   db ??= (await DbService().database);
@@ -166,7 +166,7 @@ Future<int> insertYarnInPattern({
     return db.insert("yarn_in_pattern", {
       'pattern_id': patternId,
       'yarn_id': yarnId,
-      'in_pattern_id': inPatternId,
+      'in_preview_id': inPreviewId,
     });
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
@@ -176,20 +176,20 @@ Future<int> insertYarnInPattern({
 Future<int> updateYarnInPattern({
   required int yarnId,
   required int patternId,
-  required int inPatternId,
+  required int inPreviewId,
   Database? db,
 }) async {
   db ??= (await DbService().database);
   if (db != null) {
     List<Map<String, Object?>> l = await db.query(
       "yarn_in_pattern",
-      where: "pattern_id = ? AND in_pattern_id = ?",
+      where: "pattern_id = ? AND in_preview_id = ?",
       limit: 1,
-      whereArgs: [patternId, inPatternId],
+      whereArgs: [patternId, inPreviewId],
     );
     if (l.isEmpty) {
       throw DatabaseNoElementsMeetConditionException(
-        "pattern_id = $patternId AND in_pattern_id = $inPatternId",
+        "pattern_id = $patternId AND in_preview_id = $inPreviewId",
         "yarn_in_pattern",
       );
     }
@@ -198,7 +198,7 @@ Future<int> updateYarnInPattern({
       {
         'pattern_id': patternId,
         'yarn_id': yarnId,
-        'in_pattern_id': inPatternId,
+        'in_preview_id': inPreviewId,
       },
       where: "id = ?",
       whereArgs: [l[0]['id'] as int],

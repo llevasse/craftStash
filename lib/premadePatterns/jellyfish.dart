@@ -175,7 +175,7 @@ Future<void> insertJellyFishPattern([Database? db]) async {
     await craft.insertYarnInPattern(
       yarnId: y.first.id,
       patternId: pattern.patternId,
-      inPatternId: 1,
+      inPreviewId: 1,
       db: db,
     );
   }
