@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 
 class RowPage extends StatefulWidget {
   final Future<void> Function() updatePattern;
+  Map<int, String> yarnIdToNameMap;
   PatternPart part;
   PatternRow? row;
   int startRow;
@@ -24,6 +25,7 @@ class RowPage extends StatefulWidget {
     this.startRow = 0,
     this.numberOfRows = 1,
     this.row,
+    this.yarnIdToNameMap = const {},
   });
 
   @override
@@ -37,7 +39,6 @@ class _RowPageState extends State<RowPage> {
   bool needScroll = false;
   ScrollController stitchDetailsScrollController = ScrollController();
   List<CountButton> details = List.empty(growable: true);
-  String detailsString = "";
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   PatternRow row = PatternRow(startRow: 0, numberOfRows: 0, stitchesPerRow: 0);
   TextEditingController previewControler = TextEditingController();
@@ -51,13 +52,12 @@ class _RowPageState extends State<RowPage> {
     row.numberOfRows = widget.numberOfRows;
     if (widget.row != null) {
       row = widget.row!;
-      detailsString = "";
       for (PatternRowDetail detail in row.details) {
         String text = detail.stitch!.abreviation;
         if (detail.stitchId == stitchToIdMap['color change']) {
-          text = "change to \${${detail.inPatternYarnId}}";
+          text = "change to ${widget.yarnIdToNameMap[detail.inPatternYarnId]}";
         } else if (detail.stitchId == stitchToIdMap['start color']) {
-          text = "start with \${${detail.inPatternYarnId}}";
+          text = "start with ${widget.yarnIdToNameMap[detail.inPatternYarnId]}";
         }
         details.add(
           CountButton(
@@ -88,7 +88,7 @@ class _RowPageState extends State<RowPage> {
     super.initState();
   }
 
-  AddCustomDetailButton _SubrowButton() {
+  AddCustomDetailButton _subrowButton() {
     return NewSubrowButton(
       rowId: row.rowId,
       onPressed: (PatternRowDetail? detail) async {
@@ -142,6 +142,7 @@ class _RowPageState extends State<RowPage> {
   }
 
   AddCustomDetailButton _startColorButton() {
+    // TODO fix button not working with 'freshly' created part
     return StartColorButton(
       onPressed: (PatternRowDetail? detail) async {
         if (detail == null) return;
@@ -170,7 +171,7 @@ class _RowPageState extends State<RowPage> {
       onStitchPressed: _addStitch,
       onSequencePressed: _addStitch,
       customActions: [
-        _SubrowButton(),
+        _subrowButton(),
         _colorChangeButton(),
         ?row.startRow == 1 ? _startColorButton() : null,
       ],
@@ -195,15 +196,11 @@ class _RowPageState extends State<RowPage> {
 
   @override
   void setState(VoidCallback fn) {
-    detailsString = "";
-    for (PatternRowDetail detail in row.details) {
-      // detail.printDetail();
-      // print("\r\n");
-      if (detail.repeatXTime != 0) {
-        detailsString += "${detail.toString()}, ";
-      }
+    String preview = row.detailsAsString();
+    for (MapEntry<int, String> entry in widget.yarnIdToNameMap.entries) {
+      preview = preview!.replaceAll("\${${entry.key}}", entry.value);
     }
-    previewControler.text = detailsString;
+    previewControler.text = preview;
     stitchDetailsScrollController.jumpTo(
       stitchDetailsScrollController.position.maxScrollExtent,
     );
@@ -279,9 +276,20 @@ class _RowPageState extends State<RowPage> {
   }
 
   CountButton _createStitchCountButton(PatternRowDetail stitch) {
+    String text = stitch.toString();
+    if (stitch.inPatternYarnId != null) {
+      if (debug) {
+        print(text);
+        print(widget.yarnIdToNameMap);
+      }
+      text = text.replaceAll(
+        "\${${stitch.inPatternYarnId}}",
+        widget.yarnIdToNameMap[stitch.inPatternYarnId]!,
+      );
+    }
     return CountButton(
       signed: false,
-      text: stitch.toString(),
+      text: text,
       count: stitch.repeatXTime,
       increase: () {
         stitch.repeatXTime += 1;

@@ -117,8 +117,12 @@ class _PatternPartPageState extends State<PatternPartPage> {
           context,
           MaterialPageRoute<void>(
             settings: RouteSettings(name: "row"),
-            builder: (BuildContext context) =>
-                RowPage(part: part, updatePattern: updateListView, row: r),
+            builder: (BuildContext context) => RowPage(
+              part: part,
+              updatePattern: updateListView,
+              row: r,
+              yarnIdToNameMap: widget.pattern.yarnIdToNameMap,
+            ),
           ),
         );
       },
