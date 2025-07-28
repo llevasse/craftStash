@@ -55,9 +55,9 @@ class _RowPageState extends State<RowPage> {
       for (PatternRowDetail detail in row.details) {
         String text = detail.stitch!.abreviation;
         if (detail.stitchId == stitchToIdMap['color change']) {
-          text = "change to ${detail.yarnColorName}";
+          text = "change to \${${detail.inPatternYarnId}}";
         } else if (detail.stitchId == stitchToIdMap['start color']) {
-          text = "start with ${detail.yarnColorName}";
+          text = "start with \${${detail.inPatternYarnId}}";
         }
         details.add(
           CountButton(
@@ -126,8 +126,7 @@ class _RowPageState extends State<RowPage> {
             row.details.add(detail);
             details.add(_createStitchCountButton(detail));
           } else if (row.details.last.stitchId == 'start color') {
-            row.details.last.yarnId = detail.yarnId;
-            row.details.last.yarnColorName = detail.yarnColorName;
+            row.details.last.inPatternYarnId = detail.inPatternYarnId;
             await updatePatternRowDetailInDb(row.details.last);
           } else {
             row.details.add(detail);
@@ -148,8 +147,7 @@ class _RowPageState extends State<RowPage> {
         if (detail == null) return;
         if (row.details.isNotEmpty) {
           if (row.details.first.stitchId == stitchToIdMap["start color"]) {
-            row.details.first.yarnId = detail.yarnId;
-            row.details.first.yarnColorName = detail.yarnColorName;
+            row.details.first.inPatternYarnId = detail.inPatternYarnId;
             await updatePatternRowDetailInDb(row.details.first);
           } else {
             row.details.insert(0, detail);

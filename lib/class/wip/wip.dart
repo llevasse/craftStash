@@ -129,3 +129,45 @@ Future<void> removeAllWip() async {
     throw DatabaseDoesNotExistException("Could not get database");
   }
 }
+
+Future<int> insertYarnInPattern({
+  required int yarnId,
+  required int wipId,
+  required int inPatternId,
+  Database? db,
+}) async {
+  db ??= (await DbService().database);
+  if (db != null) {
+    if ((await db.query(
+      "yarn_in_wip",
+      where: "wip_id = ? AND yarn_id = ?",
+      whereArgs: [wipId, yarnId],
+    )).isNotEmpty) {
+      throw EntryAlreadyExist("yarn_in_wip");
+    }
+    return db.insert("yarn_in_wip", {
+      'pattern_id': wipId,
+      'yarn_id': yarnId,
+      'in_pattern_id': inPatternId,
+    });
+  } else {
+    throw DatabaseDoesNotExistException("Could not get database");
+  }
+}
+
+Future<int> deleteYarnInPattern(
+  int yarnId,
+  int patternId, [
+  Database? db,
+]) async {
+  db ??= (await DbService().database);
+  if (db != null) {
+    return await db.delete(
+      "yarn_in_pattern",
+      where: "pattern_id = ? AND yarn_id = ?",
+      whereArgs: [patternId, yarnId],
+    );
+  } else {
+    throw DatabaseDoesNotExistException("Could not get database");
+  }
+}

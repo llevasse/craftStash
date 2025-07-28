@@ -131,11 +131,12 @@ Future<void> removeAllPattern() async {
   }
 }
 
-Future<int> insertYarnInPattern(
-  int yarnId,
-  int patternId, [
+Future<int> insertYarnInPattern({
+  required int yarnId,
+  required int patternId,
+  required int inPatternId,
   Database? db,
-]) async {
+}) async {
   db ??= (await DbService().database);
   if (db != null) {
     if ((await db.query(
@@ -143,11 +144,12 @@ Future<int> insertYarnInPattern(
       where: "pattern_id = ? AND yarn_id = ?",
       whereArgs: [patternId, yarnId],
     )).isNotEmpty) {
-      throw EntryAlreadyExist("yarn_in_table");
+      throw EntryAlreadyExist("yarn_in_pattern");
     }
     return db.insert("yarn_in_pattern", {
       'pattern_id': patternId,
       'yarn_id': yarnId,
+      'in_pattern_id': inPatternId,
     });
   } else {
     throw DatabaseDoesNotExistException("Could not get database");

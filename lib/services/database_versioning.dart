@@ -19,9 +19,11 @@ Future<void> dbUpgradeV2(Batch batch) async {
   batch.execute('''ALTER TABLE stitch ADD COLUMN stitch_nb INT DEFAULT 1''');
 
   batch.execute(
-    '''CREATE TABLE IF NOT EXISTS yarn_in_wip(id INTEGER PRIMARY KEY, wip_id INT, yarn_id INT, FOREIGN KEY (wip_id) REFERENCES wip(id), FOREIGN KEY (yarn_id) REFERENCES yarn(id))''',
+    '''CREATE TABLE IF NOT EXISTS yarn_in_wip(id INTEGER PRIMARY KEY, wip_id INT, in_pattern_id INT, yarn_id INT, FOREIGN KEY (wip_id) REFERENCES wip(id), FOREIGN KEY (yarn_id) REFERENCES yarn(id))''',
   );
-  
+  batch.execute('''ALTER TABLE yarn ADD COLUMN in_pattern_id INT''');
+  batch.execute('''ALTER TABLE yarn_in_pattern ADD COLUMN in_pattern_id INT''');
+
   await batch.commit();
 
   // UPDATE pattern_part AND pattern table total_stitch_nb
