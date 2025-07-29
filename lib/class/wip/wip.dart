@@ -11,6 +11,8 @@ class Wip {
   int patternId;
   int finished;
   int stitchDoneNb;
+  String name;
+  double? hookSize;
   craft.Pattern? pattern;
   Map<int, String> yarnIdToNameMap = {};
   List<WipPart> parts = List.empty(growable: true);
@@ -19,6 +21,8 @@ class Wip {
     this.patternId = 0,
     this.finished = 0,
     this.stitchDoneNb = 0,
+    this.name = "New wip",
+    this.hookSize,
   });
 
   Map<String, dynamic> toMap() {
@@ -26,6 +30,8 @@ class Wip {
       'finished': finished,
       'pattern_id': patternId,
       'stitch_done_nb': stitchDoneNb,
+      "name": name,
+      "hook_size": hookSize,
     };
   }
 
@@ -45,6 +51,8 @@ Wip _fromMap(Map<String, Object?> map) {
     patternId: map['pattern_id'] as int,
     finished: map['finished'] as int,
     stitchDoneNb: map['stitch_done_nb'] as int,
+    name: map['name'] as String,
+    hookSize: map['hook_size'] as double?,
   );
 }
 

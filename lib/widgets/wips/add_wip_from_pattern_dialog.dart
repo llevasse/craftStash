@@ -33,7 +33,11 @@ class _AddWipFromPatternDialogState extends State<AddWipFromPatternDialog> {
         return ListTile(
           title: Text(patterns[index].name),
           onTap: () async {
-            Wip newWip = Wip(patternId: patterns[index].patternId);
+            Wip newWip = Wip(
+              patternId: patterns[index].patternId,
+              name: patterns[index].name,
+              hookSize: patterns[index].hookSize,
+            );
             newWip.id = await insertWipInDb(newWip);
             List<Yarn> yarns = await getAllYarnByPatternId(
               patterns[index].patternId,

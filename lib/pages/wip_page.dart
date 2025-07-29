@@ -20,6 +20,7 @@ class WipPage extends StatefulWidget {
 }
 
 class WipPageState extends State<WipPage> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   Wip wip = Wip();
   List<Widget> patternListView = List.empty(growable: true);
   double spacing = 10;
@@ -102,6 +103,61 @@ class WipPageState extends State<WipPage> {
     );
   }
 
+  Widget _infoRow() {
+    return Form(
+      key: _formKey,
+      child: Row(
+        children: [
+          Expanded(child: _titleInput()),
+          Expanded(child: _hookSizeInput()),
+        ],
+      ),
+    );
+  }
+
+  Widget _titleInput() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      child: TextFormField(
+        initialValue: widget.wip.name,
+        decoration: InputDecoration(label: Text("Wip title")),
+        validator: (value) {
+          if (value == null || value.trim().isEmpty) {
+            return ("Wip title can't be empty");
+          }
+          return null;
+        },
+        onChanged: (value) {
+          wip.name = value.trim();
+          setState(() {});
+        },
+        onSaved: (newValue) {
+          wip.name = newValue!.trim();
+        },
+      ),
+    );
+  }
+
+  Widget _hookSizeInput() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      child: TextFormField(
+        keyboardType: TextInputType.numberWithOptions(),
+        initialValue: wip.hookSize?.toStringAsFixed(2),
+        decoration: InputDecoration(label: Text("Hook size")),
+        validator: (value) {
+          return null;
+        },
+        onSaved: (newValue) {
+          newValue = newValue?.trim();
+          if (newValue != null && newValue.isNotEmpty) {
+            wip.hookSize = double.parse(newValue);
+          }
+        },
+      ),
+    );
+  }
+
   Widget _deleteButton() {
     return IconButton(
       onPressed: () async {
@@ -132,6 +188,19 @@ class WipPageState extends State<WipPage> {
       },
       icon: Icon(LucideIcons.trash),
     );
+  }
+
+  Widget _saveButton() {
+    return (IconButton(
+      onPressed: () async {
+        if (_formKey.currentState!.validate()) {
+          _formKey.currentState!.save();
+          await updateWipInDb(wip);
+          Navigator.pop(context);
+        }
+      },
+      icon: Icon(Icons.save),
+    ));
   }
 
   Widget _assembly() {
@@ -186,6 +255,7 @@ class WipPageState extends State<WipPage> {
       );
     }
     patternListView.clear();
+    patternListView.add(_infoRow());
     patternListView.add(_yarnList());
     patternListView.add(Expanded(child: ListView(children: tmp)));
     if (wip.pattern?.note != null) patternListView.add(_assembly());
@@ -197,7 +267,7 @@ class WipPageState extends State<WipPage> {
     ThemeData theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(wip.pattern!.name),
+        title: Text(wip.name),
         backgroundColor: theme.colorScheme.primary,
         leading: IconButton(
           onPressed: () async {
@@ -207,7 +277,7 @@ class WipPageState extends State<WipPage> {
           icon: Icon(Icons.arrow_back),
         ),
 
-        actions: [_deleteButton()],
+        actions: [_deleteButton(), _saveButton()],
       ),
       body: Column(
         spacing: spacing,
