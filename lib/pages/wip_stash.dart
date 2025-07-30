@@ -32,10 +32,10 @@ class _WipStashPageState extends State<WipStashPage> {
       tmp.add(
         ListTile(
           title: Text(
-            "${wip.pattern!.name} (${((wip.stitchDoneNb / wip.pattern!.totalStitchNb) * 100).toStringAsFixed(2)}%)",
+            "${wip.name} (${((wip.stitchDoneNb / wip.pattern!.totalStitchNb) * 100).toStringAsFixed(2)}%)",
           ),
           onTap: () async {
-            Navigator.push(
+            await Navigator.push(
               context,
               MaterialPageRoute<void>(
                 settings: RouteSettings(name: "/wip"),

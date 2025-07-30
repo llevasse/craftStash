@@ -6,16 +6,20 @@ typedef MyBuilder =
 
 class PatternYarnList extends StatefulWidget {
   void Function(Yarn yarn)? onPress;
+  void Function(Yarn yarn)? onLongPress;
   final MyBuilder? builder;
   void Function()? onAddYarnPress;
   final int? patternId;
+  final int? wipId;
   PatternYarnList({
     super.key,
     this.onPress,
+    this.onLongPress,
     this.spacing = 10,
     this.builder,
     this.onAddYarnPress,
     this.patternId,
+    this.wipId,
   });
 
   double spacing;
@@ -47,10 +51,14 @@ class PatternYarnListState extends State<PatternYarnList> {
   }
 
   Future<void> getAllYarns() async {
-    if (widget.patternId == null) {
+    if (widget.patternId == null && widget.wipId == null) {
       yarns = await getAllYarn();
     } else {
-      yarns = await getAllYarnByPatternId(widget.patternId!);
+      if (widget.patternId != null) {
+        yarns = await getAllYarnByPatternId(widget.patternId!);
+      } else if (widget.wipId != null) {
+        yarns = await getAllYarnByWipId(widget.wipId!);
+      }
     }
     list.clear();
 
@@ -59,6 +67,9 @@ class PatternYarnListState extends State<PatternYarnList> {
         TextButton(
           onPressed: () {
             if (widget.onPress != null) widget.onPress!(yarn);
+          },
+          onLongPress: () {
+            if (widget.onLongPress != null) widget.onLongPress!(yarn);
           },
           style: ButtonStyle(
             minimumSize: WidgetStatePropertyAll(Size(buttonSize, buttonSize)),

@@ -46,6 +46,19 @@ Future<void> insertPhildarYarn([Database? db]) async {
   await insertYarnInDb(
     Yarn(
       collectionId: yarnCollectionId,
+      color: Colors.brown.shade900.toARGB32(),
+      colorName: "Brown",
+      minHook: collection.minHook,
+      maxHook: collection.maxHook,
+      thickness: collection.thickness,
+      brand: collection.brand,
+      material: collection.material,
+    ),
+    db,
+  );
+  await insertYarnInDb(
+    Yarn(
+      collectionId: yarnCollectionId,
       color: Colors.deepPurple.toARGB32(),
       colorName: "Deep purple",
       minHook: collection.minHook,

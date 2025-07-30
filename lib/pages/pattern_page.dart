@@ -1,3 +1,5 @@
+import 'package:craft_stash/class/yarns/yarn.dart';
+import 'package:craft_stash/services/database_service.dart';
 import 'package:craft_stash/widgets/add_part_button.dart';
 import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
@@ -25,19 +27,23 @@ class _PatternPageState extends State<PatternPage> {
   double spacing = 10;
   late void Function() yarnListInitFunction;
 
-  void _insertPattern() async {
-    pattern.patternId = await craft.insertPatternInDb(pattern);
+  void _setPattern() async {
+    if (widget.pattern == null) {
+      pattern.patternId = await craft.insertPatternInDb(pattern);
+    } else {
+      pattern = widget.pattern!;
+      pattern.yarnIdToNameMap = await craft.getYarnIdToNameMapByPatternId(
+        pattern.patternId,
+      );
+      title = pattern.name;
+      setState(() {});
+    }
+    updateListView();
   }
 
   @override
   void initState() {
-    if (widget.pattern == null) {
-      _insertPattern();
-    } else {
-      pattern = widget.pattern!;
-      title = pattern.name;
-    }
-    updateListView();
+    _setPattern();
     super.initState();
   }
 
@@ -144,39 +150,9 @@ class _PatternPageState extends State<PatternPage> {
         children: [
           Text("Yarns used :"),
           PatternYarnList(
-            onPress: (yarn) async {
-              await showDialog(
-                context: context,
-                builder: (BuildContext context) => YarnForm(
-                  fill: true,
-                  readOnly: true,
-                  base: yarn,
-                  confirm: "close",
-                  cancel: "remove",
-                  title: yarn.colorName,
-                  onCancel: (yarn) async {
-                    await craft.deleteYarnInPattern(yarn.id, pattern.patternId);
-                    yarnListInitFunction.call();
-                  },
-                ),
-              );
-            },
-            onAddYarnPress: () async {
-              await showDialog(
-                context: context,
-                builder: (BuildContext context) => YarnListDialog(
-                  onPressed: (yarn) async {
-                    try {
-                      await craft.insertYarnInPattern(
-                        yarn.id,
-                        pattern.patternId,
-                      );
-                      yarnListInitFunction.call();
-                    } catch (e) {}
-                  },
-                ),
-              );
-            },
+            onPress: _yarnListOnPress,
+            onLongPress: _yarnListOnLongPress,
+            onAddYarnPress: _yarnListOnAddYarnPress,
             builder: (BuildContext context, void Function() methodFromChild) {
               yarnListInitFunction = methodFromChild;
             },
@@ -187,10 +163,98 @@ class _PatternPageState extends State<PatternPage> {
     );
   }
 
+  void _yarnListOnPress(Yarn yarn) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) => YarnForm(
+        fill: true,
+        readOnly: true,
+        base: yarn,
+        confirm: "close",
+        cancel: "",
+        title: yarn.colorName,
+        showSkeins: false,
+      ),
+    );
+  }
+
+  void _yarnListOnLongPress(Yarn yarn) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextButton(
+              onPressed: () async {
+                int inPreviewId = yarn.inPreviewId!;
+                await showDialog(
+                  context: context,
+                  builder: (BuildContext context) => YarnListDialog(
+                    onPressed: (newYarn, numberOfYarns) async {
+                      try {
+                        await craft.updateYarnInPattern(
+                          yarnId: newYarn.id,
+                          patternId: pattern.patternId,
+                          inPreviewId: inPreviewId,
+                        );
+                        pattern.yarnIdToNameMap[inPreviewId] =
+                            newYarn.colorName;
+                        yarnListInitFunction.call();
+                        Navigator.pop(context);
+                      } catch (e) {
+                        print(e.toString());
+                      }
+                    },
+                  ),
+                );
+              },
+              child: Text("Replace"),
+            ),
+            TextButton(
+              onPressed: () async {
+                try {
+                  await craft.deleteYarnInPattern(
+                    yarnId: yarn.id,
+                    patternId: pattern.patternId,
+                    inPatternYarnId: yarn.inPreviewId!,
+                  );
+                  yarnListInitFunction.call();
+                } catch (e) {}
+              },
+              child: Text("Remove"),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _yarnListOnAddYarnPress() async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) => YarnListDialog(
+        onPressed: (yarn, numberOfYarns) async {
+          try {
+            await craft.insertYarnInPattern(
+              yarnId: yarn.id,
+              patternId: pattern.patternId,
+              inPreviewId: numberOfYarns + 1,
+            );
+            pattern.yarnIdToNameMap[numberOfYarns + 1] = yarn.colorName;
+
+            yarnListInitFunction.call();
+          } catch (e) {}
+        },
+      ),
+    );
+  }
+
   Future<void> updatePattern() async {
     pattern = await craft.getPatternById(
       id: pattern.patternId,
       withParts: true,
+      withYarnNames: true,
     );
     await updateListView();
   }

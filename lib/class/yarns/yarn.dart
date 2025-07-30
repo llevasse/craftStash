@@ -13,6 +13,7 @@ class Yarn {
     this.maxHook = 0,
     this.thickness = 0,
     this.nbOfSkeins = 1,
+    this.inPreviewId,
   });
   int id;
   int? collectionId;
@@ -24,6 +25,7 @@ class Yarn {
   double maxHook; // ex : "3.5mm"
   int color; // ex : 0xFFFFC107
   int nbOfSkeins; // ex : 1
+  int? inPreviewId;
 
   @override
   String toString() {
@@ -42,6 +44,7 @@ class Yarn {
       "thickness": thickness,
       "number_of_skeins": nbOfSkeins,
       "hash": hashCode,
+      "in_preview_id": inPreviewId,
     };
   }
 
@@ -70,6 +73,7 @@ Yarn _fromMap(Map<String, Object?> map) {
     maxHook: map["max_hook"] as double,
     thickness: map["thickness"] as double,
     nbOfSkeins: map["number_of_skeins"] as int,
+    inPreviewId: map["in_preview_id"] as int?,
   );
 }
 
@@ -123,10 +127,9 @@ Future<void> deleteYarnInDb(int id) async {
 Future<void> deleteYarnsByCollectionId(int id) async {
   final db = (await DbService().database);
   if (db != null) {
-    try{
+    try {
       await db.delete('yarn', where: "collection_id = ?", whereArgs: [id]);
-    }
-    catch (e){
+    } catch (e) {
       throw "Can't delete yarn from this collection, it may be used somewhere else";
     }
   } else {
@@ -166,10 +169,33 @@ Future<List<Yarn>> getAllYarnByPatternId(int patternId, [Database? db]) async {
       where: "pattern_id = ?",
       whereArgs: [patternId],
     );
-    return [
-      for (final {'yarn_id': yarnId as int} in connectionsMaps)
-        await getYarnById(yarnId),
-    ];
+    List<Yarn> l = List.empty(growable: true);
+    for (final {'yarn_id': yarnId as int, 'in_preview_id': inPreviewId as int?}
+        in connectionsMaps) {
+      l.add(await getYarnById(yarnId));
+      l.last.inPreviewId = inPreviewId;
+    }
+    return l;
+  } else {
+    throw DatabaseDoesNotExistException("Could not get database");
+  }
+}
+
+Future<List<Yarn>> getAllYarnByWipId(int wipId, [Database? db]) async {
+  db ??= (await DbService().database);
+  if (db != null) {
+    final List<Map<String, Object?>> connectionsMaps = await db.query(
+      'yarn_in_wip',
+      where: "wip_id = ?",
+      whereArgs: [wipId],
+    );
+    List<Yarn> l = List.empty(growable: true);
+    for (final {'yarn_id': yarnId as int, 'in_preview_id': inPreviewId as int?}
+        in connectionsMaps) {
+      l.add(await getYarnById(yarnId));
+      l.last.inPreviewId = inPreviewId;
+    }
+    return l;
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }

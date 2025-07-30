@@ -11,16 +11,17 @@ class PatternRowDetail {
   int stitchId;
   Stitch? stitch;
   int repeatXTime;
-  int? yarnId; //only used for color change
-  String? yarnColorName;
+  int? inPatternYarnId; //only used for color change
   int? order;
+  int? patternId;
   PatternRowDetail({
     required this.rowId,
     required this.stitchId,
     this.stitch,
     this.rowDetailId = 0,
     this.repeatXTime = 1,
-    this.yarnId,
+    this.patternId,
+    this.inPatternYarnId,
     this.order,
   });
 
@@ -29,18 +30,19 @@ class PatternRowDetail {
       'row_id': rowId,
       'stitch_id': stitchId,
       'repeat_x_time': repeatXTime,
-      'yarn_id': yarnId,
+      'yarn_id': inPatternYarnId,
       'in_row_order': order,
+      'pattern_id': patternId
     };
   }
 
   @override
   String toString() {
     if (stitchId == stitchToIdMap['color change']) {
-      return ("change to $yarnColorName");
+      return ("change to \${$inPatternYarnId}");
     }
     if (stitchId == stitchToIdMap['start color']) {
-      return ("start with $yarnColorName");
+      return ("start with \${$inPatternYarnId}");
     }
     if (stitch != null && repeatXTime >= 1) {
       if (repeatXTime == 1) return (stitch.toString());
@@ -62,12 +64,12 @@ class PatternRowDetail {
     print("${s}stitchId : ${stitchId.toString()}");
     stitch?.printDetails(tab + 1);
     print("${s}repeat : ${repeatXTime.toString()}");
-    print("${s}yarn_id : ${yarnId.toString()}");
+    print("${s}yarn_id : ${inPatternYarnId.toString()}");
     print("\r\n");
   }
 
   @override
-  int get hashCode => Object.hash(rowId, stitch.hashCode, yarnId);
+  int get hashCode => Object.hash(rowId, stitch.hashCode, inPatternYarnId);
 }
 
 PatternRowDetail _fromMap(Map<String, dynamic> map) {
@@ -76,7 +78,8 @@ PatternRowDetail _fromMap(Map<String, dynamic> map) {
     rowId: map['row_id'] as int,
     stitchId: map['stitch_id'] as int,
     repeatXTime: map['repeat_x_time'] as int,
-    yarnId: map['yarn_id'] as int?,
+    inPatternYarnId: map['yarn_id'] as int?,
+    patternId: map['pattern_id'] as int?
   );
 }
 
@@ -138,10 +141,7 @@ Future<List<PatternRowDetail>> getAllPatternRowDetail() async {
     );
     List<PatternRowDetail> l = List.empty(growable: true);
     for (Map<String, Object?> map in patternRowDetailMaps) {
-      PatternRowDetail t = _fromMap(map);
-      if (t.yarnId != null) {
-        t.yarnColorName = (await getYarnById(t.yarnId!)).colorName;
-      }
+      l.add(_fromMap(map));
     }
     return l;
   } else {
@@ -166,9 +166,6 @@ Future<List<PatternRowDetail>> getAllPatternRowDetailByRowId(
     ];
     for (PatternRowDetail detail in l) {
       detail.stitch = await getStitchInDbById(detail.stitchId, db);
-      if (detail.yarnId != null) {
-        detail.yarnColorName = (await getYarnById(detail.yarnId!)).colorName;
-      }
     }
     return l;
   } else {

@@ -19,7 +19,7 @@ Future<PatternPart> _createBody(int patternId, Database? db) async {
     startRow: 1,
     numberOfRows: 1,
     stitchesPerRow: 6,
-    preview: "start with ${_yarns.first.colorName}, 6sc",
+    preview: "start with \${${_yarns.first.inPreviewId}}, 6sc",
   );
   r1.rowId = await insertPatternRowInDb(r1, db);
   await insertPatternRowDetailInDb(
@@ -27,7 +27,8 @@ Future<PatternPart> _createBody(int patternId, Database? db) async {
       rowId: r1.rowId,
       repeatXTime: 1,
       stitchId: _stitchesMap["start color"]!.id,
-      yarnId: _yarns.first.id,
+      inPatternYarnId: _yarns.first.inPreviewId,
+      patternId: patternId,
     ),
     db,
   );
@@ -36,6 +37,7 @@ Future<PatternPart> _createBody(int patternId, Database? db) async {
       rowId: r1.rowId,
       repeatXTime: 6,
       stitchId: _stitchesMap["sc"]!.id,
+      patternId: patternId,
     ),
     db,
   );
@@ -53,6 +55,7 @@ Future<PatternPart> _createBody(int patternId, Database? db) async {
       rowId: r2.rowId,
       repeatXTime: 6,
       stitchId: _stitchesMap["inc"]!.id,
+      patternId: patternId,
     ),
     db,
   );
@@ -69,6 +72,7 @@ Future<PatternPart> _createBody(int patternId, Database? db) async {
     rowId: r3.rowId,
     repeatXTime: 6,
     stitchId: _stitchesMap["(sc, inc)"]!.id,
+    patternId: patternId,
   );
   dr3.rowDetailId = await insertPatternRowDetailInDb(dr3, db);
 
@@ -77,7 +81,7 @@ Future<PatternPart> _createBody(int patternId, Database? db) async {
     startRow: 4,
     numberOfRows: 1,
     stitchesPerRow: 18,
-    preview: "18sc, change color to ${_yarns.last.colorName}",
+    preview: "18sc, change color to \${${_yarns.last.inPreviewId}}",
   );
   r4.rowId = await insertPatternRowInDb(r4, db);
   await insertPatternRowDetailInDb(
@@ -85,6 +89,7 @@ Future<PatternPart> _createBody(int patternId, Database? db) async {
       rowId: r4.rowId,
       repeatXTime: 18,
       stitchId: _stitchesMap["sc"]!.id,
+      patternId: patternId,
     ),
     db,
   );
@@ -93,7 +98,8 @@ Future<PatternPart> _createBody(int patternId, Database? db) async {
       rowId: r4.rowId,
       repeatXTime: 1,
       stitchId: _stitchesMap["color change"]!.id,
-      yarnId: _yarns.last.id,
+      inPatternYarnId: _yarns.last.inPreviewId,
+      patternId: patternId,
     ),
     db,
   );
@@ -103,7 +109,7 @@ Future<PatternPart> _createBody(int patternId, Database? db) async {
     startRow: 5,
     numberOfRows: 1,
     stitchesPerRow: 18,
-    preview: "18sc, change color to ${_yarns.first.colorName}",
+    preview: "18sc, change color to \${${_yarns.first.inPreviewId}}",
   );
   r5.rowId = await insertPatternRowInDb(r5, db);
   await insertPatternRowDetailInDb(
@@ -111,6 +117,7 @@ Future<PatternPart> _createBody(int patternId, Database? db) async {
       rowId: r5.rowId,
       repeatXTime: 18,
       stitchId: _stitchesMap["sc"]!.id,
+      patternId: patternId,
     ),
     db,
   );
@@ -119,7 +126,8 @@ Future<PatternPart> _createBody(int patternId, Database? db) async {
       rowId: r5.rowId,
       repeatXTime: 1,
       stitchId: _stitchesMap["color change"]!.id,
-      yarnId: _yarns.first.id,
+      inPatternYarnId: _yarns.first.inPreviewId,
+      patternId: patternId,
     ),
     db,
   );
@@ -129,7 +137,7 @@ Future<PatternPart> _createBody(int patternId, Database? db) async {
     startRow: 6,
     numberOfRows: 1,
     stitchesPerRow: 18,
-    preview: "18sc, change color to ${_yarns.last.colorName}",
+    preview: "18sc, change color to \${${_yarns.last.inPreviewId}}",
   );
   r6.rowId = await insertPatternRowInDb(r6, db);
   await insertPatternRowDetailInDb(
@@ -145,7 +153,8 @@ Future<PatternPart> _createBody(int patternId, Database? db) async {
       rowId: r6.rowId,
       repeatXTime: 1,
       stitchId: _stitchesMap["color change"]!.id,
-      yarnId: _yarns.last.id,
+      inPatternYarnId: _yarns.last.inPreviewId,
+      patternId: patternId,
     ),
     db,
   );
@@ -162,6 +171,7 @@ Future<PatternPart> _createBody(int patternId, Database? db) async {
     rowId: r7.rowId,
     repeatXTime: 6,
     stitchId: _stitchesMap["(sc, dec)"]!.id,
+    patternId: patternId,
   );
   dr7.rowDetailId = await insertPatternRowDetailInDb(dr7, db);
 
@@ -198,8 +208,20 @@ Future<void> insertBeePattern([Database? db]) async {
   pattern.patternId = await craft.insertPatternInDb(pattern, db);
   _yarns = await getAllYarn(db);
   if (_yarns.isNotEmpty) {
-    await craft.insertYarnInPattern(_yarns.first.id, pattern.patternId, db);
-    await craft.insertYarnInPattern(_yarns.last.id, pattern.patternId, db);
+    await craft.insertYarnInPattern(
+      yarnId: _yarns.first.id,
+      patternId: pattern.patternId,
+      inPreviewId: 1,
+      db: db,
+    );
+    _yarns.first.inPreviewId = 1;
+    await craft.insertYarnInPattern(
+      yarnId: _yarns.last.id,
+      patternId: pattern.patternId,
+      inPreviewId: 2,
+      db: db,
+    );
+    _yarns.last.inPreviewId = 2;
   }
   pattern.parts.add(await _createBody(pattern.patternId, db));
   print("Bee created");

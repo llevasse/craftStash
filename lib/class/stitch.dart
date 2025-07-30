@@ -153,7 +153,7 @@ Future<void> _insertScIncInDb({
       description: null,
       isSequence: 1,
       sequenceId: row.rowId,
-      stitchNb: 3
+      stitchNb: 3,
     ),
     db,
   );
@@ -182,7 +182,7 @@ Future<void> _insertScDecInDb({
       description: null,
       isSequence: 1,
       sequenceId: row.rowId,
-      stitchNb: 2
+      stitchNb: 2,
     ),
     db,
   );
@@ -296,6 +296,7 @@ Future<List<Stitch>> getAllVisibleStitchesInDb([Database? db]) async {
 }
 
 Future<Stitch> getStitchInDbById(int id, [Database? db]) async {
+  db ??= (await DbService().database);
   if (db != null) {
     final List<Map<String, Object?>> stitchMaps = await db.query(
       _tableName,

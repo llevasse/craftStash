@@ -1,8 +1,11 @@
 import 'package:craft_stash/class/wip/wip.dart';
 import 'package:craft_stash/class/wip/wip_part.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
+import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:craft_stash/pages/wip_part_page.dart';
+import 'package:craft_stash/services/database_service.dart';
 import 'package:craft_stash/widgets/yarn/pattern_yarn_list.dart';
+import 'package:craft_stash/widgets/yarn/yarn_list_dialog.dart';
 import 'package:craft_stash/widgets/yarnButtons/yarn_form.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -17,6 +20,7 @@ class WipPage extends StatefulWidget {
 }
 
 class WipPageState extends State<WipPage> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   Wip wip = Wip();
   List<Widget> patternListView = List.empty(growable: true);
   double spacing = 10;
@@ -27,6 +31,7 @@ class WipPageState extends State<WipPage> {
       id: wip.patternId,
       withParts: true,
     );
+    wip.yarnIdToNameMap = await getYarnIdToNameMapByWipId(wip.id);
     wip.parts = await getAllWipPart(wipId: wip.id);
     updateListView();
   }
@@ -49,26 +54,106 @@ class WipPageState extends State<WipPage> {
         children: [
           Text("Yarns used :"),
           PatternYarnList(
-            onPress: (yarn) async {
-              await showDialog(
-                context: context,
-                builder: (BuildContext context) => YarnForm(
-                  fill: true,
-                  readOnly: true,
-                  base: yarn,
-                  confirm: "close",
-                  cancel: "",
-                  title: yarn.colorName,
-                  onCancel: (yarn) async {},
-                ),
-              );
-            },
+            onPress: _yarnListOnPress,
+            onLongPress: _yarnListOnLongPress,
             builder: (BuildContext context, void Function() methodFromChild) {
               yarnListInitFunction = methodFromChild;
             },
-            patternId: wip.patternId,
+            wipId: wip.id,
           ),
         ],
+      ),
+    );
+  }
+
+  void _yarnListOnPress(Yarn yarn) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) => YarnForm(
+        fill: true,
+        readOnly: true,
+        base: yarn,
+        confirm: "close",
+        cancel: "",
+        title: yarn.colorName,
+        showSkeins: false,
+      ),
+    );
+  }
+
+  void _yarnListOnLongPress(Yarn yarn) async {
+    int inPreviewId = yarn.inPreviewId!;
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) => YarnListDialog(
+        onPressed: (newYarn, numberOfYarns) async {
+          try {
+            await updateYarnInWip(
+              yarnId: newYarn.id,
+              wipId: wip.id,
+              inPreviewId: inPreviewId,
+            );
+            wip.yarnIdToNameMap[inPreviewId] = newYarn.colorName;
+            yarnListInitFunction.call();
+          } catch (e) {
+            print(e.toString());
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _infoRow() {
+    return Form(
+      key: _formKey,
+      child: Row(
+        children: [
+          Expanded(child: _titleInput()),
+          Expanded(child: _hookSizeInput()),
+        ],
+      ),
+    );
+  }
+
+  Widget _titleInput() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      child: TextFormField(
+        initialValue: widget.wip.name,
+        decoration: InputDecoration(label: Text("Wip title")),
+        validator: (value) {
+          if (value == null || value.trim().isEmpty) {
+            return ("Wip title can't be empty");
+          }
+          return null;
+        },
+        onChanged: (value) {
+          wip.name = value.trim();
+          setState(() {});
+        },
+        onSaved: (newValue) {
+          wip.name = newValue!.trim();
+        },
+      ),
+    );
+  }
+
+  Widget _hookSizeInput() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      child: TextFormField(
+        keyboardType: TextInputType.numberWithOptions(),
+        initialValue: wip.hookSize?.toStringAsFixed(2),
+        decoration: InputDecoration(label: Text("Hook size")),
+        validator: (value) {
+          return null;
+        },
+        onSaved: (newValue) {
+          newValue = newValue?.trim();
+          if (newValue != null && newValue.isNotEmpty) {
+            wip.hookSize = double.parse(newValue);
+          }
+        },
       ),
     );
   }
@@ -105,6 +190,19 @@ class WipPageState extends State<WipPage> {
     );
   }
 
+  Widget _saveButton() {
+    return (IconButton(
+      onPressed: () async {
+        if (_formKey.currentState!.validate()) {
+          _formKey.currentState!.save();
+          await updateWipInDb(wip);
+          Navigator.pop(context);
+        }
+      },
+      icon: Icon(Icons.save),
+    ));
+  }
+
   Widget _assembly() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10),
@@ -139,8 +237,10 @@ class WipPageState extends State<WipPage> {
                       context,
                       MaterialPageRoute<void>(
                         settings: RouteSettings(name: "/wip_part"),
-                        builder: (BuildContext context) =>
-                            WipPartPage(wipPart: wipPart),
+                        builder: (BuildContext context) => WipPartPage(
+                          wipPart: wipPart,
+                          yarnIdToNameMap: wip.yarnIdToNameMap,
+                        ),
                       ),
                     )
                     as WipPart;
@@ -155,6 +255,7 @@ class WipPageState extends State<WipPage> {
       );
     }
     patternListView.clear();
+    patternListView.add(_infoRow());
     patternListView.add(_yarnList());
     patternListView.add(Expanded(child: ListView(children: tmp)));
     if (wip.pattern?.note != null) patternListView.add(_assembly());
@@ -166,7 +267,7 @@ class WipPageState extends State<WipPage> {
     ThemeData theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(wip.pattern!.name),
+        title: Text(wip.name),
         backgroundColor: theme.colorScheme.primary,
         leading: IconButton(
           onPressed: () async {
@@ -176,7 +277,7 @@ class WipPageState extends State<WipPage> {
           icon: Icon(Icons.arrow_back),
         ),
 
-        actions: [_deleteButton()],
+        actions: [_deleteButton(), _saveButton()],
       ),
       body: Column(
         spacing: spacing,

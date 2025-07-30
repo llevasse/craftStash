@@ -1,5 +1,6 @@
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
 import 'package:craft_stash/class/wip/wip_part.dart';
+import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -10,13 +11,18 @@ class Wip {
   int patternId;
   int finished;
   int stitchDoneNb;
+  String name;
+  double? hookSize;
   craft.Pattern? pattern;
+  Map<int, String> yarnIdToNameMap = {};
   List<WipPart> parts = List.empty(growable: true);
   Wip({
     this.id = 0,
     this.patternId = 0,
     this.finished = 0,
     this.stitchDoneNb = 0,
+    this.name = "New wip",
+    this.hookSize,
   });
 
   Map<String, dynamic> toMap() {
@@ -24,6 +30,8 @@ class Wip {
       'finished': finished,
       'pattern_id': patternId,
       'stitch_done_nb': stitchDoneNb,
+      "name": name,
+      "hook_size": hookSize,
     };
   }
 
@@ -43,6 +51,8 @@ Wip _fromMap(Map<String, Object?> map) {
     patternId: map['pattern_id'] as int,
     finished: map['finished'] as int,
     stitchDoneNb: map['stitch_done_nb'] as int,
+    name: map['name'] as String,
+    hookSize: map['hook_size'] as double?,
   );
 }
 
@@ -85,6 +95,7 @@ Future<void> deleteWipInDb(int id) async {
 Future<List<Wip>> getAllWip({
   bool withPattern = true,
   bool withParts = false,
+  bool withYarnNames = false,
 }) async {
   final db = (await DbService().database);
   if (db != null) {
@@ -95,6 +106,9 @@ Future<List<Wip>> getAllWip({
         if (withParts) wip.parts = await getAllWipPart(wipId: wip.id);
         if (withPattern) {
           wip.pattern = await craft.getPatternById(id: wip.patternId);
+        }
+        if (withYarnNames) {
+          wip.yarnIdToNameMap = await getYarnIdToNameMapByWipId(wip.id);
         }
       }
     }
@@ -128,4 +142,88 @@ Future<void> removeAllWip() async {
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }
+}
+
+Future<int> insertYarnInWip({
+  required int yarnId,
+  required int wipId,
+  required int inPreviewId,
+  Database? db,
+}) async {
+  db ??= (await DbService().database);
+  if (db != null) {
+    if ((await db.query(
+      "yarn_in_wip",
+      where: "wip_id = ? AND yarn_id = ?",
+      whereArgs: [wipId, yarnId],
+    )).isNotEmpty) {
+      throw EntryAlreadyExist("yarn_in_wip");
+    }
+    return db.insert("yarn_in_wip", {
+      'wip_id': wipId,
+      'yarn_id': yarnId,
+      'in_preview_id': inPreviewId,
+    });
+  } else {
+    throw DatabaseDoesNotExistException("Could not get database");
+  }
+}
+
+Future<int> deleteYarnInPattern(
+  int yarnId,
+  int patternId, [
+  Database? db,
+]) async {
+  db ??= (await DbService().database);
+  if (db != null) {
+    return await db.delete(
+      "yarn_in_pattern",
+      where: "pattern_id = ? AND yarn_id = ?",
+      whereArgs: [patternId, yarnId],
+    );
+  } else {
+    throw DatabaseDoesNotExistException("Could not get database");
+  }
+}
+
+Future<int> updateYarnInWip({
+  required int yarnId,
+  required int wipId,
+  required int inPreviewId,
+  Database? db,
+}) async {
+  db ??= (await DbService().database);
+  if (db != null) {
+    List<Map<String, Object?>> l = await db.query(
+      "yarn_in_wip",
+      where: "wip_id = ? AND in_preview_id = ?",
+      limit: 1,
+      whereArgs: [wipId, inPreviewId],
+    );
+    if (l.isEmpty) {
+      throw DatabaseNoElementsMeetConditionException(
+        "wip_id = $wipId AND in_preview_id = $inPreviewId",
+        "yarn_in_wip",
+      );
+    }
+    return db.update(
+      "yarn_in_wip",
+      {'wip_id': wipId, 'yarn_id': yarnId, 'in_preview_id': inPreviewId},
+      where: "id = ?",
+      whereArgs: [l[0]['id'] as int],
+    );
+  } else {
+    throw DatabaseDoesNotExistException("Could not get database");
+  }
+}
+
+Future<Map<int, String>> getYarnIdToNameMapByWipId(int wipId) async {
+  Map<int, String> map = {};
+  List<Yarn> yarns = await getAllYarnByWipId(wipId);
+  for (Yarn yarn in yarns) {
+    if (yarn.inPreviewId != null) {
+      map[yarn.inPreviewId!] = yarn.colorName;
+    }
+  }
+  return map;
 }

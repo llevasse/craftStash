@@ -1,5 +1,6 @@
 import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
+import 'package:craft_stash/main.dart';
 import 'package:craft_stash/pages/pattern_part_page.dart';
 import 'package:flutter/material.dart';
 
@@ -28,6 +29,7 @@ class _AddPartButton extends State<AddPartButton> {
     ThemeData theme = Theme.of(context);
     return TextButton(
       onPressed: () async {
+        if (debug) print("on addPartButton ${widget.pattern.yarnIdToNameMap}");
         await Navigator.push(
           context,
           MaterialPageRoute<void>(

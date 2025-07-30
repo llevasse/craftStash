@@ -1,6 +1,7 @@
 import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/wip/wip.dart';
 import 'package:craft_stash/class/wip/wip_part.dart';
+import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:flutter/material.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
 
@@ -32,8 +33,23 @@ class _AddWipFromPatternDialogState extends State<AddWipFromPatternDialog> {
         return ListTile(
           title: Text(patterns[index].name),
           onTap: () async {
-            Wip newWip = Wip(patternId: patterns[index].patternId);
+            Wip newWip = Wip(
+              patternId: patterns[index].patternId,
+              name: patterns[index].name,
+              hookSize: patterns[index].hookSize,
+            );
             newWip.id = await insertWipInDb(newWip);
+            List<Yarn> yarns = await getAllYarnByPatternId(
+              patterns[index].patternId,
+            );
+            for (Yarn yarn in yarns) {
+              if (yarn.inPreviewId == null) continue;
+              await insertYarnInWip(
+                yarnId: yarn.id,
+                wipId: newWip.id,
+                inPreviewId: yarn.inPreviewId!,
+              );
+            }
             for (PatternPart part in patterns[index].parts) {
               await insertWipPartInDb(
                 WipPart(wipId: newWip.id, partId: part.partId),

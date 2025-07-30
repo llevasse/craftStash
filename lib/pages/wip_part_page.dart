@@ -7,7 +7,12 @@ import 'package:flutter/material.dart';
 
 class WipPartPage extends StatefulWidget {
   WipPart wipPart;
-  WipPartPage({super.key, required this.wipPart});
+  Map<int, String> yarnIdToNameMap;
+  WipPartPage({
+    super.key,
+    required this.wipPart,
+    required this.yarnIdToNameMap,
+  });
 
   @override
   State<StatefulWidget> createState() => WipPartPageState();
@@ -50,9 +55,15 @@ class WipPartPageState extends State<WipPartPage> {
         rowNumber +=
             "-${row.startRow + row.numberOfRows - 1} (${row.numberOfRows}rows)";
       }
+      String? preview = row.preview;
+      if (preview != null) {
+        for (MapEntry<int, String> entry in widget.yarnIdToNameMap.entries) {
+          preview = preview!.replaceAll("\${${entry.key}}", entry.value);
+        }
+      }
       tmp.add(
         ListTile(
-          title: Text("$rowNumber : ${row.preview!}"),
+          title: Text("$rowNumber : $preview"),
           contentPadding: EdgeInsets.all(0),
         ),
       );

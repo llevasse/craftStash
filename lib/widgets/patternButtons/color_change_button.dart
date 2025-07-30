@@ -35,10 +35,12 @@ class _ColorChangeButtonState extends State<ColorChangeButton> {
                         PatternRowDetail p = PatternRowDetail(
                           rowId: widget.rowId,
                           stitchId: stitchToIdMap["color change"]!,
-                          yarnId: yarn.id,
+                          stitch: await getStitchInDbById(
+                            stitchToIdMap["color change"]!,
+                          ),
+                          inPatternYarnId: yarn.inPreviewId,
                         );
                         // await insertPatternRowDetailInDb(p);
-                        p.yarnColorName = yarn.colorName;
                         Navigator.pop(context, p);
                       },
                     ),

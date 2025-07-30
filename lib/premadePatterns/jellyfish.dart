@@ -172,7 +172,12 @@ Future<void> insertJellyFishPattern([Database? db]) async {
   pattern.patternId = await craft.insertPatternInDb(pattern, db);
   List<Yarn> y = await getAllYarn(db);
   if (y.isNotEmpty) {
-    await craft.insertYarnInPattern(y.first.id, pattern.patternId, db);
+    await craft.insertYarnInPattern(
+      yarnId: y.first.id,
+      patternId: pattern.patternId,
+      inPreviewId: 1,
+      db: db,
+    );
   }
   pattern.parts.add(await _createHeadPart(pattern.patternId, db));
   pattern.parts.add(await _createShortTentacles(pattern.patternId, db));

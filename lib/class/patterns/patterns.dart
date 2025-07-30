@@ -1,4 +1,5 @@
 import 'package:craft_stash/class/patterns/pattern_part.dart';
+import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -8,6 +9,7 @@ class Pattern {
   String name;
   String? note;
   int totalStitchNb;
+  Map<int, String> yarnIdToNameMap = {};
   List<PatternPart> parts = List.empty(growable: true);
   Pattern({
     this.patternId = 0,
@@ -105,6 +107,7 @@ Future<List<Pattern>> getAllPattern({bool withParts = false}) async {
 Future<Pattern> getPatternById({
   required int id,
   bool withParts = false,
+  bool withYarnNames = false,
 }) async {
   final db = (await DbService().database);
   if (db != null) {
@@ -116,10 +119,24 @@ Future<Pattern> getPatternById({
     );
     Pattern p = _fromMap(patternMaps[0]);
     if (withParts) p.parts = await getAllPatternPart(patternId: id);
+    if (withYarnNames) {
+      p.yarnIdToNameMap = await getYarnIdToNameMapByPatternId(id);
+    }
     return (p);
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }
+}
+
+Future<Map<int, String>> getYarnIdToNameMapByPatternId(int patternId) async {
+  Map<int, String> map = {};
+  List<Yarn> yarns = await getAllYarnByPatternId(patternId);
+  for (Yarn yarn in yarns) {
+    if (yarn.inPreviewId != null) {
+      map[yarn.inPreviewId!] = yarn.colorName;
+    }
+  }
+  return map;
 }
 
 Future<void> removeAllPattern() async {
@@ -131,11 +148,12 @@ Future<void> removeAllPattern() async {
   }
 }
 
-Future<int> insertYarnInPattern(
-  int yarnId,
-  int patternId, [
+Future<int> insertYarnInPattern({
+  required int yarnId,
+  required int patternId,
+  required int inPreviewId,
   Database? db,
-]) async {
+}) async {
   db ??= (await DbService().database);
   if (db != null) {
     if ((await db.query(
@@ -143,24 +161,69 @@ Future<int> insertYarnInPattern(
       where: "pattern_id = ? AND yarn_id = ?",
       whereArgs: [patternId, yarnId],
     )).isNotEmpty) {
-      throw EntryAlreadyExist("yarn_in_table");
+      throw EntryAlreadyExist("yarn_in_pattern");
     }
     return db.insert("yarn_in_pattern", {
       'pattern_id': patternId,
       'yarn_id': yarnId,
+      'in_preview_id': inPreviewId,
     });
   } else {
     throw DatabaseDoesNotExistException("Could not get database");
   }
 }
 
-Future<int> deleteYarnInPattern(
-  int yarnId,
-  int patternId, [
+Future<int> updateYarnInPattern({
+  required int yarnId,
+  required int patternId,
+  required int inPreviewId,
   Database? db,
-]) async {
+}) async {
   db ??= (await DbService().database);
   if (db != null) {
+    List<Map<String, Object?>> l = await db.query(
+      "yarn_in_pattern",
+      where: "pattern_id = ? AND in_preview_id = ?",
+      limit: 1,
+      whereArgs: [patternId, inPreviewId],
+    );
+    if (l.isEmpty) {
+      throw DatabaseNoElementsMeetConditionException(
+        "pattern_id = $patternId AND in_preview_id = $inPreviewId",
+        "yarn_in_pattern",
+      );
+    }
+    return db.update(
+      "yarn_in_pattern",
+      {
+        'pattern_id': patternId,
+        'yarn_id': yarnId,
+        'in_preview_id': inPreviewId,
+      },
+      where: "id = ?",
+      whereArgs: [l[0]['id'] as int],
+    );
+  } else {
+    throw DatabaseDoesNotExistException("Could not get database");
+  }
+}
+
+Future<int> deleteYarnInPattern({
+  required int yarnId,
+  required int inPatternYarnId,
+  required int patternId,
+  Database? db,
+}) async {
+  db ??= (await DbService().database);
+  if (db != null) {
+    if ((await db.query(
+      "pattern_row_detail",
+      limit: 1,
+      where: "pattern_id = ? AND yarn_id = ?",
+      whereArgs: [patternId, inPatternYarnId],
+    )).isNotEmpty) {
+      throw ElementIsUsedSomewhereElse('pattern_row_detail');
+    }
     return await db.delete(
       "yarn_in_pattern",
       where: "pattern_id = ? AND yarn_id = ?",
