@@ -72,7 +72,8 @@ class PatternRow {
         // print("\n\r");
         tmp += "${detail.toString()}, ";
       }
-      return tmp.substring(0, tmp.length - 2);
+      tmp = tmp.substring(0, tmp.length - 2);
+      tmp += ". (${stitchesPerRow}sts)";
     }
     return tmp;
   }

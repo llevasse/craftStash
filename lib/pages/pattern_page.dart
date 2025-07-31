@@ -1,5 +1,4 @@
 import 'package:craft_stash/class/yarns/yarn.dart';
-import 'package:craft_stash/services/database_service.dart';
 import 'package:craft_stash/widgets/add_part_button.dart';
 import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;

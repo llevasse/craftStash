@@ -323,29 +323,35 @@ class _RowPageState extends State<RowPage> {
         if (_formKey.currentState!.validate()) {
           _formKey.currentState!.save();
           if (debug) print("Row stitch nb : ${row.stitchesPerRow}");
-          row.preview = row.detailsAsString();
-          await updatePatternRowInDb(row);
-          if (widget.row == null) {
-            for (int i = 0; i < row.details.length; i++) {
-              if (row.details[i].repeatXTime != 0) {
-                row.details[i].rowId = row.rowId;
-                row.details[i].order = i;
-                await insertPatternRowDetailInDb(row.details[i]);
-              }
-            }
+          if (row.stitchesPerRow < 1) {
+            await deletePatternRowInDb(row.rowId);
           } else {
-            for (int i = 0; i < row.details.length; i++) {
-              if (row.details[i].repeatXTime != 0) {
-                row.details[i].rowId = row.rowId;
-                row.details[i].order = i;
-                if (row.details[i].rowDetailId == 0) {
+            row.preview = row.detailsAsString();
+            await updatePatternRowInDb(row);
+            if (widget.row == null) {
+              for (int i = 0; i < row.details.length; i++) {
+                if (row.details[i].repeatXTime != 0) {
+                  row.details[i].rowId = row.rowId;
+                  row.details[i].order = i;
                   await insertPatternRowDetailInDb(row.details[i]);
-                } else {
-                  await updatePatternRowDetailInDb(row.details[i]);
                 }
-              } else {
-                if (row.details[i].rowDetailId != 0) {
-                  await deletePatternRowDetailInDb(row.details[i].rowDetailId);
+              }
+            } else {
+              for (int i = 0; i < row.details.length; i++) {
+                if (row.details[i].repeatXTime != 0) {
+                  row.details[i].rowId = row.rowId;
+                  row.details[i].order = i;
+                  if (row.details[i].rowDetailId == 0) {
+                    await insertPatternRowDetailInDb(row.details[i]);
+                  } else {
+                    await updatePatternRowDetailInDb(row.details[i]);
+                  }
+                } else {
+                  if (row.details[i].rowDetailId != 0) {
+                    await deletePatternRowDetailInDb(
+                      row.details[i].rowDetailId,
+                    );
+                  }
                 }
               }
             }
@@ -397,6 +403,16 @@ class _RowPageState extends State<RowPage> {
           "${widget.part.name}/Row ${row.startRow}${row.numberOfRows > 1 ? "-${row.startRow + row.numberOfRows - 1}" : ""}",
         ),
         backgroundColor: theme.colorScheme.primary,
+        leading: IconButton(
+          onPressed: () async {
+            if (row.stitchesPerRow < 1) {
+              await deletePatternRowInDb(row.rowId);
+            }
+            await widget.updatePattern();
+            Navigator.pop(context);
+          },
+          icon: Icon(Icons.arrow_back),
+        ),
         actions: [_saveButton()],
       ),
       body: Container(
