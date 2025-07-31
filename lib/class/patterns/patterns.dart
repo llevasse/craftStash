@@ -1,6 +1,7 @@
 import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:craft_stash/services/database_service.dart';
+import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
 class Pattern {

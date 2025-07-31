@@ -176,7 +176,10 @@ class _PatternPartPageState extends State<PatternPartPage> {
         await showDialog(
           context: context,
           builder: (BuildContext context) => AlertDialog(
-            title: Text("Do you want to delete this pattern"),
+            title: Text("Do you want to delete this part"),
+            content: Text(
+              "Every wips and rows connected to it will be deleted as well",
+            ),
             actions: [
               TextButton(
                 onPressed: () {

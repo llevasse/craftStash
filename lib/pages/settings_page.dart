@@ -1,3 +1,4 @@
+import 'package:craft_stash/main.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:flutter/material.dart';
 
@@ -32,6 +33,30 @@ class _SettingsPageState extends State<SettingsPage> {
               },
               child: Text("Recreate db"),
             ),
+            ?debug
+                ? TextButton(
+                    onPressed: () async {
+                      await DbService().printDbTables(
+                        brand: true,
+                        material: true,
+                        pattern: true,
+                        patternPart: true,
+                        patternRow: true,
+                        patternRowDetail: true,
+                        stitch: true,
+                        wip: true,
+                        wipPart: true,
+                        yarn: true,
+                        yarnCollection: true,
+                        yarnInPattern: true,
+                        yarnInWip: true,
+                      );
+                      Navigator.popUntil(context, ModalRoute.withName("/"));
+                      widget.onQuit.call();
+                    },
+                    child: Text("Print db"),
+                  )
+                : null,
           ],
         ),
       ),

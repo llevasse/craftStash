@@ -7,6 +7,7 @@ class CountButton extends StatefulWidget {
   bool signed;
   String? text;
   Color? textBackgroundColor;
+  bool showCount;
   void Function() increase;
   void Function() decrease;
   CountButton({
@@ -15,6 +16,7 @@ class CountButton extends StatefulWidget {
     this.text,
     this.min,
     this.max,
+    this.showCount = true,
     required this.increase,
     required this.decrease,
     this.signed = true,
@@ -76,7 +78,7 @@ class _CountButtonState extends State<CountButton> {
             constraints: BoxConstraints(maxWidth: 200),
             padding: EdgeInsets.all(10),
             child: Text(
-              "${widget.count}${widget.text ?? ""}",
+              "${widget.showCount ? widget.count : ""}${widget.text ?? ""}",
               textAlign: TextAlign.center,
               style: TextStyle(color: theme.colorScheme.secondary),
             ),

@@ -43,6 +43,7 @@ class _RowPageState extends State<RowPage> {
   PatternRow row = PatternRow(startRow: 0, numberOfRows: 0, stitchesPerRow: 0);
   TextEditingController previewControler = TextEditingController();
   StitchList stitchList = StitchList();
+  double spacing = 20;
   late void Function() stitchListInitFunction;
 
   @override
@@ -104,7 +105,7 @@ class _RowPageState extends State<RowPage> {
         row.stitchesPerRow += detail.stitch!.stitchNb;
         if (debug) print("Row stitch nb : ${row.stitchesPerRow}");
 
-        details.add(_createStitchCountButton(detail));
+        details.add(_createStitchCountButton(stitch: detail));
         await getAllStitches();
         stitchListInitFunction();
       },
@@ -124,13 +125,13 @@ class _RowPageState extends State<RowPage> {
             row.details.removeLast();
             details.removeLast();
             row.details.add(detail);
-            details.add(_createStitchCountButton(detail));
+            details.add(_createStitchCountButton(stitch: detail, showCount: false));
           } else if (row.details.last.stitchId == 'start color') {
             row.details.last.inPatternYarnId = detail.inPatternYarnId;
             await updatePatternRowDetailInDb(row.details.last);
           } else {
             row.details.add(detail);
-            details.add(_createStitchCountButton(detail));
+            details.add(_createStitchCountButton(stitch: detail, showCount: false));
           }
         }
         await getAllStitches();
@@ -151,11 +152,16 @@ class _RowPageState extends State<RowPage> {
             await updatePatternRowDetailInDb(row.details.first);
           } else {
             row.details.insert(0, detail);
-            details.insert(0, _createStitchCountButton(detail));
+            details.insert(
+              0,
+              _createStitchCountButton(stitch: detail, showCount: false),
+            );
           }
         } else {
           row.details.add(detail);
-          details.add(_createStitchCountButton(detail));
+          details.add(
+            _createStitchCountButton(stitch: detail, showCount: false),
+          );
         }
         await getAllStitches();
         stitchListInitFunction();
@@ -274,7 +280,10 @@ class _RowPageState extends State<RowPage> {
     );
   }
 
-  CountButton _createStitchCountButton(PatternRowDetail stitch) {
+  CountButton _createStitchCountButton({
+    required PatternRowDetail stitch,
+    bool showCount = true,
+  }) {
     String text = stitch.toString();
     if (stitch.inPatternYarnId != null) {
       if (debug) {
@@ -288,7 +297,8 @@ class _RowPageState extends State<RowPage> {
     }
     return CountButton(
       signed: false,
-      text: text,
+      text: stitch.stitch?.abreviation,
+      showCount: showCount,
       count: stitch.repeatXTime,
       increase: () {
         stitch.repeatXTime += 1;
@@ -378,7 +388,7 @@ class _RowPageState extends State<RowPage> {
 
     if (debug) print("Row stitch nb : ${row.stitchesPerRow}");
 
-    details.add(_createStitchCountButton(row.details.last));
+    details.add(_createStitchCountButton(stitch: row.details.last));
     needScroll = true;
     setState(() {});
     return null;

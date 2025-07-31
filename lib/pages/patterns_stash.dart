@@ -43,6 +43,9 @@ class _PatternsStashPageState extends State<PatternsStashPage> {
               context: context,
               builder: (BuildContext context) => AlertDialog(
                 title: Text("Do you want to delete this pattern"),
+                content: Text(
+                  "Every wips, parts and rows connected to it will be deleted as well",
+                ),
                 actions: [
                   TextButton(
                     onPressed: () {

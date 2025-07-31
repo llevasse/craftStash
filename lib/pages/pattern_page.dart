@@ -53,6 +53,9 @@ class _PatternPageState extends State<PatternPage> {
           context: context,
           builder: (BuildContext context) => AlertDialog(
             title: Text("Do you want to delete this pattern"),
+            content: Text(
+              "Every wips, parts and rows connected to it will be deleted as well",
+            ),
             actions: [
               TextButton(
                 onPressed: () {
@@ -63,6 +66,7 @@ class _PatternPageState extends State<PatternPage> {
               TextButton(
                 onPressed: () async {
                   await craft.deletePatternInDb(pattern.patternId);
+
                   await widget.updatePatternListView();
                   while (Navigator.canPop(context)) {
                     Navigator.pop(context);
@@ -286,6 +290,9 @@ class _PatternPageState extends State<PatternPage> {
               context: context,
               builder: (BuildContext context) => AlertDialog(
                 title: Text("Do you want to delete this part"),
+                content: Text(
+                  "Every wips and rows connected to it will be deleted as well",
+                ),
                 actions: [
                   TextButton(
                     onPressed: () {
