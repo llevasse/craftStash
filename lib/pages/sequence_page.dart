@@ -60,7 +60,7 @@ class _SequencePageState extends State<SequencePage> {
           CountButton(
             signed: false,
             count: detail.repeatXTime,
-            text: detail.stitch?.abreviation,
+            suffixText: detail.stitch?.abreviation,
             increase: () {
               detail.repeatXTime += 1;
               row.stitchesPerRow += detail.stitch!.stitchNb;
@@ -119,7 +119,7 @@ class _SequencePageState extends State<SequencePage> {
     int length = row.details.length;
     return CountButton(
       signed: false,
-      text: stitch.abreviation,
+      suffixText: stitch.abreviation,
       count: row.details[length - 1].repeatXTime,
       increase: () {
         row.details[length - 1].repeatXTime += 1;

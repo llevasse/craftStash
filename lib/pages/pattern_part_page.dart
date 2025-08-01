@@ -4,6 +4,7 @@ import 'package:craft_stash/class/patterns/patterns.dart' as craft;
 import 'package:craft_stash/main.dart';
 import 'package:craft_stash/widgets/patternButtons/add_row_button.dart';
 import 'package:craft_stash/pages/row_page.dart';
+import 'package:craft_stash/widgets/patternButtons/count_button.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
@@ -71,6 +72,20 @@ class _PatternPartPageState extends State<PatternPartPage> {
   }
 
   Widget _numbersToMakeInput() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      child: CountButton(
+        prefixText: "Make ",
+        count: part.numbersToMake,
+        increase: () {
+          part.numbersToMake += 1;
+        },
+        decrease: () {
+          part.numbersToMake -= 1;
+        },
+        min: 1,
+      ),
+    );
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10),
       child: TextFormField(
@@ -158,8 +173,15 @@ class _PatternPartPageState extends State<PatternPartPage> {
   Future<void> updateListView() async {
     List<Widget> tmp = List.empty(growable: true);
     part = await getPatternPartByPartId(id: part.partId);
-    tmp.add(_titleInput());
-    tmp.add(_numbersToMakeInput());
+
+    tmp.add(
+      Row(
+        children: [
+          Expanded(child: _titleInput()),
+          Expanded(child: _numbersToMakeInput()),
+        ],
+      ),
+    );
     for (PatternRow row in part.rows) {
       if (row.startRow != 0) {
         tmp.add(_patternRowTile(row));

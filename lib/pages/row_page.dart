@@ -63,7 +63,7 @@ class _RowPageState extends State<RowPage> {
         details.add(
           CountButton(
             signed: false,
-            text: text,
+            suffixText: text,
             count: detail.repeatXTime,
             increase: () {
               detail.repeatXTime += 1;
@@ -125,13 +125,17 @@ class _RowPageState extends State<RowPage> {
             row.details.removeLast();
             details.removeLast();
             row.details.add(detail);
-            details.add(_createStitchCountButton(stitch: detail, showCount: false));
+            details.add(
+              _createStitchCountButton(stitch: detail, showCount: false),
+            );
           } else if (row.details.last.stitchId == 'start color') {
             row.details.last.inPatternYarnId = detail.inPatternYarnId;
             await updatePatternRowDetailInDb(row.details.last);
           } else {
             row.details.add(detail);
-            details.add(_createStitchCountButton(stitch: detail, showCount: false));
+            details.add(
+              _createStitchCountButton(stitch: detail, showCount: false),
+            );
           }
         }
         await getAllStitches();
@@ -219,61 +223,28 @@ class _RowPageState extends State<RowPage> {
       spacing: 10,
       children: [
         Expanded(
-          child: TextFormField(
-            keyboardType: TextInputType.numberWithOptions(),
-            decoration: InputDecoration(label: Text("Start row")),
-            initialValue: row.startRow.toString(),
-            validator: (value) {
-              if (value == null || value.trim().isEmpty) {
-                return ("Can't be empty");
-              }
-              try {
-                if (int.parse(value.trim()) < 0) {
-                  return ("Row number can't be negative");
-                }
-              } catch (e) {
-                return ("Only digits allowed");
-              }
-              return null;
+          child: CountButton(
+            prefixText: "Row ",
+            count: row.startRow,
+            increase: () {
+              row.startRow += 1;
             },
-            onChanged: (newValue) {
-              if (newValue.trim().isEmpty) return;
-
-              try {
-                row.startRow = int.parse(newValue.trim());
-              } catch (e) {}
-            },
-            onSaved: (newValue) {
-              if (newValue == null || newValue.trim().isEmpty) {
-                return;
-              }
-              row.startRow = int.parse(newValue.trim());
+            decrease: () {
+              row.startRow -= 1;
             },
           ),
         ),
         Expanded(
-          child: TextFormField(
-            keyboardType: TextInputType.numberWithOptions(),
-            decoration: InputDecoration(label: Text("Number of rows")),
-            initialValue: row.numberOfRows.toString(),
-            validator: (value) {
-              if (value == null || value.trim().isEmpty) {
-                return ("Can't be empty");
-              }
-              try {
-                int val = int.parse(value.trim());
-                if (val < 1) {
-                  return ("Row number can't be inferior to one");
-                }
-              } catch (e) {
-                return ("Only digits allowed");
-              }
-              return null;
+          child: CountButton(
+            prefixText: "Do ",
+            count: row.numberOfRows,
+            increase: () {
+              row.numberOfRows += 1;
             },
-            onSaved: (newValue) {
-              if (newValue == null) return;
-              row.numberOfRows = int.parse(newValue.trim());
+            decrease: () {
+              row.numberOfRows -= 1;
             },
+            min: 1,
           ),
         ),
       ],
@@ -297,7 +268,7 @@ class _RowPageState extends State<RowPage> {
     }
     return CountButton(
       signed: false,
-      text: stitch.stitch?.abreviation,
+      suffixText: stitch.stitch?.abreviation,
       showCount: showCount,
       count: stitch.repeatXTime,
       increase: () {
