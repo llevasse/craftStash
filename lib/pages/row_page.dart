@@ -38,6 +38,7 @@ class _RowPageState extends State<RowPage> {
   double buttonHeight = 50;
   bool needScroll = false;
   ScrollController stitchDetailsScrollController = ScrollController();
+  ScrollController previewScrollController = ScrollController();
   List<CountButton> details = List.empty(growable: true);
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   PatternRow row = PatternRow(startRow: 0, numberOfRows: 0, stitchesPerRow: 0);
@@ -210,6 +211,9 @@ class _RowPageState extends State<RowPage> {
       preview = preview!.replaceAll("\${${entry.key}}", entry.value);
     }
     previewControler.text = preview;
+    previewScrollController.jumpTo(
+      previewScrollController.position.maxScrollExtent,
+    );
     stitchDetailsScrollController.jumpTo(
       stitchDetailsScrollController.position.maxScrollExtent,
     );
@@ -228,9 +232,11 @@ class _RowPageState extends State<RowPage> {
             count: row.startRow,
             increase: () {
               row.startRow += 1;
+              setState(() {});
             },
             decrease: () {
               row.startRow -= 1;
+              setState(() {});
             },
           ),
         ),
@@ -240,9 +246,11 @@ class _RowPageState extends State<RowPage> {
             count: row.numberOfRows,
             increase: () {
               row.numberOfRows += 1;
+              setState(() {});
             },
             decrease: () {
               row.numberOfRows -= 1;
+              setState(() {});
             },
             min: 1,
           ),
@@ -376,6 +384,13 @@ class _RowPageState extends State<RowPage> {
           curve: Curves.linear,
         ),
       );
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => previewScrollController.animateTo(
+          previewScrollController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 500),
+          curve: Curves.linear,
+        ),
+      );
       needScroll = false;
     }
     return Scaffold(
@@ -397,7 +412,7 @@ class _RowPageState extends State<RowPage> {
         actions: [_saveButton()],
       ),
       body: Container(
-        padding: EdgeInsets.symmetric(horizontal: 10),
+        padding: EdgeInsets.all(10),
         child: Form(
           key: _formKey,
           child: Column(
@@ -405,8 +420,10 @@ class _RowPageState extends State<RowPage> {
             children: [
               _rowNumberInput(),
               TextFormField(
+                scrollController: previewScrollController,
                 controller: previewControler,
                 readOnly: true,
+                maxLines: 2,
                 decoration: InputDecoration(label: Text("Preview")),
               ),
               _stitchDetailsList(),
