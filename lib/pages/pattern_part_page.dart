@@ -28,6 +28,7 @@ class _PatternPartPageState extends State<PatternPartPage> {
   String title = "New part";
   PatternPart part = PatternPart(name: "New part", patternId: 0);
   List<Widget> patternListView = List.empty(growable: true);
+  double spacing = 10;
 
   void _insertPart() async {
     part.patternId = widget.pattern.patternId;
@@ -40,8 +41,15 @@ class _PatternPartPageState extends State<PatternPartPage> {
 
     if (widget.part == null) {
       _insertPart();
-      patternListView.add(_titleInput());
-      patternListView.add(_numbersToMakeInput());
+      patternListView.add(
+        Row(
+          spacing: spacing,
+          children: [
+            Expanded(child: _titleInput()),
+            Expanded(child: _numbersToMakeInput()),
+          ],
+        ),
+      );
     } else {
       part = widget.part!;
       title = part.name;
@@ -52,59 +60,33 @@ class _PatternPartPageState extends State<PatternPartPage> {
   }
 
   Widget _titleInput() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10),
-      child: TextFormField(
-        initialValue: part.name,
-        decoration: InputDecoration(label: Text("Pattern title")),
-        validator: (value) {
-          if (value == null || value.trim().isEmpty) {
-            return ("Part title can't be empty");
-          }
-          return null;
-        },
-        onSaved: (newValue) {
-          title = newValue!.trim();
-          part.name = title;
-        },
-      ),
+    return TextFormField(
+      initialValue: part.name,
+      decoration: InputDecoration(label: Text("Pattern title")),
+      validator: (value) {
+        if (value == null || value.trim().isEmpty) {
+          return ("Part title can't be empty");
+        }
+        return null;
+      },
+      onSaved: (newValue) {
+        title = newValue!.trim();
+        part.name = title;
+      },
     );
   }
 
   Widget _numbersToMakeInput() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10),
-      child: CountButton(
-        prefixText: "Make ",
-        count: part.numbersToMake,
-        increase: () {
-          part.numbersToMake += 1;
-        },
-        decrease: () {
-          part.numbersToMake -= 1;
-        },
-        min: 1,
-      ),
-    );
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10),
-      child: TextFormField(
-        keyboardType: TextInputType.numberWithOptions(),
-        initialValue: part.numbersToMake.toString(),
-        decoration: InputDecoration(label: Text("Numbers to make")),
-        validator: (value) {
-          if (value == null || value.trim().isEmpty) {
-            return ("Can't be empty");
-          }
-          if (int.parse(value.trim()) < 1) {
-            return ("Can't be lower than one");
-          }
-          return null;
-        },
-        onSaved: (newValue) {
-          part.numbersToMake = int.parse(newValue!.trim());
-        },
-      ),
+    return CountButton(
+      prefixText: "Make ",
+      count: part.numbersToMake,
+      increase: () {
+        part.numbersToMake += 1;
+      },
+      decrease: () {
+        part.numbersToMake -= 1;
+      },
+      min: 1,
     );
   }
 
@@ -127,6 +109,7 @@ class _PatternPartPageState extends State<PatternPartPage> {
     Widget? subtitle = preview != null ? Text(preview) : null;
     return ListTile(
       title: Text(title),
+      contentPadding: EdgeInsets.all(0),
       subtitle: subtitle,
       onTap: () async {
         PatternRow r = await getPatternRowByRowId(row.rowId);
@@ -176,6 +159,7 @@ class _PatternPartPageState extends State<PatternPartPage> {
 
     tmp.add(
       Row(
+        spacing: spacing,
         children: [
           Expanded(child: _titleInput()),
           Expanded(child: _numbersToMakeInput()),
@@ -253,7 +237,10 @@ class _PatternPartPageState extends State<PatternPartPage> {
       ),
       body: Form(
         key: _formKey,
-        child: ListView(children: patternListView),
+        child: ListView(
+          padding: EdgeInsets.all(spacing),
+          children: patternListView,
+        ),
       ),
       floatingActionButton: AddRowButton(
         part: part,
