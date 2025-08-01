@@ -80,11 +80,8 @@ class _PatternPartPageState extends State<PatternPartPage> {
     return CountButton(
       prefixText: "Make ",
       count: part.numbersToMake,
-      increase: () {
-        part.numbersToMake += 1;
-      },
-      decrease: () {
-        part.numbersToMake -= 1;
+      onChange: (value) {
+        part.numbersToMake = value;
       },
       min: 1,
     );

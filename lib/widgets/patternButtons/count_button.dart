@@ -9,8 +9,7 @@ class CountButton extends StatefulWidget {
   String? prefixText;
   Color? textBackgroundColor;
   bool showCount;
-  void Function() increase;
-  void Function() decrease;
+  void Function(int value) onChange;
   CountButton({
     super.key,
     required this.count,
@@ -19,8 +18,8 @@ class CountButton extends StatefulWidget {
     this.min,
     this.max,
     this.showCount = true,
-    required this.increase,
-    required this.decrease,
+
+    required this.onChange,
     this.signed = true,
     this.textBackgroundColor,
   });
@@ -53,27 +52,7 @@ class _CountButtonState extends State<CountButton> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          IconButton(
-            style: ButtonStyle(
-              shape: WidgetStatePropertyAll(RoundedRectangleBorder()),
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              minimumSize: WidgetStatePropertyAll(Size.zero),
-              padding: WidgetStatePropertyAll(EdgeInsetsGeometry.all(10)),
-              backgroundColor: WidgetStateColor.fromMap({
-                WidgetState.any: Colors.amber,
-              }),
-            ),
-            onPressed: () {
-              if (widget.signed == false && widget.count == 0) return;
-              if (widget.min == null || widget.count > (widget.min as int)) {
-                widget.decrease();
-                setState(() {
-                  widget.count -= 1;
-                });
-              }
-            },
-            icon: Icon(Icons.remove, color: theme.colorScheme.secondary),
-          ),
+          _increase(),
 
           Container(
             color: widget.textBackgroundColor,
@@ -90,28 +69,56 @@ class _CountButtonState extends State<CountButton> {
               overflow: TextOverflow.clip,
             ),
           ),
-          IconButton(
-            style: ButtonStyle(
-              shape: WidgetStatePropertyAll(RoundedRectangleBorder()),
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              minimumSize: WidgetStatePropertyAll(Size.zero),
-              padding: WidgetStatePropertyAll(EdgeInsetsGeometry.all(10)),
-              backgroundColor: WidgetStateColor.fromMap({
-                WidgetState.any: Colors.amber,
-              }),
-            ),
-            onPressed: () {
-              if (widget.max == null || widget.count < (widget.max as int)) {
-                widget.increase();
-                setState(() {
-                  widget.count += 1;
-                });
-              }
-            },
-            icon: Icon(Icons.add, color: theme.colorScheme.secondary),
-          ),
+          _decrease(),
         ],
       ),
+    );
+  }
+
+  Widget _increase() {
+    ThemeData theme = Theme.of(context);
+    return IconButton(
+      style: ButtonStyle(
+        shape: WidgetStatePropertyAll(RoundedRectangleBorder()),
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        minimumSize: WidgetStatePropertyAll(Size.zero),
+        padding: WidgetStatePropertyAll(EdgeInsetsGeometry.all(10)),
+        backgroundColor: WidgetStateColor.fromMap({
+          WidgetState.any: Colors.amber,
+        }),
+      ),
+      onPressed: () {
+        if (widget.signed == false && widget.count == 0) return;
+        if (widget.min == null || widget.count > (widget.min as int)) {
+          widget.count -= 1;
+          widget.onChange(widget.count);
+          setState(() {});
+        }
+      },
+      icon: Icon(Icons.remove, color: theme.colorScheme.secondary),
+    );
+  }
+
+  Widget _decrease() {
+    ThemeData theme = Theme.of(context);
+    return IconButton(
+      style: ButtonStyle(
+        shape: WidgetStatePropertyAll(RoundedRectangleBorder()),
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        minimumSize: WidgetStatePropertyAll(Size.zero),
+        padding: WidgetStatePropertyAll(EdgeInsetsGeometry.all(10)),
+        backgroundColor: WidgetStateColor.fromMap({
+          WidgetState.any: Colors.amber,
+        }),
+      ),
+      onPressed: () {
+        if (widget.max == null || widget.count < (widget.max as int)) {
+          widget.count += 1;
+          widget.onChange(widget.count);
+          setState(() {});
+        }
+      },
+      icon: Icon(Icons.add, color: theme.colorScheme.secondary),
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:craft_stash/class/wip/wip_part.dart';
 import 'package:craft_stash/main.dart';
 import 'package:craft_stash/widgets/patternButtons/count_button.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 
 class WipPartPage extends StatefulWidget {
   WipPart wipPart;
@@ -96,49 +97,47 @@ class WipPartPageState extends State<WipPartPage> {
         CountButton(
           textBackgroundColor: Colors.white,
           count: widget.wipPart.currentRowNumber,
-          increase: () {
+          onChange: (value) {
             if (widget.wipPart.finished == 1) return;
-            PatternRow row = part.rows[widget.wipPart.currentRowIndex];
+            bool increase = value > widget.wipPart.currentRowNumber;
 
-            widget.wipPart.currentRowNumber++;
-            widget.wipPart.stitchDoneNb +=
-                row.stitchesPerRow - widget.wipPart.currentStitchNumber;
-            if (debug) {
-              print(
-                "Add ${row.stitchesPerRow - widget.wipPart.currentStitchNumber} stitches",
-              );
-            }
-            if (widget.wipPart.currentRowNumber >
-                part.rows.last.startRow + (part.rows.last.numberOfRows - 1)) {
-              widget.wipPart.madeXTime += 1;
-              if (widget.wipPart.madeXTime >= part.numbersToMake) {
-                widget.wipPart.finished = 1;
+            widget.wipPart.currentRowNumber = value;
+            PatternRow row = part.rows[widget.wipPart.currentRowIndex];
+            if (increase) {
+              widget.wipPart.stitchDoneNb +=
+                  row.stitchesPerRow - widget.wipPart.currentStitchNumber;
+
+              if (widget.wipPart.currentRowNumber >
+                  part.rows.last.startRow + (part.rows.last.numberOfRows - 1)) {
+                widget.wipPart.madeXTime += 1;
+                if (widget.wipPart.madeXTime >= part.numbersToMake) {
+                  widget.wipPart.finished = 1;
+                }
+                widget.wipPart.currentRowIndex = 0;
+                widget.wipPart.currentRowNumber = part.rows.first.startRow;
+              } else if (widget.wipPart.currentRowNumber >
+                  row.startRow + (row.numberOfRows - 1)) {
+                widget.wipPart.currentRowIndex++;
               }
-              widget.wipPart.currentRowIndex = 0;
-              widget.wipPart.currentRowNumber = part.rows.first.startRow;
-            } else if (widget.wipPart.currentRowNumber >
-                row.startRow + (row.numberOfRows - 1)) {
-              widget.wipPart.currentRowIndex++;
+              widget.wipPart.currentStitchNumber = 0;
+            } else {
+              widget.wipPart.finished = 0;
+
+              widget.wipPart.finished = 0;
+              if (widget.wipPart.currentRowNumber <
+                  part.rows[widget.wipPart.currentRowIndex].startRow) {
+                widget.wipPart.currentRowIndex--;
+              }
+              widget.wipPart.stitchDoneNb -= widget.wipPart.currentStitchNumber;
+              widget.wipPart.stitchDoneNb -=
+                  part.rows[widget.wipPart.currentRowIndex].stitchesPerRow;
+              widget.wipPart.currentStitchNumber = 0;
             }
-            widget.wipPart.currentStitchNumber = 0;
-            updateListView();
-          },
-          decrease: () {
-            widget.wipPart.currentRowNumber--;
-            widget.wipPart.finished = 0;
-            if (widget.wipPart.currentRowNumber <
-                part.rows[widget.wipPart.currentRowIndex].startRow) {
-              widget.wipPart.currentRowIndex--;
-            }
-            widget.wipPart.stitchDoneNb -= widget.wipPart.currentStitchNumber;
-            widget.wipPart.stitchDoneNb -=
-                part.rows[widget.wipPart.currentRowIndex].stitchesPerRow;
             if (debug) {
               print(
                 "Remove ${widget.wipPart.currentStitchNumber + part.rows[widget.wipPart.currentRowIndex].stitchesPerRow} stitches",
               );
             }
-            widget.wipPart.currentStitchNumber = 0;
             updateListView();
           },
           min: 1,
@@ -156,31 +155,34 @@ class WipPartPageState extends State<WipPartPage> {
         CountButton(
           textBackgroundColor: Colors.white,
           count: widget.wipPart.currentStitchNumber,
-          increase: () {
+          onChange: (value) {
             if (widget.wipPart.finished == 1) return;
-            widget.wipPart.currentStitchNumber++;
-            widget.wipPart.stitchDoneNb++;
-            if (widget.wipPart.currentStitchNumber ==
-                part.rows[widget.wipPart.currentRowIndex].stitchesPerRow) {
-              if (part.rows.length - 1 == widget.wipPart.currentRowIndex) {
-                widget.wipPart.madeXTime++;
-              }
+            bool increase = value > widget.wipPart.currentStitchNumber;
+            widget.wipPart.currentStitchNumber = value;
+            PatternRow row = part.rows[widget.wipPart.currentRowIndex];
 
-              if (widget.wipPart.madeXTime == part.numbersToMake) {
-                widget.wipPart.finished = 1;
-              }
+            if (increase) {
+              widget.wipPart.stitchDoneNb++;
+              if (widget.wipPart.currentStitchNumber ==
+                  part.rows[widget.wipPart.currentRowIndex].stitchesPerRow) {
+                if (part.rows.length - 1 == widget.wipPart.currentRowIndex) {
+                  widget.wipPart.madeXTime++;
+                  widget.wipPart.currentRowIndex = 0;
+                  widget.wipPart.currentRowNumber = part.rows.first.startRow;
+                  widget.wipPart.currentStitchNumber = 0;
+                  return;
+                }
 
-              widget.wipPart.currentRowIndex = 0;
-              widget.wipPart.currentRowNumber = part.rows.first.startRow;
-              widget.wipPart.currentStitchNumber = 0;
-              updateListView();
+                if (widget.wipPart.madeXTime == part.numbersToMake) {
+                  widget.wipPart.finished = 1;
+                }
+
+                updateListView();
+              }
+            } else {
+              widget.wipPart.finished = 0;
+              widget.wipPart.stitchDoneNb--;
             }
-          },
-          decrease: () {
-            widget.wipPart.finished = 0;
-
-            widget.wipPart.currentStitchNumber--;
-            widget.wipPart.stitchDoneNb--;
           },
           max: part.rows[widget.wipPart.currentRowIndex].stitchesPerRow,
           signed: false,
@@ -191,6 +193,44 @@ class WipPartPageState extends State<WipPartPage> {
 
   Widget _conterText(String text) {
     return Text(text, textScaler: TextScaler.linear(1.5));
+  }
+
+  Widget _partCount() {
+    return CountButton(
+      count: widget.wipPart.madeXTime,
+      onChange: (value) {
+        if (widget.wipPart.finished == 1) return;
+        bool increase = value > widget.wipPart.madeXTime;
+        widget.wipPart.madeXTime = value;
+        if (increase) {
+          if (widget.wipPart.madeXTime == part.numbersToMake) {
+            widget.wipPart.finished = 1;
+          }
+          widget.wipPart.stitchDoneNb =
+              ((part.totalStitchNb / part.numbersToMake) *
+                      widget.wipPart.madeXTime)
+                  .toInt();
+          widget.wipPart.currentRowIndex = 0;
+          widget.wipPart.currentRowNumber = 0;
+          widget.wipPart.currentStitchNumber = 0;
+        } else {
+          widget.wipPart.finished = 0;
+          widget.wipPart.stitchDoneNb =
+              ((part.totalStitchNb / part.numbersToMake) *
+                      widget.wipPart.madeXTime)
+                  .toInt();
+
+          widget.wipPart.currentRowIndex = 0;
+          widget.wipPart.currentRowNumber = 0;
+          widget.wipPart.currentStitchNumber = 0;
+        }
+        if (debug) {
+          print("Set to ${widget.wipPart.stitchDoneNb} stitches");
+        }
+      },
+      max: part.numbersToMake,
+      signed: false,
+    );
   }
 
   @override
@@ -207,48 +247,7 @@ class WipPartPageState extends State<WipPartPage> {
           },
           icon: Icon(Icons.arrow_back),
         ),
-        actions: [
-          ?part.numbersToMake > 1
-              ? CountButton(
-                  count: widget.wipPart.madeXTime,
-                  increase: () {
-                    if (widget.wipPart.finished == 1) return;
-
-                    widget.wipPart.madeXTime++;
-                    if (widget.wipPart.madeXTime == part.numbersToMake) {
-                      widget.wipPart.finished = 1;
-                    }
-                    widget.wipPart.stitchDoneNb =
-                        ((part.totalStitchNb / part.numbersToMake) *
-                                widget.wipPart.madeXTime)
-                            .toInt();
-                    if (debug) {
-                      print("Set to ${widget.wipPart.stitchDoneNb} stitches");
-                    }
-                    widget.wipPart.currentRowIndex = 0;
-                    widget.wipPart.currentRowNumber = 0;
-                    widget.wipPart.currentStitchNumber = 0;
-                  },
-                  decrease: () {
-                    widget.wipPart.finished = 0;
-                    widget.wipPart.madeXTime--;
-                    widget.wipPart.stitchDoneNb =
-                        ((part.totalStitchNb / part.numbersToMake) *
-                                widget.wipPart.madeXTime)
-                            .toInt();
-                    if (debug) {
-                      print("Set to ${widget.wipPart.stitchDoneNb} stitches");
-                    }
-
-                    widget.wipPart.currentRowIndex = 0;
-                    widget.wipPart.currentRowNumber = 0;
-                    widget.wipPart.currentStitchNumber = 0;
-                  },
-                  max: part.numbersToMake,
-                  signed: false,
-                )
-              : null,
-        ],
+        actions: [?part.numbersToMake > 1 ? _partCount() : null],
       ),
       body: Container(
         padding: EdgeInsets.all(spacing),

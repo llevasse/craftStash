@@ -66,15 +66,13 @@ class _RowPageState extends State<RowPage> {
             signed: false,
             suffixText: text,
             count: detail.repeatXTime,
-            increase: () {
-              detail.repeatXTime += 1;
-              row.stitchesPerRow += detail.stitch!.stitchNb;
-              if (debug) print("Row stitch nb : ${row.stitchesPerRow}");
-              setState(() {});
-            },
-            decrease: () {
-              detail.repeatXTime -= 1;
-              row.stitchesPerRow -= detail.stitch!.stitchNb;
+            onChange: (value) {
+              if (value > detail.repeatXTime) {
+                row.stitchesPerRow += detail.stitch!.stitchNb;
+              } else {
+                row.stitchesPerRow -= detail.stitch!.stitchNb;
+              }
+              detail.repeatXTime = value;
               if (debug) print("Row stitch nb : ${row.stitchesPerRow}");
               setState(() {});
             },
@@ -230,26 +228,19 @@ class _RowPageState extends State<RowPage> {
           child: CountButton(
             prefixText: "Row ",
             count: row.startRow,
-            increase: () {
-              row.startRow += 1;
+            onChange: (value) {
+              row.startRow = value;
               setState(() {});
             },
-            decrease: () {
-              row.startRow -= 1;
-              setState(() {});
-            },
+            min: 1,
           ),
         ),
         Expanded(
           child: CountButton(
             prefixText: "Do ",
             count: row.numberOfRows,
-            increase: () {
-              row.numberOfRows += 1;
-              setState(() {});
-            },
-            decrease: () {
-              row.numberOfRows -= 1;
+            onChange: (value) {
+              row.numberOfRows = value;
               setState(() {});
             },
             min: 1,
@@ -279,17 +270,15 @@ class _RowPageState extends State<RowPage> {
       suffixText: stitch.stitch?.abreviation,
       showCount: showCount,
       count: stitch.repeatXTime,
-      increase: () {
-        stitch.repeatXTime += 1;
-        row.stitchesPerRow += stitch.stitch!.stitchNb;
+      onChange: (value) {
+        if (value > stitch.repeatXTime) {
+          row.stitchesPerRow += stitch.stitch!.stitchNb;
+        } else {
+          row.stitchesPerRow -= stitch.stitch!.stitchNb;
+        }
+        stitch.repeatXTime = value;
         if (debug) print("Row stitch nb : ${row.stitchesPerRow}");
 
-        setState(() {});
-      },
-      decrease: () {
-        stitch.repeatXTime -= 1;
-        row.stitchesPerRow -= stitch.stitch!.stitchNb;
-        if (debug) print("Row stitch nb : ${row.stitchesPerRow}");
         setState(() {});
       },
     );

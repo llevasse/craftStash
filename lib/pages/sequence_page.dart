@@ -61,16 +61,15 @@ class _SequencePageState extends State<SequencePage> {
             signed: false,
             count: detail.repeatXTime,
             suffixText: detail.stitch?.abreviation,
-            increase: () {
-              detail.repeatXTime += 1;
-              row.stitchesPerRow += detail.stitch!.stitchNb;
+            onChange: (value) {
+              if (value > detail.repeatXTime) {
+                row.stitchesPerRow += detail.stitch!.stitchNb;
+              } else {
+                row.stitchesPerRow -= detail.stitch!.stitchNb;
+              }
+              detail.repeatXTime = value;
               if (debug) print("Row stitch nb : ${row.stitchesPerRow}");
-              setState(() {});
-            },
-            decrease: () {
-              detail.repeatXTime -= 1;
-              row.stitchesPerRow -= detail.stitch!.stitchNb;
-              if (debug) print("Row stitch nb : ${row.stitchesPerRow}");
+
               setState(() {});
             },
           ),
@@ -121,16 +120,15 @@ class _SequencePageState extends State<SequencePage> {
       signed: false,
       suffixText: stitch.abreviation,
       count: row.details[length - 1].repeatXTime,
-      increase: () {
-        row.details[length - 1].repeatXTime += 1;
-        row.stitchesPerRow += stitch.stitchNb;
+      onChange: (value) {
+        if (value > row.details[length - 1].repeatXTime) {
+          row.stitchesPerRow += stitch.stitchNb;
+        } else {
+          row.stitchesPerRow -= stitch.stitchNb;
+        }
+        row.details[length - 1].repeatXTime = value;
         if (debug) print("Row stitch nb : ${row.stitchesPerRow}");
-        setState(() {});
-      },
-      decrease: () {
-        row.details[length - 1].repeatXTime -= 1;
-        row.stitchesPerRow -= stitch.stitchNb;
-        if (debug) print("Row stitch nb : ${row.stitchesPerRow}");
+
         setState(() {});
       },
     );
