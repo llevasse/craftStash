@@ -10,6 +10,10 @@ class CountButton extends StatefulWidget {
   Color? textBackgroundColor;
   bool showCount;
   void Function(int value) onChange;
+  void Function()? onLongPress;
+  bool allowIncrease;
+  bool allowDecrease;
+
   CountButton({
     super.key,
     required this.count,
@@ -20,8 +24,11 @@ class CountButton extends StatefulWidget {
     this.showCount = true,
 
     required this.onChange,
+    this.onLongPress,
     this.signed = true,
     this.textBackgroundColor,
+    this.allowIncrease = true,
+    this.allowDecrease = true,
   });
 
   @override
@@ -48,11 +55,12 @@ class _CountButtonState extends State<CountButton> {
       ),
       clipBehavior: Clip.hardEdge,
       onPressed: () {},
+      onLongPress: widget.onLongPress,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          _increase(),
+          ?widget.allowIncrease ? _increase() : null,
 
           Container(
             color: widget.textBackgroundColor,
@@ -69,7 +77,7 @@ class _CountButtonState extends State<CountButton> {
               overflow: TextOverflow.clip,
             ),
           ),
-          _decrease(),
+          ?widget.allowDecrease ? _decrease() : null,
         ],
       ),
     );

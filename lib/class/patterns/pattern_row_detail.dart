@@ -32,7 +32,7 @@ class PatternRowDetail {
       'repeat_x_time': repeatXTime,
       'yarn_id': inPatternYarnId,
       'in_row_order': order,
-      'pattern_id': patternId
+      'pattern_id': patternId,
     };
   }
 
@@ -69,7 +69,8 @@ class PatternRowDetail {
   }
 
   @override
-  int get hashCode => Object.hash(rowId, stitch.hashCode, inPatternYarnId);
+  int get hashCode =>
+      Object.hash(rowId, stitch.hashCode, inPatternYarnId, repeatXTime);
 }
 
 PatternRowDetail _fromMap(Map<String, dynamic> map) {
@@ -79,7 +80,7 @@ PatternRowDetail _fromMap(Map<String, dynamic> map) {
     stitchId: map['stitch_id'] as int,
     repeatXTime: map['repeat_x_time'] as int,
     inPatternYarnId: map['yarn_id'] as int?,
-    patternId: map['pattern_id'] as int?
+    patternId: map['pattern_id'] as int?,
   );
 }
 
