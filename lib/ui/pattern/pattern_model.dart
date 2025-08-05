@@ -21,6 +21,11 @@ class PatternModel extends ChangeNotifier {
       if (id != null) {
         _pattern = await _patternRepository.getPatternById(id: id!);
         loaded = true;
+      } else {
+        _pattern = craft.Pattern(
+          patternId: await _patternRepository.insertPattern(),
+        );
+        loaded = true;
       }
     } finally {
       notifyListeners();
@@ -67,5 +72,42 @@ class PatternModel extends ChangeNotifier {
       return true;
     }
     return false;
+  }
+
+  Future<void> deletePattern() async {
+    if (_pattern != null) await craft.deletePatternInDb(_pattern!.patternId);
+  }
+
+  Future<void> insertYarn({
+    required int yarnId,
+    required int inPreviewId,
+  }) async {
+    await craft.insertYarnInPattern(
+      yarnId: yarnId,
+      patternId: _pattern!.patternId,
+      inPreviewId: inPreviewId,
+    );
+  }
+
+  Future<void> updateYarn({
+    required int yarnId,
+    required int inPreviewId,
+  }) async {
+    await craft.updateYarnInPattern(
+      yarnId: yarnId,
+      patternId: _pattern!.patternId,
+      inPreviewId: inPreviewId,
+    );
+  }
+
+  Future<void> deleteYarn({
+    required int yarnId,
+    required int inPatternYarnId,
+  }) async {
+    await craft.deleteYarnInPattern(
+      yarnId: yarnId,
+      patternId: _pattern!.patternId,
+      inPatternYarnId: inPatternYarnId,
+    );
   }
 }
