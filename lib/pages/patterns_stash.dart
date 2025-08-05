@@ -1,5 +1,7 @@
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
-import 'package:craft_stash/pages/pattern_page.dart';
+import 'package:craft_stash/data/repository/pattern_repository.dart';
+import 'package:craft_stash/ui/pattern/pattern_model.dart';
+import 'package:craft_stash/ui/pattern/pattern_screen.dart';
 import 'package:craft_stash/widgets/page_select_dropdown_button.dart';
 import 'package:flutter/material.dart';
 
@@ -30,10 +32,17 @@ class _PatternsStashPageState extends State<PatternsStashPage> {
               context,
               MaterialPageRoute<void>(
                 settings: RouteSettings(name: "pattern"),
-                builder: (BuildContext context) => PatternPage(
-                  updatePatternListView: updateListView,
-                  pattern: pattern,
+
+                builder: (BuildContext context) => PatternScreen(
+                  patternModel: PatternModel(
+                    patternRepository: PatternRepository(),
+                    id: pattern.patternId,
+                  ),
                 ),
+                // builder: (BuildContext context) => PatternPage(
+                //   updatePatternListView: updateListView,
+                //   pattern: pattern,
+                // ),
               ),
             );
             await updateListView();

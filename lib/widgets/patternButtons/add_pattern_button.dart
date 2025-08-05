@@ -1,4 +1,4 @@
-import 'package:craft_stash/pages/pattern_page.dart';
+import 'package:craft_stash/ui/pattern/pattern_screen.dart';
 import 'package:flutter/material.dart';
 
 class AddPatternButton extends StatefulWidget {
@@ -21,14 +21,14 @@ class _AddPatternButton extends State<AddPatternButton> {
     ThemeData theme = Theme.of(context);
     return OutlinedButton(
       onPressed: () async {
-        Navigator.push(
-          context,
-          MaterialPageRoute<void>(
-            builder: (BuildContext context) => PatternPage(
-              updatePatternListView: widget.updatePatternListView,
-            ),
-          ),
-        );
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute<void>(
+        //     builder: (BuildContext context) => PatternPage(
+        //       updatePatternListView: widget.updatePatternListView,
+        //     ),
+        //   ),
+        // );
       },
 
       style: ButtonStyle(
