@@ -1,7 +1,3 @@
-import 'package:craft_stash/class/patterns/pattern_part.dart';
-import 'package:craft_stash/class/patterns/pattern_row.dart';
-import 'package:craft_stash/class/patterns/patterns.dart' as craft;
-import 'package:craft_stash/main.dart';
 import 'package:craft_stash/ui/core/loading_screen.dart';
 import 'package:craft_stash/ui/pattern_part/pattern_part_model.dart';
 import 'package:craft_stash/ui/pattern_part/widget/delete_button.dart';
@@ -10,10 +6,7 @@ import 'package:craft_stash/ui/pattern_part/widget/row_list_tile.dart';
 import 'package:craft_stash/ui/pattern_part/widget/save_button.dart';
 import 'package:craft_stash/ui/pattern_part/widget/title_input.dart';
 import 'package:craft_stash/widgets/patternButtons/add_row_button.dart';
-import 'package:craft_stash/pages/row_page.dart';
-import 'package:craft_stash/widgets/patternButtons/count_button.dart';
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class PatternPartScreen extends StatelessWidget {
   final PatternPartModel patternPartModel;

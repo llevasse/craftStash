@@ -1,8 +1,8 @@
-import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/pattern_row.dart';
-import 'package:craft_stash/pages/row_page.dart';
+import 'package:craft_stash/data/repository/pattern_row_repository.dart';
+import 'package:craft_stash/ui/row/row_model.dart';
+import 'package:craft_stash/ui/row/row_screen.dart';
 import 'package:craft_stash/ui/pattern_part/pattern_part_model.dart';
-import 'package:craft_stash/ui/pattern_part/pattern_part_screen.dart';
 import 'package:flutter/material.dart';
 
 class RowListTile extends StatelessWidget {
@@ -41,11 +41,14 @@ class RowListTile extends StatelessWidget {
           context,
           MaterialPageRoute<void>(
             settings: RouteSettings(name: "row"),
-            builder: (BuildContext context) => RowPage(
-              part: patternPartModel.part!,
-              updatePattern: () async {},
-              row: r,
-              yarnIdToNameMap: patternPartModel.yarnNameMap!,
+            builder: (BuildContext context) => RowScreen(
+              patternRowModel: PatternRowModel(
+                patternRowRepository: PatternRowRepository(),
+                partId: patternPartModel.part!.partId,
+                patternId: patternPartModel.patternId,
+                id: row.rowId,
+                yarnNameMap: patternPartModel.yarnNameMap,
+              ),
             ),
           ),
         );

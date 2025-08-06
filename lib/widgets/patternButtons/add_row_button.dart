@@ -1,5 +1,7 @@
 import 'package:craft_stash/class/patterns/pattern_part.dart';
-import 'package:craft_stash/pages/row_page.dart';
+import 'package:craft_stash/data/repository/pattern_row_repository.dart';
+import 'package:craft_stash/ui/row/row_model.dart';
+import 'package:craft_stash/ui/row/row_screen.dart';
 
 import 'package:flutter/material.dart';
 
@@ -15,7 +17,7 @@ class AddRowButton extends StatefulWidget {
     required this.updatePattern,
     this.startRow = 1,
     this.numberOfRows = 1,
-    this.yarnIdToNameMap = const {}
+    this.yarnIdToNameMap = const {},
   });
 
   @override
@@ -37,13 +39,21 @@ class _AddRowButton extends State<AddRowButton> {
           context,
           MaterialPageRoute<void>(
             settings: RouteSettings(name: "row"),
-            builder: (BuildContext context) => RowPage(
-              part: widget.part,
-              updatePattern: widget.updatePattern,
-              startRow: widget.startRow,
-              numberOfRows: widget.numberOfRows,
-              yarnIdToNameMap: widget.yarnIdToNameMap,
+            builder: (BuildContext context) => RowScreen(
+              patternRowModel: PatternRowModel(
+                patternRowRepository: PatternRowRepository(),
+                partId: widget.part.partId,
+                patternId: widget.part.patternId,
+                yarnNameMap: widget.yarnIdToNameMap,
+              ),
             ),
+            // builder: (BuildContext context) => RowPage(
+            //   part: widget.part,
+            //   updatePattern: widget.updatePattern,
+            //   startRow: widget.startRow,
+            //   numberOfRows: widget.numberOfRows,
+            //   yarnIdToNameMap: widget.yarnIdToNameMap,
+            // ),
           ),
         );
       },
