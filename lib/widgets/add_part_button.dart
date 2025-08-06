@@ -1,7 +1,9 @@
 import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
+import 'package:craft_stash/data/repository/pattern_part_repository.dart';
 import 'package:craft_stash/main.dart';
-import 'package:craft_stash/pages/pattern_part_page.dart';
+import 'package:craft_stash/ui/pattern_part/pattern_part_model.dart';
+import 'package:craft_stash/ui/pattern_part/pattern_part_screen.dart';
 import 'package:flutter/material.dart';
 
 class AddPartButton extends StatefulWidget {
@@ -34,10 +36,12 @@ class _AddPartButton extends State<AddPartButton> {
           context,
           MaterialPageRoute<void>(
             settings: RouteSettings(name: "part"),
-            builder: (BuildContext context) => PatternPartPage(
-              updatePatternListView: widget.updatePatternListView,
-              pattern: widget.pattern,
-              part: widget.part,
+            builder: (BuildContext context) => PatternPartScreen(
+              patternPartModel: PatternPartModel(
+                patternPartRepository: PatternPartRepository(),
+                patternId: widget.pattern.patternId,
+
+              ),
             ),
           ),
         );

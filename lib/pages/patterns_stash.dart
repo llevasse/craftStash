@@ -39,10 +39,6 @@ class _PatternsStashPageState extends State<PatternsStashPage> {
                     id: pattern.patternId,
                   ),
                 ),
-                // builder: (BuildContext context) => PatternPage(
-                //   updatePatternListView: updateListView,
-                //   pattern: pattern,
-                // ),
               ),
             );
             await updateListView();
