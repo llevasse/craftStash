@@ -19,7 +19,6 @@ class PatternListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       title: Text(pattern.name),
-      contentPadding: EdgeInsets.all(0),
       onTap: () async {
         await Navigator.push(
           context,
