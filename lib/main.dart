@@ -4,7 +4,6 @@ import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/data/repository/pattern_stash_repository.dart';
 import 'package:craft_stash/data/repository/yarn_stash_repository.dart';
 import 'package:craft_stash/pages/wip_stash.dart';
-import 'package:craft_stash/pages/yarn_stash.dart';
 import 'package:craft_stash/ui/pattern_stash/stash_model.dart';
 import 'package:craft_stash/ui/pattern_stash/stash_screen.dart';
 import 'package:craft_stash/ui/yarn_stash/yarn_model.dart';

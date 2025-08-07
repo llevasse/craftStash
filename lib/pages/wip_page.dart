@@ -2,8 +2,11 @@ import 'package:craft_stash/class/wip/wip.dart';
 import 'package:craft_stash/class/wip/wip_part.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
 import 'package:craft_stash/class/yarns/yarn.dart';
+import 'package:craft_stash/data/repository/wip_part_repository%20copy.dart';
 import 'package:craft_stash/pages/wip_part_page.dart';
 import 'package:craft_stash/services/database_service.dart';
+import 'package:craft_stash/ui/wip_part/wip_part_model.dart';
+import 'package:craft_stash/ui/wip_part/wip_part_screen.dart';
 import 'package:craft_stash/widgets/yarn/pattern_yarn_list.dart';
 import 'package:craft_stash/widgets/yarn/yarn_list_dialog.dart';
 import 'package:craft_stash/widgets/yarnButtons/yarn_form.dart';
@@ -237,10 +240,18 @@ class WipPageState extends State<WipPage> {
                       context,
                       MaterialPageRoute<void>(
                         settings: RouteSettings(name: "/wip_part"),
-                        builder: (BuildContext context) => WipPartPage(
-                          wipPart: wipPart,
-                          yarnIdToNameMap: wip.yarnIdToNameMap,
+
+                        builder: (BuildContext context) => WipPartScreen(
+                          wipPartModel: WipPartModel(
+                            wipPartRepository: WipPartRepository(),
+                            id: wipPart.id,
+                            wipId: wip.id,
+                          ),
                         ),
+                        // builder: (BuildContext context) => WipPartPage(
+                        //   wipPart: wipPart,
+                        //   yarnIdToNameMap: wip.yarnIdToNameMap,
+                        // ),
                       ),
                     )
                     as WipPart;
