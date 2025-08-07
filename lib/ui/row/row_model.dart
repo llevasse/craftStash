@@ -25,6 +25,9 @@ class PatternRowModel extends ChangeNotifier {
   PatternRow? _row;
   PatternRow? get row => _row;
 
+  double buttonHeight = 50;
+  bool needScroll = false;
+
   ScrollController stitchDetailsScrollController = ScrollController();
   ScrollController previewScrollController = ScrollController();
   TextEditingController previewControler = TextEditingController();
@@ -70,6 +73,12 @@ class PatternRowModel extends ChangeNotifier {
         preview = preview.replaceAll("\${${entry.key}}", entry.value);
       }
       previewControler.text = preview;
+      if (previewScrollController.hasClients) {
+        scrollDown(ctrl: previewScrollController);
+      }
+      if (stitchDetailsScrollController.hasClients) {
+        scrollDown(ctrl: stitchDetailsScrollController);
+      }
       loaded = true;
     } finally {
       notifyListeners();
@@ -101,6 +110,15 @@ class PatternRowModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void scrollDown({required ScrollController ctrl, int duration = 0}) {
+    ctrl.animateTo(
+      ctrl.position.maxScrollExtent,
+      duration: Duration(milliseconds: duration),
+      curve: Curves.linear,
+    );
+    notifyListeners();
+  }
+
   Future<Stitch?> addStitch(Stitch stitch) async {
     if (_row!.details.isNotEmpty &&
         _row!.details.last.stitch?.abreviation == stitch.abreviation) {
@@ -127,6 +145,7 @@ class PatternRowModel extends ChangeNotifier {
       preview = preview.replaceAll("\${${entry.key}}", entry.value);
     }
     previewControler.text = preview;
+    needScroll = true;
     notifyListeners();
     return null;
   }
@@ -158,6 +177,9 @@ class PatternRowModel extends ChangeNotifier {
       preview = preview.replaceAll("\${${entry.key}}", entry.value);
     }
     previewControler.text = preview;
+
+    needScroll = true;
+
     notifyListeners();
   }
 
@@ -204,6 +226,9 @@ class PatternRowModel extends ChangeNotifier {
       preview = preview.replaceAll("\${${entry.key}}", entry.value);
     }
     previewControler.text = preview;
+
+    needScroll = true;
+
     notifyListeners();
   }
 
@@ -245,6 +270,9 @@ class PatternRowModel extends ChangeNotifier {
       preview = preview.replaceAll("\${${entry.key}}", entry.value);
     }
     previewControler.text = preview;
+
+    needScroll = true;
+
     notifyListeners();
   }
 
