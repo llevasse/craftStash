@@ -14,13 +14,15 @@ class RowStitchList extends StatelessWidget {
     return StitchList(
       onStitchPressed: patternRowModel.addStitch,
       onSequencePressed: patternRowModel.addStitch,
-      customActions: [
-        rowSubrowButton(patternRowModel: patternRowModel),
-        rowColorChangeButton(patternRowModel: patternRowModel),
-        ?patternRowModel.row!.startRow == 1
-            ? rowStartColorButton(patternRowModel: patternRowModel)
-            : null,
-      ],
+      customActions: patternRowModel.isSubRow == false
+          ? [
+              RowSubrowButton(patternRowModel: patternRowModel),
+              rowColorChangeButton(patternRowModel: patternRowModel),
+              ?patternRowModel.row!.startRow == 1
+                  ? rowStartColorButton(patternRowModel: patternRowModel)
+                  : null,
+            ]
+          : [],
     );
   }
 }

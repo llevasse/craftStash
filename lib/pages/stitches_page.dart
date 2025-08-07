@@ -1,5 +1,8 @@
 import 'package:craft_stash/class/stitch.dart';
+import 'package:craft_stash/data/repository/pattern_row_repository.dart';
 import 'package:craft_stash/pages/sequence_page.dart';
+import 'package:craft_stash/ui/row/row_model.dart';
+import 'package:craft_stash/ui/row/row_screen.dart';
 import 'package:craft_stash/widgets/stitches/stitch_form.dart';
 import 'package:craft_stash/widgets/stitches/stitch_list.dart';
 import 'package:flutter/material.dart';
@@ -60,11 +63,19 @@ class _StitchesPageState extends State<StitchesPage> {
                       context,
                       MaterialPageRoute<void>(
                         settings: RouteSettings(name: "subrow"),
-                        builder: (BuildContext context) => SequencePage(
-                          subrow: stitch.row,
-                          stitchId: stitch.id,
-                          stitch: stitch,
+                        builder: (context) => RowScreen(
+                          patternRowModel: PatternRowModel(
+                            patternRowRepository: PatternRowRepository(),
+                            id: stitch.row!.rowId,
+                            stitchId: stitch.id,
+                            isSubRow: true,
+                          ),
                         ),
+                        // builder: (BuildContext context) => SequencePage(
+                        //   subrow: stitch.row,
+                        //   stitchId: stitch.id,
+                        //   stitch: stitch,
+                        // ),
                       ),
                     );
                     return stitch;

@@ -43,9 +43,11 @@ class RowScreen extends StatelessWidget {
           }
           return Scaffold(
             appBar: AppBar(
-              title: Text(
-                "Row ${patternRowModel.row!.startRow}${patternRowModel.row!.numberOfRows > 1 ? "-${patternRowModel.row!.startRow + patternRowModel.row!.numberOfRows - 1}" : ""}",
-              ),
+              title: patternRowModel.isSubRow == false
+                  ? Text(
+                      "Row ${patternRowModel.row!.startRow}${patternRowModel.row!.numberOfRows > 1 ? "-${patternRowModel.row!.startRow + patternRowModel.row!.numberOfRows - 1}" : ""}",
+                    )
+                  : null,
               backgroundColor: theme.colorScheme.primary,
               actions: [
                 rowDeleteButton(
@@ -67,21 +69,23 @@ class RowScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   spacing: spacing,
                   children: [
-                    Row(
-                      spacing: spacing,
-                      children: [
-                        Expanded(
-                          child: rowStartRowButton(
-                            patternRowModel: patternRowModel,
-                          ),
-                        ),
-                        Expanded(
-                          child: rowNbOfRowButton(
-                            patternRowModel: patternRowModel,
-                          ),
-                        ),
-                      ],
-                    ),
+                    ?patternRowModel.isSubRow == false
+                        ? Row(
+                            spacing: spacing,
+                            children: [
+                              Expanded(
+                                child: rowStartRowButton(
+                                  patternRowModel: patternRowModel,
+                                ),
+                              ),
+                              Expanded(
+                                child: rowNbOfRowButton(
+                                  patternRowModel: patternRowModel,
+                                ),
+                              ),
+                            ],
+                          )
+                        : null,
                     rowPreviewField(patternRowModel: patternRowModel),
                     rowStitchDetailsList(patternRowModel: patternRowModel),
                     Expanded(

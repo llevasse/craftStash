@@ -9,18 +9,22 @@ import 'package:flutter/material.dart';
 class PatternRowModel extends ChangeNotifier {
   PatternRowModel({
     required PatternRowRepository patternRowRepository,
-    required this.yarnNameMap,
-    required this.partId,
-    required this.patternId,
+    this.yarnNameMap,
+    this.partId,
+    this.patternId,
+    this.isSubRow = false,
+    this.stitchId,
     this.id,
   }) : _patternRowRepository = patternRowRepository;
   final PatternRowRepository _patternRowRepository;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final Map<int, String>? yarnNameMap;
+  final bool isSubRow;
+  final int? stitchId;
 
   int? id;
-  final int partId;
-  final int patternId;
+  final int? partId;
+  final int? patternId;
 
   PatternRow? _row;
   PatternRow? get row => _row;
@@ -66,11 +70,15 @@ class PatternRowModel extends ChangeNotifier {
         }
       } else {
         _row = PatternRow(startRow: 0, numberOfRows: 0, stitchesPerRow: 0);
-        _row?.rowId = await _patternRowRepository.insertRow(partId: partId);
+        _row?.rowId = await _patternRowRepository.insertRow(
+          partId: isSubRow == false ? partId : null,
+        );
       }
       String preview = _row!.detailsAsString();
-      for (MapEntry<int, String> entry in yarnNameMap!.entries) {
-        preview = preview.replaceAll("\${${entry.key}}", entry.value);
+      if (yarnNameMap != null) {
+        for (MapEntry<int, String> entry in yarnNameMap!.entries) {
+          preview = preview.replaceAll("\${${entry.key}}", entry.value);
+        }
       }
       previewControler.text = preview;
       if (previewScrollController.hasClients) {
@@ -141,8 +149,10 @@ class PatternRowModel extends ChangeNotifier {
       ),
     );
     String preview = _row!.detailsAsString();
-    for (MapEntry<int, String> entry in yarnNameMap!.entries) {
-      preview = preview.replaceAll("\${${entry.key}}", entry.value);
+    if (yarnNameMap != null) {
+      for (MapEntry<int, String> entry in yarnNameMap!.entries) {
+        preview = preview.replaceAll("\${${entry.key}}", entry.value);
+      }
     }
     previewControler.text = preview;
     needScroll = true;
@@ -173,8 +183,10 @@ class PatternRowModel extends ChangeNotifier {
     );
 
     String preview = _row!.detailsAsString();
-    for (MapEntry<int, String> entry in yarnNameMap!.entries) {
-      preview = preview.replaceAll("\${${entry.key}}", entry.value);
+    if (yarnNameMap != null) {
+      for (MapEntry<int, String> entry in yarnNameMap!.entries) {
+        preview = preview.replaceAll("\${${entry.key}}", entry.value);
+      }
     }
     previewControler.text = preview;
 
@@ -222,8 +234,10 @@ class PatternRowModel extends ChangeNotifier {
     }
 
     String preview = _row!.detailsAsString();
-    for (MapEntry<int, String> entry in yarnNameMap!.entries) {
-      preview = preview.replaceAll("\${${entry.key}}", entry.value);
+    if (yarnNameMap != null) {
+      for (MapEntry<int, String> entry in yarnNameMap!.entries) {
+        preview = preview.replaceAll("\${${entry.key}}", entry.value);
+      }
     }
     previewControler.text = preview;
 
@@ -266,8 +280,10 @@ class PatternRowModel extends ChangeNotifier {
       );
     }
     String preview = _row!.detailsAsString();
-    for (MapEntry<int, String> entry in yarnNameMap!.entries) {
-      preview = preview.replaceAll("\${${entry.key}}", entry.value);
+    if (yarnNameMap != null) {
+      for (MapEntry<int, String> entry in yarnNameMap!.entries) {
+        preview = preview.replaceAll("\${${entry.key}}", entry.value);
+      }
     }
     previewControler.text = preview;
 
@@ -303,6 +319,60 @@ class PatternRowModel extends ChangeNotifier {
       return true;
     }
     return false;
+  }
+
+  Future<PatternRowDetail?> saveSequence(BuildContext context) async {
+    if (formKey.currentState!.validate()) {
+      formKey.currentState!.save();
+      if (debug) print("Row stitch nb : ${_row!.stitchesPerRow}");
+      PatternRowDetail detail = PatternRowDetail(rowId: 0, stitchId: 0);
+
+      if (row?.rowId != null) {
+        detail.rowId = row!.rowId!;
+      }
+      if (id == null) {
+        for (PatternRowDetail e in _row!.details) {
+          if (e.repeatXTime != 0) {
+            e.rowId = _row!.rowId;
+            await insertPatternRowDetailInDb(e);
+          }
+        }
+        detail.stitch = Stitch(
+          abreviation: _row!.toString(),
+          isSequence: 1,
+          sequenceId: _row!.rowId,
+          stitchNb: _row!.stitchesPerRow,
+        );
+        detail.stitchId = await insertStitchInDb(detail.stitch!);
+      } else {
+        await updatePatternRowInDb(row!);
+        await updateStitchInDb(
+          Stitch(
+            id: stitchId as int,
+            abreviation: _row!.toString(),
+            isSequence: 1,
+            sequenceId: _row!.rowId,
+          ),
+        );
+        for (PatternRowDetail e in _row!.details) {
+          if (e.repeatXTime != 0) {
+            e.rowId = _row!.rowId;
+            if (e.rowDetailId == 0) {
+              await insertPatternRowDetailInDb(e);
+            } else {
+              await updatePatternRowDetailInDb(e);
+            }
+          } else {
+            if (e.rowDetailId != 0) {
+              await deletePatternRowDetailInDb(e.rowDetailId);
+            }
+          }
+        }
+      }
+
+      Navigator.pop(context, detail);
+    }
+    return null;
   }
 
   Future<void> deleteRow() async {

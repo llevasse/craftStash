@@ -8,7 +8,7 @@ class PatternRowRepository {
     return row;
   }
 
-  Future<int> insertRow({required int partId}) async {
+  Future<int> insertRow({int? partId}) async {
     patternRow.PatternRow row = patternRow.PatternRow(
       partId: partId,
       startRow: 0,
