@@ -12,7 +12,7 @@ class PatternRepository {
     pattern.yarnIdToNameMap = await craft.getYarnIdToNameMapByPatternId(id);
     return pattern;
   }
-  
+
   Future<int> insertPattern() async {
     craft.Pattern pattern = craft.Pattern();
     return await craft.insertPatternInDb(pattern);

@@ -1,9 +1,11 @@
 import 'dart:io';
 
 import 'package:craft_stash/class/stitch.dart';
-import 'package:craft_stash/pages/patterns_stash.dart';
+import 'package:craft_stash/data/repository/pattern_stash_repository.dart';
 import 'package:craft_stash/pages/wip_stash.dart';
 import 'package:craft_stash/pages/yarn_stash.dart';
+import 'package:craft_stash/ui/pattern_stash/stash_model.dart';
+import 'package:craft_stash/ui/pattern_stash/stash_screen.dart';
 import 'package:craft_stash/widgets/patternButtons/add_pattern_button.dart';
 import 'package:craft_stash/widgets/wips/add_wip_button.dart';
 import 'package:craft_stash/widgets/yarnButtons/add_yarn_button.dart';
@@ -116,11 +118,12 @@ class _MyHomePageState extends State<MyHomePage>
                 updateWipListView = method;
               },
             ),
-            PatternsStashPage(
-              builder: (BuildContext context, Future<void> Function() method) {
-                updatePatternListView = method;
-              },
+            PatternStashScreen(
+              patternStashModel: PatternStashModel(
+                patternStashRepository: PatternStashRepository(),
+              ),
             ),
+
             YarnStashPage(
               builder: (BuildContext context, Future<void> Function() method) {
                 updateYarn = method;
