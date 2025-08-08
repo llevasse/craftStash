@@ -1,4 +1,8 @@
 import 'package:craft_stash/ui/core/loading_screen.dart';
+import 'package:craft_stash/ui/wip_part/widget/finish_button.dart';
+import 'package:craft_stash/ui/wip_part/widget/part_count_button.dart';
+import 'package:craft_stash/ui/wip_part/widget/row_count_button.dart';
+import 'package:craft_stash/ui/wip_part/widget/stitch_count_button.dart';
 import 'package:craft_stash/ui/wip_part/widget/wip_part_rows.dart';
 import 'package:craft_stash/ui/wip_part/wip_part_model.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +27,11 @@ class WipPartScreen extends StatelessWidget {
             appBar: AppBar(
               title: Text(wipPartModel.wipPart!.part!.name),
               backgroundColor: theme.colorScheme.primary,
+              actions: [
+                ?wipPartModel.wipPart!.part!.numbersToMake > 1
+                    ? wipPartMadeCount(wpm: wipPartModel)
+                    : null,
+              ],
             ),
 
             body: Container(
@@ -32,9 +41,25 @@ class WipPartScreen extends StatelessWidget {
                 mainAxisSize: MainAxisSize.max,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  Center(
+                    child: Row(
+                      spacing: wipPartModel.spacing,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisSize: MainAxisSize.max,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        wipPartRowCount(wpm: wipPartModel),
+                        wipPartStitchCount(wpm: wipPartModel),
+                      ],
+                    ),
+                  ),
                   Expanded(child: wipPartRowsListView(wpm: wipPartModel)),
                 ],
               ),
+            ),
+            floatingActionButton: wipPartFinishedButton(
+              context: context,
+              wpm: wipPartModel,
             ),
           );
         }

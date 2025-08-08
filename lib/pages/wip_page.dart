@@ -2,7 +2,7 @@ import 'package:craft_stash/class/wip/wip.dart';
 import 'package:craft_stash/class/wip/wip_part.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
 import 'package:craft_stash/class/yarns/yarn.dart';
-import 'package:craft_stash/data/repository/wip_part_repository%20copy.dart';
+import 'package:craft_stash/data/repository/wip_part_repository.dart';
 import 'package:craft_stash/pages/wip_part_page.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:craft_stash/ui/wip_part/wip_part_model.dart';
