@@ -1,6 +1,7 @@
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
 import 'package:craft_stash/class/wip/wip_part.dart';
 import 'package:craft_stash/class/yarns/yarn.dart';
+import 'package:craft_stash/data/repository/pattern_repository.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -105,7 +106,9 @@ Future<List<Wip>> getAllWip({
       for (Wip wip in w) {
         if (withParts) wip.parts = await getAllWipPart(wipId: wip.id);
         if (withPattern) {
-          wip.pattern = await craft.getPatternById(id: wip.patternId);
+          wip.pattern = await PatternRepository().getPatternById(
+            id: wip.patternId,
+          );
         }
         if (withYarnNames) {
           wip.yarnIdToNameMap = await getYarnIdToNameMapByWipId(wip.id);
@@ -118,7 +121,11 @@ Future<List<Wip>> getAllWip({
   }
 }
 
-Future<Wip> getWipById({required int id, bool withParts = false, bool withPattern = false}) async {
+Future<Wip> getWipById({
+  required int id,
+  bool withParts = false,
+  bool withPattern = false,
+}) async {
   final db = (await DbService().database);
   if (db != null) {
     final List<Map<String, Object?>> patternMaps = await db.query(

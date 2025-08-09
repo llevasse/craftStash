@@ -1,12 +1,13 @@
 import 'package:craft_stash/class/patterns/patterns.dart';
 import 'package:craft_stash/class/wip/wip.dart' as craft;
+import 'package:craft_stash/data/repository/pattern_repository.dart';
 
 class WipRepository {
   const WipRepository();
 
   Future<craft.Wip> getWipById({required int id}) async {
     craft.Wip wip = await craft.getWipById(id: id, withParts: true);
-    wip.pattern = await getPatternById(id: wip.patternId);
+    wip.pattern = await PatternRepository().getPatternById(id: wip.patternId);
     return wip;
   }
 

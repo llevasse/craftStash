@@ -1,5 +1,5 @@
 import 'package:craft_stash/class/patterns/pattern_part.dart';
-import 'package:craft_stash/class/patterns/patterns.dart' as craft;
+import 'package:craft_stash/data/repository/pattern_repository.dart';
 
 class PatternPartRepository {
   const PatternPartRepository();
@@ -14,7 +14,7 @@ class PatternPartRepository {
   }
 
   Future<Map<int, String>> getYarnIdToNameMap({required int patternId}) async {
-    Map<int, String> yarnIdToNameMap = await craft
+    Map<int, String> yarnIdToNameMap = await PatternRepository()
         .getYarnIdToNameMapByPatternId(patternId);
     return yarnIdToNameMap;
   }

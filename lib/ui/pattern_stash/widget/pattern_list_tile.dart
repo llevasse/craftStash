@@ -50,7 +50,9 @@ class PatternListTile extends StatelessWidget {
               ),
               TextButton(
                 onPressed: () async {
-                  await craft.deletePatternInDb(pattern.patternId);
+                  await PatternRepository().deletePattern(
+                    id: pattern.patternId,
+                  );
                   Navigator.pop(context);
                 },
                 child: Text("Delete"),

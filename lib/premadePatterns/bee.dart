@@ -4,6 +4,7 @@ import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
 import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/class/yarns/yarn.dart';
+import 'package:craft_stash/data/repository/pattern_repository.dart';
 import 'package:sqflite/sqflite.dart';
 
 Map<String, Stitch> _stitchesMap = {};
@@ -205,17 +206,20 @@ Future<void> insertBeePattern([Database? db]) async {
   // print(_stitchesMap);
   craft.Pattern pattern = craft.Pattern(name: "Bee");
   pattern.totalStitchNb = 108;
-  pattern.patternId = await craft.insertPatternInDb(pattern, db);
+  pattern.patternId = await PatternRepository().insertPattern(
+    pattern: pattern,
+    db: db,
+  );
   _yarns = await getAllYarn(db);
   if (_yarns.isNotEmpty) {
-    await craft.insertYarnInPattern(
+    await PatternRepository().insertYarnInPattern(
       yarnId: _yarns.first.id,
       patternId: pattern.patternId,
       inPreviewId: 1,
       db: db,
     );
     _yarns.first.inPreviewId = 1;
-    await craft.insertYarnInPattern(
+    await PatternRepository().insertYarnInPattern(
       yarnId: _yarns.last.id,
       patternId: pattern.patternId,
       inPreviewId: 2,

@@ -23,7 +23,9 @@ class PatternModel extends ChangeNotifier {
         loaded = true;
       } else {
         _pattern = craft.Pattern(
-          patternId: await _patternRepository.insertPattern(),
+          patternId: await _patternRepository.insertPattern(
+            pattern: craft.Pattern(),
+          ),
         );
         loaded = true;
       }
@@ -68,21 +70,23 @@ class PatternModel extends ChangeNotifier {
       for (PatternPart part in pattern!.parts) {
         pattern?.totalStitchNb += part.totalStitchNb * part.numbersToMake;
       }
-      await craft.updatePatternInDb(pattern!);
+      await _patternRepository.updatePattern(pattern!);
       return true;
     }
     return false;
   }
 
   Future<void> deletePattern() async {
-    if (_pattern != null) await craft.deletePatternInDb(_pattern!.patternId);
+    if (_pattern != null) {
+      await _patternRepository.deletePattern(id: _pattern!.patternId);
+    }
   }
 
   Future<void> insertYarn({
     required int yarnId,
     required int inPreviewId,
   }) async {
-    await craft.insertYarnInPattern(
+    await _patternRepository.insertYarnInPattern(
       yarnId: yarnId,
       patternId: _pattern!.patternId,
       inPreviewId: inPreviewId,
@@ -93,7 +97,7 @@ class PatternModel extends ChangeNotifier {
     required int yarnId,
     required int inPreviewId,
   }) async {
-    await craft.updateYarnInPattern(
+    await _patternRepository.updateYarnInPattern(
       yarnId: yarnId,
       patternId: _pattern!.patternId,
       inPreviewId: inPreviewId,
@@ -104,7 +108,7 @@ class PatternModel extends ChangeNotifier {
     required int yarnId,
     required int inPatternYarnId,
   }) async {
-    await craft.deleteYarnInPattern(
+    await _patternRepository.deleteYarnInPattern(
       yarnId: yarnId,
       patternId: _pattern!.patternId,
       inPatternYarnId: inPatternYarnId,
