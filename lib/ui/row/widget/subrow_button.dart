@@ -1,9 +1,8 @@
-import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/data/repository/pattern_row_repository.dart';
 import 'package:craft_stash/ui/row/row_model.dart';
 import 'package:craft_stash/ui/row/row_screen.dart';
-import 'package:craft_stash/widgets/patternButtons/add_custom_detail_button.dart';
+import 'package:craft_stash/ui/core/pattern_detail_buttons/add_custom_detail_button.dart';
 import 'package:flutter/material.dart';
 
 class RowSubrowButton extends AddCustomDetailButton {
@@ -11,11 +10,6 @@ class RowSubrowButton extends AddCustomDetailButton {
 
   RowSubrowButton({super.key, required this.patternRowModel})
     : super(text: "New sequence", onPressed: patternRowModel.addSubrow);
-  @override
-  State<StatefulWidget> createState() => _NewSubrowButtonState();
-}
-
-class _NewSubrowButtonState extends State<RowSubrowButton> {
   @override
   Widget build(BuildContext context) {
     return AddCustomDetailButton(
@@ -29,9 +23,9 @@ class _NewSubrowButtonState extends State<RowSubrowButton> {
                     builder: (BuildContext context) => RowScreen(
                       patternRowModel: PatternRowModel(
                         patternRowRepository: PatternRowRepository(),
-                        yarnNameMap: widget.patternRowModel.yarnNameMap,
-                        partId: widget.patternRowModel.partId,
-                        patternId: widget.patternRowModel.patternId,
+                        yarnNameMap: patternRowModel.yarnNameMap,
+                        partId: patternRowModel.partId,
+                        patternId: patternRowModel.patternId,
                         isSubRow: true,
                       ),
                     ),
@@ -39,8 +33,7 @@ class _NewSubrowButtonState extends State<RowSubrowButton> {
                 )
                 as PatternRowDetail?;
         if (t == null) return;
-        await widget.onPressed.call(t);
-        setState(() {});
+        await onPressed.call(t);
       },
     );
   }

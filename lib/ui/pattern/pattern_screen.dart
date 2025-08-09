@@ -7,7 +7,7 @@ import 'package:craft_stash/ui/pattern/widget/parts_list_tile.dart';
 import 'package:craft_stash/ui/pattern/widget/save_button.dart';
 import 'package:craft_stash/ui/pattern/widget/title_input.dart';
 import 'package:craft_stash/ui/pattern/widget/yarn_list.dart';
-import 'package:craft_stash/widgets/add_part_button.dart';
+import 'package:craft_stash/ui/pattern/widget/add_part_button.dart';
 import 'package:flutter/material.dart';
 
 class PatternScreen extends StatelessWidget {

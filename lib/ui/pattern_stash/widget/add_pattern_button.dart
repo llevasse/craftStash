@@ -1,34 +1,29 @@
+import 'package:craft_stash/data/repository/pattern_repository.dart';
+import 'package:craft_stash/ui/pattern/pattern_model.dart';
 import 'package:craft_stash/ui/pattern/pattern_screen.dart';
 import 'package:flutter/material.dart';
 
-class AddPatternButton extends StatefulWidget {
-  final Future<void> Function() updatePatternListView;
+class AddPatternButton extends StatelessWidget {
+  final Future<void> Function() onQuitPage;
 
-  const AddPatternButton({super.key, required this.updatePatternListView});
-
-  @override
-  State<StatefulWidget> createState() => _AddPatternButton();
-}
-
-class _AddPatternButton extends State<AddPatternButton> {
-  @override
-  void initState() {
-    super.initState();
-  }
+  const AddPatternButton({super.key, required this.onQuitPage});
 
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     return OutlinedButton(
       onPressed: () async {
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute<void>(
-        //     builder: (BuildContext context) => PatternPage(
-        //       updatePatternListView: widget.updatePatternListView,
-        //     ),
-        //   ),
-        // );
+        await Navigator.push(
+          context,
+          MaterialPageRoute<void>(
+            builder: (context) => PatternScreen(
+              patternModel: PatternModel(
+                patternRepository: PatternRepository(),
+              ),
+            ),
+          ),
+        );
+        onQuitPage();
       },
 
       style: ButtonStyle(

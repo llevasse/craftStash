@@ -6,9 +6,9 @@ import 'package:craft_stash/widgets/wips/add_wip_from_pattern_dialog.dart';
 import 'package:flutter/material.dart';
 
 class AddWipButton extends StatefulWidget {
-  final Future<void> Function() updateWipListView;
+  final Future<void> Function() onQuitPage;
 
-  const AddWipButton({super.key, required this.updateWipListView});
+  const AddWipButton({super.key, required this.onQuitPage});
 
   @override
   State<StatefulWidget> createState() => _AddWipButton();

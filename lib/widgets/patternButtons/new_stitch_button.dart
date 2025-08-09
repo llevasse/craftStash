@@ -1,5 +1,5 @@
 import 'package:craft_stash/class/stitch.dart';
-import 'package:craft_stash/widgets/patternButtons/add_custom_detail_button.dart';
+import 'package:craft_stash/ui/core/pattern_detail_buttons/add_custom_detail_button.dart';
 import 'package:craft_stash/widgets/stitches/stitch_form.dart';
 import 'package:flutter/material.dart';
 

@@ -5,7 +5,7 @@ import 'package:craft_stash/ui/row/row_screen.dart';
 
 import 'package:flutter/material.dart';
 
-class AddRowButton extends StatefulWidget {
+class AddRowButton extends StatelessWidget {
   final Future<void> Function() updatePattern;
   PatternPart part;
   int startRow;
@@ -21,16 +21,6 @@ class AddRowButton extends StatefulWidget {
   });
 
   @override
-  State<StatefulWidget> createState() => _AddRowButton();
-}
-
-class _AddRowButton extends State<AddRowButton> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     return TextButton(
@@ -42,18 +32,11 @@ class _AddRowButton extends State<AddRowButton> {
             builder: (BuildContext context) => RowScreen(
               patternRowModel: PatternRowModel(
                 patternRowRepository: PatternRowRepository(),
-                partId: widget.part.partId,
-                patternId: widget.part.patternId,
-                yarnNameMap: widget.yarnIdToNameMap,
+                partId: part.partId,
+                patternId: part.patternId,
+                yarnNameMap: yarnIdToNameMap,
               ),
             ),
-            // builder: (BuildContext context) => RowPage(
-            //   part: widget.part,
-            //   updatePattern: widget.updatePattern,
-            //   startRow: widget.startRow,
-            //   numberOfRows: widget.numberOfRows,
-            //   yarnIdToNameMap: widget.yarnIdToNameMap,
-            // ),
           ),
         );
       },

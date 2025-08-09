@@ -1,5 +1,5 @@
+import 'package:craft_stash/ui/core/count_button.dart';
 import 'package:craft_stash/ui/wip_part/wip_part_model.dart';
-import 'package:craft_stash/widgets/patternButtons/count_button.dart';
 
 CountButton wipPartMadeCount({required WipPartModel wpm}) {
   return CountButton(

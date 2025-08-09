@@ -2,9 +2,9 @@ import 'package:craft_stash/widgets/yarnButtons/yarn_collection_form.dart';
 import 'package:flutter/material.dart';
 
 class AddYarnButton extends StatefulWidget {
-  final Future<void> Function() updateYarn;
+  final Future<void> Function() onQuitPage;
 
-  const AddYarnButton({super.key, required this.updateYarn});
+  const AddYarnButton({super.key, required this.onQuitPage});
 
   @override
   State<StatefulWidget> createState() => _AddYarnButton();
@@ -27,7 +27,7 @@ class _AddYarnButton extends State<AddYarnButton> {
           context: context,
           builder: (BuildContext context) => YarnCollectionForm(
             title: "Collections",
-            updateYarn: widget.updateYarn,
+            updateYarn: widget.onQuitPage,
           ),
         );
       },

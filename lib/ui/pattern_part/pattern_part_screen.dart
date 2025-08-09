@@ -5,7 +5,7 @@ import 'package:craft_stash/ui/pattern_part/widget/repeat_x_time_button.dart';
 import 'package:craft_stash/ui/pattern_part/widget/row_list_tile.dart';
 import 'package:craft_stash/ui/pattern_part/widget/save_button.dart';
 import 'package:craft_stash/ui/pattern_part/widget/title_input.dart';
-import 'package:craft_stash/widgets/patternButtons/add_row_button.dart';
+import 'package:craft_stash/ui/pattern_part/add_row_button.dart';
 import 'package:flutter/material.dart';
 
 class PatternPartScreen extends StatelessWidget {

@@ -1,10 +1,10 @@
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/stitch.dart';
-import 'package:craft_stash/widgets/patternButtons/add_custom_detail_button.dart';
-import 'package:craft_stash/widgets/patternButtons/add_generic_detail_button.dart';
+import 'package:craft_stash/ui/core/count_button.dart';
+import 'package:craft_stash/ui/core/pattern_detail_buttons/add_custom_detail_button.dart';
+import 'package:craft_stash/ui/core/pattern_detail_buttons/add_generic_detail_button.dart';
 import 'package:craft_stash/widgets/patternButtons/new_stitch_button.dart';
 import 'package:craft_stash/ui/row/widget/subrow_button.dart';
-import 'package:craft_stash/widgets/patternButtons/count_button.dart';
 import 'package:flutter/material.dart';
 
 typedef MyBuilder =

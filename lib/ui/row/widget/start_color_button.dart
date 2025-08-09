@@ -1,6 +1,6 @@
 import 'package:craft_stash/ui/row/row_model.dart';
-import 'package:craft_stash/widgets/patternButtons/add_custom_detail_button.dart';
-import 'package:craft_stash/widgets/patternButtons/start_color_button.dart';
+import 'package:craft_stash/ui/core/pattern_detail_buttons/add_custom_detail_button.dart';
+import 'package:craft_stash/ui/core/pattern_detail_buttons/start_color_button.dart';
 
 AddCustomDetailButton rowStartColorButton({
   required PatternRowModel patternRowModel,

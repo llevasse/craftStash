@@ -10,8 +10,8 @@ import 'package:craft_stash/ui/wip_stash/stash_model.dart';
 import 'package:craft_stash/ui/wip_stash/stash_screen.dart';
 import 'package:craft_stash/ui/yarn_stash/yarn_model.dart';
 import 'package:craft_stash/ui/yarn_stash/yarn_screen.dart';
-import 'package:craft_stash/widgets/patternButtons/add_pattern_button.dart';
-import 'package:craft_stash/widgets/wips/add_wip_button.dart';
+import 'package:craft_stash/ui/pattern_stash/widget/add_pattern_button.dart';
+import 'package:craft_stash/ui/wip_stash/widget/add_wip_button.dart';
 import 'package:craft_stash/widgets/yarnButtons/add_yarn_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -100,14 +100,9 @@ class _MyHomePageState extends State<MyHomePage>
     );
     WipStashModel wsm = WipStashModel(wipStashRepository: WipStashRepository());
     List<Widget> actionButtons = [
-      AddWipButton(
-        updateWipListView: () async {
-          updateWipListView.call();
-        },
-      ),
-
-      AddPatternButton(updatePatternListView: psm.reload),
-      AddYarnButton(updateYarn: ysm.reload),
+      AddWipButton(onQuitPage: wsm.reload),
+      AddPatternButton(onQuitPage: psm.reload),
+      AddYarnButton(onQuitPage: ysm.reload),
     ];
 
     return DefaultTabController(
