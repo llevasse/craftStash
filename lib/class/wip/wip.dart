@@ -118,7 +118,7 @@ Future<List<Wip>> getAllWip({
   }
 }
 
-Future<Wip> getWipById({required int id, bool withParts = false}) async {
+Future<Wip> getWipById({required int id, bool withParts = false, bool withPattern = false}) async {
   final db = (await DbService().database);
   if (db != null) {
     final List<Map<String, Object?>> patternMaps = await db.query(

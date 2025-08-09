@@ -1,5 +1,7 @@
 import 'package:craft_stash/class/wip/wip.dart';
-import 'package:craft_stash/pages/wip_page.dart';
+import 'package:craft_stash/data/repository/wip_repository.dart';
+import 'package:craft_stash/ui/wip/wip_model.dart';
+import 'package:craft_stash/ui/wip/wip_screen.dart';
 import 'package:craft_stash/widgets/wips/add_wip_from_pattern_dialog.dart';
 import 'package:flutter/material.dart';
 
@@ -33,9 +35,11 @@ class _AddWipButton extends State<AddWipButton> {
           Navigator.push(
             context,
             MaterialPageRoute<void>(
-              builder: (BuildContext context) => WipPage(
-                updateWipListView: widget.updateWipListView,
-                wip: newWip,
+              builder: (BuildContext context) => WipScreen(
+                wipModel: WipModel(
+                  wipRepository: WipRepository(),
+                  id: newWip.id,
+                ),
               ),
             ),
           );

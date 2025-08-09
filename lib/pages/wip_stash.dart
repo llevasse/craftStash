@@ -1,6 +1,8 @@
 import 'package:craft_stash/class/wip/wip.dart';
+import 'package:craft_stash/data/repository/wip_repository.dart';
 import 'package:craft_stash/main.dart';
-import 'package:craft_stash/pages/wip_page.dart';
+import 'package:craft_stash/ui/wip/wip_model.dart';
+import 'package:craft_stash/ui/wip/wip_screen.dart';
 import 'package:craft_stash/widgets/page_select_dropdown_button.dart';
 import 'package:flutter/material.dart';
 
@@ -39,8 +41,12 @@ class _WipStashPageState extends State<WipStashPage> {
               context,
               MaterialPageRoute<void>(
                 settings: RouteSettings(name: "/wip"),
-                builder: (BuildContext context) =>
-                    WipPage(updateWipListView: updateListView, wip: wip),
+                builder: (BuildContext context) => WipScreen(
+                  wipModel: WipModel(
+                    wipRepository: WipRepository(),
+                    id: wip.id,
+                  ),
+                ),
               ),
             );
             await updateListView();
