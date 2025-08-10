@@ -1,9 +1,9 @@
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/main.dart';
-import 'package:craft_stash/ui/core/count_button.dart';
+import 'package:craft_stash/ui/core/widgets/buttons/count_button.dart';
 import 'package:craft_stash/ui/row/row_model.dart';
 import 'package:craft_stash/ui/wip_part/wip_part_model.dart';
-import 'package:craft_stash/widgets/patternButtons/stitch_detail_dialog.dart';
+import 'package:craft_stash/ui/core/widgets/dialogs/stitch_detail_dialog.dart';
 import 'package:flutter/material.dart';
 
 class RowStitchCountButton extends StatelessWidget {

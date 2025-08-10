@@ -1,7 +1,7 @@
 import 'package:craft_stash/class/yarns/brand.dart';
 import 'package:craft_stash/class/yarns/material.dart';
 import 'package:craft_stash/class/yarns/yarn.dart';
-import 'package:craft_stash/widgets/int_control_button.dart';
+import 'package:craft_stash/ui/core/widgets/buttons/int_control_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 

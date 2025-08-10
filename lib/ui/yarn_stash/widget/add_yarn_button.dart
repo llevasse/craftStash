@@ -1,22 +1,12 @@
-import 'package:craft_stash/widgets/yarnButtons/yarn_collection_form.dart';
+import 'package:craft_stash/ui/yarn_stash/widget/yarn_collection_form.dart';
 import 'package:flutter/material.dart';
-
-class AddYarnButton extends StatefulWidget {
-  final Future<void> Function() onQuitPage;
-
-  const AddYarnButton({super.key, required this.onQuitPage});
-
-  @override
-  State<StatefulWidget> createState() => _AddYarnButton();
-}
 
 typedef MenuEntry = DropdownMenuEntry<String>;
 
-class _AddYarnButton extends State<AddYarnButton> {
-  @override
-  void initState() {
-    super.initState();
-  }
+class AddYarnButton extends StatelessWidget {
+  final Future<void> Function() onQuitPage;
+
+  const AddYarnButton({super.key, required this.onQuitPage});
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +15,8 @@ class _AddYarnButton extends State<AddYarnButton> {
       onPressed: () async {
         await showDialog(
           context: context,
-          builder: (BuildContext context) => YarnCollectionForm(
-            title: "Collections",
-            updateYarn: widget.onQuitPage,
-          ),
+          builder: (BuildContext context) =>
+              YarnCollectionForm(title: "Collections", updateYarn: onQuitPage),
         );
       },
 

@@ -2,8 +2,8 @@ import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/data/repository/pattern_row_repository.dart';
 import 'package:craft_stash/ui/row/row_model.dart';
 import 'package:craft_stash/ui/row/row_screen.dart';
-import 'package:craft_stash/widgets/stitches/stitch_form.dart';
-import 'package:craft_stash/widgets/stitches/stitch_list.dart';
+import 'package:craft_stash/ui/core/widgets/dialogs/new)stitch_dialog.dart';
+import 'package:craft_stash/ui/core/widgets/stitch_list.dart';
 import 'package:flutter/material.dart';
 
 class StitchesPage extends StatefulWidget {
@@ -48,7 +48,7 @@ class _StitchesPageState extends State<StitchesPage> {
                   onStitchPressed: (stitch) async {
                     return await showDialog(
                           context: context,
-                          builder: (BuildContext context) => StitchForm(
+                          builder: (BuildContext context) => NewStitchDialog(
                             base: stitch,
                             onValidate: () {
                               setState(() {});

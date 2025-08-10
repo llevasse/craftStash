@@ -1,6 +1,6 @@
 import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:craft_stash/class/yarns/yarn_collection.dart';
-import 'package:craft_stash/widgets/yarnButtons/edit_yarn_button.dart';
+import 'package:craft_stash/ui/core/widgets/buttons/edit_yarn_button.dart';
 import 'package:flutter/material.dart';
 
 class YarnListDialog extends StatefulWidget {

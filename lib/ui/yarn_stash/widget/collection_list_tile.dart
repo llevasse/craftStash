@@ -1,9 +1,9 @@
 import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:craft_stash/class/yarns/yarn_collection.dart';
 import 'package:craft_stash/ui/yarn_stash/yarn_model.dart';
-import 'package:craft_stash/widgets/yarnButtons/collection_form.dart';
-import 'package:craft_stash/widgets/yarnButtons/edit_yarn_button.dart';
-import 'package:craft_stash/widgets/yarnButtons/yarn_form.dart';
+import 'package:craft_stash/ui/yarn_stash/widget/collection_form.dart';
+import 'package:craft_stash/ui/core/widgets/buttons/edit_yarn_button.dart';
+import 'package:craft_stash/ui/core/widgets/dialogs/yarn_form_dialog.dart';
 import 'package:flutter/material.dart';
 
 class CollectionListTile extends StatelessWidget {

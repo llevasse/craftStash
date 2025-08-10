@@ -1,8 +1,8 @@
 import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:craft_stash/ui/pattern/pattern_model.dart';
-import 'package:craft_stash/widgets/yarn/pattern_yarn_list.dart';
-import 'package:craft_stash/widgets/yarn/yarn_list_dialog.dart';
-import 'package:craft_stash/widgets/yarnButtons/yarn_form.dart';
+import 'package:craft_stash/ui/core/widgets/pattern_yarn_list.dart';
+import 'package:craft_stash/ui/core/widgets/dialogs/yarn_list_dialog.dart';
+import 'package:craft_stash/ui/core/widgets/dialogs/yarn_form_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 

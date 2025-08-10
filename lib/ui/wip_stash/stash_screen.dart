@@ -4,7 +4,7 @@ import 'package:craft_stash/ui/pattern_stash/stash_model.dart';
 import 'package:craft_stash/ui/pattern_stash/widget/pattern_list_tile.dart';
 import 'package:craft_stash/ui/wip_stash/stash_model.dart';
 import 'package:craft_stash/ui/wip_stash/widget/wip_list_tile.dart';
-import 'package:craft_stash/widgets/page_select_dropdown_button.dart';
+import 'package:craft_stash/ui/core/widgets/buttons/page_select_dropdown_button.dart';
 import 'package:flutter/material.dart';
 
 class WipStashScreen extends StatelessWidget {

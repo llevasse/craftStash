@@ -2,7 +2,7 @@ import 'package:craft_stash/class/wip/wip.dart';
 import 'package:craft_stash/data/repository/wip_repository.dart';
 import 'package:craft_stash/ui/wip/wip_model.dart';
 import 'package:craft_stash/ui/wip/wip_screen.dart';
-import 'package:craft_stash/widgets/wips/add_wip_from_pattern_dialog.dart';
+import 'package:craft_stash/ui/core/widgets/dialogs/add_wip_from_pattern_dialog.dart';
 import 'package:flutter/material.dart';
 
 class AddWipButton extends StatefulWidget {

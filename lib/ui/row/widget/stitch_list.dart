@@ -2,7 +2,7 @@ import 'package:craft_stash/ui/row/row_model.dart';
 import 'package:craft_stash/ui/row/widget/color_change.dart';
 import 'package:craft_stash/ui/row/widget/start_color_button.dart';
 import 'package:craft_stash/ui/row/widget/subrow_button.dart';
-import 'package:craft_stash/widgets/stitches/stitch_list.dart';
+import 'package:craft_stash/ui/core/widgets/stitch_list.dart';
 import 'package:flutter/material.dart';
 
 class RowStitchList extends StatelessWidget {

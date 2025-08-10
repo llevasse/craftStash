@@ -1,7 +1,7 @@
 import 'package:craft_stash/ui/core/loading_screen.dart';
 import 'package:craft_stash/ui/yarn_stash/widget/stash_list_view.dart';
 import 'package:craft_stash/ui/yarn_stash/yarn_model.dart';
-import 'package:craft_stash/widgets/page_select_dropdown_button.dart';
+import 'package:craft_stash/ui/core/widgets/buttons/page_select_dropdown_button.dart';
 import 'package:flutter/material.dart';
 
 class YarnStashScreen extends StatelessWidget {

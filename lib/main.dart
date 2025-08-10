@@ -12,7 +12,7 @@ import 'package:craft_stash/ui/yarn_stash/yarn_model.dart';
 import 'package:craft_stash/ui/yarn_stash/yarn_screen.dart';
 import 'package:craft_stash/ui/pattern_stash/widget/add_pattern_button.dart';
 import 'package:craft_stash/ui/wip_stash/widget/add_wip_button.dart';
-import 'package:craft_stash/widgets/yarnButtons/add_yarn_button.dart';
+import 'package:craft_stash/ui/yarn_stash/widget/add_yarn_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:package_info_plus/package_info_plus.dart';

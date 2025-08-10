@@ -2,16 +2,10 @@ import 'package:craft_stash/pages/settings_page.dart';
 import 'package:craft_stash/pages/stitches_page.dart';
 import 'package:flutter/material.dart';
 
-class PageSelectDropdownButton extends StatefulWidget {
+class PageSelectDropdownButton extends StatelessWidget {
   final Future<void> Function() onQuit;
 
   const PageSelectDropdownButton({super.key, required this.onQuit});
-
-  @override
-  State<StatefulWidget> createState() => _PageSelectDropdownButtonState();
-}
-
-class _PageSelectDropdownButtonState extends State<PageSelectDropdownButton> {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton(
@@ -35,8 +29,7 @@ class _PageSelectDropdownButtonState extends State<PageSelectDropdownButton> {
               context,
               MaterialPageRoute<void>(
                 settings: RouteSettings(name: "Settings"),
-                builder: (BuildContext context) =>
-                    SettingsPage(onQuit: widget.onQuit),
+                builder: (BuildContext context) => SettingsPage(onQuit: onQuit),
               ),
             );
           },

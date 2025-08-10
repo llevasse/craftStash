@@ -1,4 +1,4 @@
-import 'package:craft_stash/ui/core/count_button.dart';
+import 'package:craft_stash/ui/core/widgets/buttons/count_button.dart';
 import 'package:craft_stash/ui/wip_part/wip_part_model.dart';
 import 'package:craft_stash/ui/wip_part/wip_part_model.dart';
 import 'package:flutter/material.dart';

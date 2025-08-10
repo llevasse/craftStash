@@ -1,7 +1,7 @@
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/ui/core/pattern_detail_buttons/add_custom_detail_button.dart';
-import 'package:craft_stash/widgets/yarn/pattern_yarn_list.dart';
+import 'package:craft_stash/ui/core/widgets/pattern_yarn_list.dart';
 import 'package:flutter/material.dart';
 
 class StartColorButton extends AddCustomDetailButton {

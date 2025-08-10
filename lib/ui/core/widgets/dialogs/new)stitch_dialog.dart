@@ -1,18 +1,18 @@
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/stitch.dart';
-import 'package:craft_stash/ui/core/error_dialog.dart';
+import 'package:craft_stash/ui/core/widgets/dialogs/error_dialog.dart';
 import 'package:flutter/material.dart';
 
-class StitchForm extends StatefulWidget {
+class NewStitchDialog extends StatefulWidget {
   final void Function() onValidate;
   final Stitch? base;
-  const StitchForm({super.key, required this.onValidate, this.base});
+  const NewStitchDialog({super.key, required this.onValidate, this.base});
 
   @override
-  State<StatefulWidget> createState() => _StitchFormState();
+  State<StatefulWidget> createState() => _NewStitchDialogState();
 }
 
-class _StitchFormState extends State<StitchForm> {
+class _NewStitchDialogState extends State<NewStitchDialog> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String abreviation = "";
   String? fullName;
