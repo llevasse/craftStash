@@ -55,7 +55,7 @@ class PatternRowRepository {
   Future<void> deleteRow(int id) async {
     final db = (await DbService().database);
     if (db != null) {
-      // await deletePatternRowDetailInDbByRowId(id);
+      // await deletePatternRowDetailByRowId(id);
       await db.delete(_tableName, where: "row_id = ?", whereArgs: [id]);
     } else {
       throw DatabaseDoesNotExistException("Could not get database");

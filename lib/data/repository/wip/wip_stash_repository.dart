@@ -1,9 +1,10 @@
-import 'package:craft_stash/class/wip/wip.dart' as craft;
+import 'package:craft_stash/class/wip/wip.dart';
+import 'package:craft_stash/data/repository/wip/wip_repository.dart';
 
 class WipStashRepository {
   const WipStashRepository();
 
-  Future<List<craft.Wip>> getAllWip() async {
-    return await craft.getAllWip();
+  Future<List<Wip>> getAllWip() async {
+    return await WipRepository().getAllWip();
   }
 }

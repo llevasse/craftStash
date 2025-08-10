@@ -45,7 +45,7 @@ class WipListTile extends StatelessWidget {
               ),
               TextButton(
                 onPressed: () async {
-                  await craft.deleteWipInDb(wip.id);
+                  await WipRepository().deleteWip(wip.id);
                   Navigator.pop(context);
                 },
                 child: Text("Delete"),

@@ -1,5 +1,6 @@
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/class/stitch.dart';
+import 'package:craft_stash/data/repository/stitch_repository.dart';
 import 'package:craft_stash/ui/core/pattern_detail_buttons/add_custom_detail_button.dart';
 import 'package:craft_stash/ui/core/widgets/pattern_yarn_list.dart';
 import 'package:flutter/material.dart';
@@ -31,12 +32,12 @@ class StartColorButton extends AddCustomDetailButton {
                         PatternRowDetail p = PatternRowDetail(
                           rowId: rowId,
                           stitchId: stitchToIdMap["start color"]!,
-                          stitch: await getStitchInDbById(
+                          stitch: await StitchRepository().getStitchById(
                             stitchToIdMap["start color"]!,
                           ),
                           inPatternYarnId: yarn.inPreviewId,
                         );
-                        // await insertPatternRowDetailInDb(p);
+                        // await insertPatternRowDetail(p);
                         Navigator.pop(context, p);
                       },
                     ),

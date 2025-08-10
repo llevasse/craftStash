@@ -4,6 +4,7 @@ import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/data/repository/pattern/pattern_detail_repository.dart';
 import 'package:craft_stash/data/repository/pattern/pattern_row_repository.dart';
+import 'package:craft_stash/data/repository/stitch_repository.dart';
 import 'package:craft_stash/main.dart';
 import 'package:craft_stash/ui/row/widget/stitch_count_button.dart';
 import 'package:flutter/material.dart';
@@ -352,10 +353,10 @@ class PatternRowModel extends ChangeNotifier {
           sequenceId: _row!.rowId,
           stitchNb: _row!.stitchesPerRow,
         );
-        detail.stitchId = await insertStitchInDb(detail.stitch!);
+        detail.stitchId = await StitchRepository().insertStitch(detail.stitch!);
       } else {
         await _patternRowRepository.updateRow(row!);
-        await updateStitchInDb(
+        await StitchRepository().updateStitch(
           Stitch(
             id: stitchId as int,
             abreviation: _row!.toString(),

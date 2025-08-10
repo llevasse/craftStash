@@ -1,6 +1,7 @@
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/class/yarns/yarn.dart';
+import 'package:craft_stash/data/repository/stitch_repository.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -100,7 +101,10 @@ class PatternDetailRepository {
         for (Map<String, Object?> map in patternRowDetailMaps) _fromMap(map),
       ];
       for (PatternRowDetail detail in l) {
-        detail.stitch = await getStitchInDbById(detail.stitchId, db);
+        detail.stitch = await StitchRepository().getStitchById(
+          detail.stitchId,
+          db,
+        );
       }
       return l;
     } else {

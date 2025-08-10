@@ -8,6 +8,7 @@ import 'package:craft_stash/data/repository/pattern/pattern_detail_repository.da
 import 'package:craft_stash/data/repository/pattern/pattern_part_repository.dart';
 import 'package:craft_stash/data/repository/pattern/pattern_repository.dart';
 import 'package:craft_stash/data/repository/pattern/pattern_row_repository.dart';
+import 'package:craft_stash/data/repository/stitch_repository.dart';
 import 'package:craft_stash/data/repository/yarn/yarn_repository.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -166,7 +167,7 @@ Future<PatternPart> _createLongTentacles(int patternId, Database? db) async {
 
 Future<void> insertJellyFishPattern([Database? db]) async {
   // print("insert jelly");
-  List<Stitch> l = await getAllStitchesInDb(db);
+  List<Stitch> l = await StitchRepository().getAllStitches(db);
   // print(l);
   for (Stitch s in l) {
     _stitchesMap.addAll({s.abreviation: s});

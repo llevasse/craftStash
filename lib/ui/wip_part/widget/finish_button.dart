@@ -1,4 +1,5 @@
 import 'package:craft_stash/class/wip/wip_part.dart';
+import 'package:craft_stash/data/repository/wip/wip_part_repository.dart';
 import 'package:craft_stash/ui/wip_part/wip_part_model.dart';
 import 'package:flutter/material.dart';
 
@@ -10,7 +11,7 @@ OutlinedButton wipPartFinishedButton({
   return OutlinedButton(
     onPressed: () async {
       wpm.wipPart!.finished = wpm.wipPart!.finished == 0 ? 1 : 0;
-      await updateWipPartInDb(wpm.wipPart!);
+      await WipPartRepository().updateWipPart(wpm.wipPart!);
       Navigator.pop(context, wpm.wipPart);
     },
     style: ButtonStyle(

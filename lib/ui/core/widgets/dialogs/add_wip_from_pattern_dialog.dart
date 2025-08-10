@@ -3,6 +3,8 @@ import 'package:craft_stash/class/wip/wip.dart';
 import 'package:craft_stash/class/wip/wip_part.dart';
 import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:craft_stash/data/repository/pattern/pattern_repository.dart';
+import 'package:craft_stash/data/repository/wip/wip_part_repository.dart';
+import 'package:craft_stash/data/repository/wip/wip_repository.dart';
 import 'package:craft_stash/data/repository/yarn/yarn_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
@@ -40,20 +42,20 @@ class _AddWipFromPatternDialogState extends State<AddWipFromPatternDialog> {
               name: patterns[index].name,
               hookSize: patterns[index].hookSize,
             );
-            newWip.id = await insertWipInDb(newWip);
+            newWip.id = await WipRepository().insertWip(newWip);
             List<Yarn> yarns = await YarnRepository().getAllYarnByPatternId(
               patterns[index].patternId,
             );
             for (Yarn yarn in yarns) {
               if (yarn.inPreviewId == null) continue;
-              await insertYarnInWip(
+              await WipRepository().insertYarnInWip(
                 yarnId: yarn.id,
                 wipId: newWip.id,
                 inPreviewId: yarn.inPreviewId!,
               );
             }
             for (PatternPart part in patterns[index].parts) {
-              await insertWipPartInDb(
+              await WipPartRepository().insertWipPart(
                 WipPart(wipId: newWip.id, partId: part.partId),
               );
             }

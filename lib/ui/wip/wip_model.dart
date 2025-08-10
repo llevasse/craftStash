@@ -23,7 +23,7 @@ class WipModel extends ChangeNotifier {
   Future<void> load() async {
     try {
       _wip = await _wipRepository.getWipById(id: id);
-      _yarnNameMap = await _wipRepository.getYarnIdToName(id: id);
+      _yarnNameMap = await _wipRepository.getYarnIdToName(id);
       loaded = true;
     } finally {
       notifyListeners();
@@ -51,13 +51,13 @@ class WipModel extends ChangeNotifier {
   }
 
   Future<void> deleteWip() async {
-    await deleteWipInDb(_wip!.id);
+    await _wipRepository.deleteWip(_wip!.id);
   }
 
   Future<bool> saveWip() async {
     if (formKey.currentState!.validate()) {
       formKey.currentState!.save();
-      await updateWipInDb(_wip!);
+      await _wipRepository.updateWip(_wip!);
       return true;
     }
     return false;

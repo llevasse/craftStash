@@ -1,5 +1,6 @@
 import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/data/repository/pattern/pattern_row_repository.dart';
+import 'package:craft_stash/data/repository/stitch_repository.dart';
 import 'package:craft_stash/ui/row/row_model.dart';
 import 'package:craft_stash/ui/row/row_screen.dart';
 import 'package:craft_stash/ui/core/widgets/dialogs/new_stitch_dialog.dart';
@@ -21,7 +22,7 @@ class _StitchesPageState extends State<StitchesPage> {
   }
 
   void printAllStitch() async {
-    List<Stitch> stitches = await getAllStitchesInDb();
+    List<Stitch> stitches = await StitchRepository().getAllStitches();
     for (Stitch s in stitches) {
       s.printDetails();
     }

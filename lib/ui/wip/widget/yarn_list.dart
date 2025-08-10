@@ -1,5 +1,5 @@
-import 'package:craft_stash/class/wip/wip.dart';
 import 'package:craft_stash/class/yarns/yarn.dart';
+import 'package:craft_stash/data/repository/wip/wip_repository.dart';
 import 'package:craft_stash/ui/wip/wip_model.dart';
 import 'package:craft_stash/ui/core/widgets/pattern_yarn_list.dart';
 import 'package:craft_stash/ui/core/widgets/dialogs/yarn_list_dialog.dart';
@@ -41,7 +41,7 @@ class WipYarnList extends StatelessWidget {
       builder: (BuildContext context) => YarnListDialog(
         onPressed: (newYarn, numberOfYarns) async {
           try {
-            await updateYarnInWip(
+            await WipRepository().updateYarnInWip(
               yarnId: newYarn.id,
               wipId: wipModel.wip!.id,
               inPreviewId: inPreviewId,

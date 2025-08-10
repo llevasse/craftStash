@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/data/repository/pattern/pattern_stash_repository.dart';
+import 'package:craft_stash/data/repository/stitch_repository.dart';
 import 'package:craft_stash/data/repository/wip/wip_stash_repository.dart';
 import 'package:craft_stash/data/repository/yarn/yarn_stash_repository.dart';
 import 'package:craft_stash/ui/pattern_stash/stash_model.dart';
@@ -33,7 +34,7 @@ Future<void> main() async {
   }
 
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  await setStitchToIdMap();
+  await StitchRepository().setStitchToIdMap();
   runApp(const MyApp());
 }
 
