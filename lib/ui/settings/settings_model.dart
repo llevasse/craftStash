@@ -8,9 +8,9 @@ import 'package:craft_stash/class/patterns/patterns.dart' as craft;
 class SettingsModel extends ChangeNotifier {
   SettingsModel({
     required this.onQuit,
-    required SettingsRepository SettingsRepository,
-  }) : _SettingsRepository = SettingsRepository;
-  final SettingsRepository _SettingsRepository;
+    required SettingsRepository settingsRepository,
+  }) : _settingsRepository = settingsRepository;
+  final SettingsRepository _settingsRepository;
 
   final Future<void> Function() onQuit;
 

@@ -1,7 +1,9 @@
 import 'package:craft_stash/data/repository/settings_repository.dart';
-import 'package:craft_stash/pages/stitches_page.dart';
+import 'package:craft_stash/data/repository/stitch_repository.dart';
 import 'package:craft_stash/ui/settings/settings_model.dart';
 import 'package:craft_stash/ui/settings/settings_screen.dart';
+import 'package:craft_stash/ui/stitch/stitch_model.dart';
+import 'package:craft_stash/ui/stitch/stitch_screen.dart';
 import 'package:flutter/material.dart';
 
 class PageSelectDropdownButton extends StatelessWidget {
@@ -19,7 +21,11 @@ class PageSelectDropdownButton extends StatelessWidget {
               context,
               MaterialPageRoute<void>(
                 settings: RouteSettings(name: "Stitches"),
-                builder: (BuildContext context) => StitchesPage(),
+                builder: (BuildContext context) => StitchScreen(
+                  stitchModel: StitchModel(
+                    stitchRepository: StitchRepository(),
+                  ),
+                ),
               ),
             );
           },
@@ -34,7 +40,7 @@ class PageSelectDropdownButton extends StatelessWidget {
                 builder: (BuildContext context) => SettingsScreen(
                   settingsModel: SettingsModel(
                     onQuit: onQuit,
-                    SettingsRepository: SettingsRepository(),
+                    settingsRepository: SettingsRepository(),
                   ),
                 ),
               ),
