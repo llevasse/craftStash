@@ -1,3 +1,4 @@
+import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/class/stitch.dart';
@@ -10,8 +11,7 @@ class PatternRowModel extends ChangeNotifier {
   PatternRowModel({
     required PatternRowRepository patternRowRepository,
     this.yarnNameMap,
-    this.partId,
-    this.patternId,
+    this.part,
     this.isSubRow = false,
     this.stitchId,
     this.id,
@@ -23,8 +23,7 @@ class PatternRowModel extends ChangeNotifier {
   final int? stitchId;
 
   int? id;
-  final int? partId;
-  final int? patternId;
+  final PatternPart? part;
 
   PatternRow? _row;
   PatternRow? get row => _row;
@@ -45,7 +44,7 @@ class PatternRowModel extends ChangeNotifier {
   Future<void> load() async {
     try {
       if (id != null) {
-        _row = await _patternRowRepository.getPatternRowById(id: id!);
+        _row = await _patternRowRepository.getRowById(id: id!);
         for (PatternRowDetail detail in _row!.details) {
           String text = detail.stitch!.abreviation;
           bool isColorChange = false;
@@ -69,10 +68,15 @@ class PatternRowModel extends ChangeNotifier {
           );
         }
       } else {
-        _row = PatternRow(startRow: 0, numberOfRows: 0, stitchesPerRow: 0);
-        _row?.rowId = await _patternRowRepository.insertRow(
-          partId: isSubRow == false ? partId : null,
+        _row = PatternRow(
+          startRow: part!.rows.isEmpty
+              ? 1
+              : part!.rows.last.startRow + part!.rows.last.numberOfRows,
+          numberOfRows: 1,
+          stitchesPerRow: 0,
+          partId: isSubRow == false ? part!.partId : null,
         );
+        _row?.rowId = await _patternRowRepository.insertRow(patternRow: _row!);
       }
       String preview = _row!.detailsAsString();
       if (yarnNameMap != null) {
@@ -296,10 +300,10 @@ class PatternRowModel extends ChangeNotifier {
     if (formKey.currentState!.validate()) {
       if (debug) print("Row stitch nb : ${_row?.stitchesPerRow}");
       if (_row!.stitchesPerRow < 1) {
-        await deletePatternRowInDb(_row!.rowId);
+        await _patternRowRepository.deleteRow(_row!.rowId);
       } else {
         _row?.preview = _row?.detailsAsString();
-        await updatePatternRowInDb(row!);
+        await _patternRowRepository.updateRow(row!);
         for (int i = 0; i < _row!.details.length; i++) {
           if (_row?.details[i].repeatXTime != 0) {
             _row?.details[i].rowId = _row!.rowId;
@@ -345,7 +349,7 @@ class PatternRowModel extends ChangeNotifier {
         );
         detail.stitchId = await insertStitchInDb(detail.stitch!);
       } else {
-        await updatePatternRowInDb(row!);
+        await _patternRowRepository.updateRow(row!);
         await updateStitchInDb(
           Stitch(
             id: stitchId as int,
@@ -376,6 +380,8 @@ class PatternRowModel extends ChangeNotifier {
   }
 
   Future<void> deleteRow() async {
-    if (_row != null) await deletePatternRowInDb(_row!.rowId);
+    if (_row != null) {
+      await _patternRowRepository.deleteRow(_row!.rowId);
+    }
   }
 }

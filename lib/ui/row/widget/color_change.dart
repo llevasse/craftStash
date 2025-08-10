@@ -8,6 +8,6 @@ AddCustomDetailButton rowColorChangeButton({
   return ColorChangeButton(
     onPressed: patternRowModel.addColorChange,
     rowId: patternRowModel.row!.rowId,
-    patternId: patternRowModel.patternId!,
+    patternId: patternRowModel.part!.patternId,
   );
 }

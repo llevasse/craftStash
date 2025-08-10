@@ -19,14 +19,17 @@ class PatternModel extends ChangeNotifier {
   Future<void> load() async {
     try {
       if (id != null) {
-        _pattern = await _patternRepository.getPatternById(id: id!);
+        _pattern = await _patternRepository.getPatternById(
+          id: id!,
+          withParts: true,
+        );
         loaded = true;
       } else {
-        _pattern = craft.Pattern(
-          patternId: await _patternRepository.insertPattern(
-            pattern: craft.Pattern(),
-          ),
+        _pattern = craft.Pattern();
+        _pattern!.patternId = await _patternRepository.insertPattern(
+          pattern: _pattern!,
         );
+        id = _pattern!.patternId;
         loaded = true;
       }
     } finally {
@@ -35,17 +38,10 @@ class PatternModel extends ChangeNotifier {
   }
 
   Future<void> reload() async {
-    try {
-      loaded = false;
-      notifyListeners();
+    loaded = false;
+    notifyListeners();
 
-      if (id != null) {
-        _pattern = await _patternRepository.getPatternById(id: id!);
-        loaded = true;
-      }
-    } finally {
-      notifyListeners();
-    }
+    load();
   }
 
   void setTitle(String title) {

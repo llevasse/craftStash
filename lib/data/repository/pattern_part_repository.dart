@@ -1,6 +1,7 @@
 import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/data/repository/pattern_repository.dart';
+import 'package:craft_stash/data/repository/pattern_row_repository.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -55,7 +56,7 @@ class PatternPartRepository {
   Future<void> deletePart(int id) async {
     final db = (await DbService().database);
     if (db != null) {
-      await deletePatternRowInDbByPartId(id);
+      await PatternRowRepository().deleteRowByPartId(id);
       await db.delete(_tablename, where: "part_id = ?", whereArgs: [id]);
     } else {
       throw DatabaseDoesNotExistException("Could not get database");
@@ -84,7 +85,11 @@ class PatternPartRepository {
       List<PatternPart> l = [for (final map in patternPartMaps) _fromMap(map)];
       if (withRow == true) {
         for (PatternPart part in l) {
-          part.rows = await getAllPatternRow(part.partId, withDetails, db);
+          part.rows = await PatternRowRepository().getAllRows(
+            part.partId,
+            withDetails,
+            db,
+          );
         }
       }
       return (l);
@@ -108,7 +113,9 @@ class PatternPartRepository {
         limit: 1,
       );
       PatternPart p = _fromMap(patternPartMaps[0]);
-      if (withRows) p.rows = await getAllPatternRow(id, withDetails, db);
+      if (withRows) {
+        p.rows = await PatternRowRepository().getAllRows(id, withDetails, db);
+      }
       return (p);
     } else {
       throw DatabaseDoesNotExistException("Could not get database");

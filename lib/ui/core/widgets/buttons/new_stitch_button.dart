@@ -1,6 +1,6 @@
 import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/ui/core/pattern_detail_buttons/add_custom_detail_button.dart';
-import 'package:craft_stash/ui/core/widgets/dialogs/new)stitch_dialog.dart';
+import 'package:craft_stash/ui/core/widgets/dialogs/new_stitch_dialog.dart';
 import 'package:flutter/material.dart';
 
 class NewStitchButton extends StatelessWidget {

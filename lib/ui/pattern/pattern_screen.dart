@@ -3,7 +3,7 @@ import 'package:craft_stash/ui/pattern/pattern_model.dart';
 import 'package:craft_stash/ui/pattern/widget/assembly_input.dart';
 import 'package:craft_stash/ui/pattern/widget/delete_button.dart';
 import 'package:craft_stash/ui/pattern/widget/hook_size_input.dart';
-import 'package:craft_stash/ui/pattern/widget/parts_list_tile.dart';
+import 'package:craft_stash/ui/pattern/widget/parts_list.dart';
 import 'package:craft_stash/ui/pattern/widget/save_button.dart';
 import 'package:craft_stash/ui/pattern/widget/title_input.dart';
 import 'package:craft_stash/ui/pattern/widget/yarn_list.dart';
@@ -65,24 +65,13 @@ class PatternScreen extends StatelessWidget {
                       context: context,
                       patternModel: patternModel,
                     ),
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: patternModel.pattern!.parts.length,
-                        itemBuilder: (_, index) => PatternPartsListTile(
-                          part: patternModel.pattern!.parts[index],
-                          patternModel: patternModel,
-                        ),
-                      ),
-                    ),
+                    Expanded(child: patternPartListView(patternModel)),
                     patternAssemblyInput(patternModel: patternModel),
                   ],
                 ),
               ),
             ),
-            floatingActionButton: AddPartButton(
-              updatePatternListView: patternModel.reload,
-              pattern: patternModel.pattern!,
-            ),
+            floatingActionButton: AddPartButton(patternModel: patternModel),
           );
         }
       },

@@ -1,23 +1,19 @@
-import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/data/repository/pattern_row_repository.dart';
+import 'package:craft_stash/ui/pattern_part/pattern_part_model.dart';
 import 'package:craft_stash/ui/row/row_model.dart';
 import 'package:craft_stash/ui/row/row_screen.dart';
 
 import 'package:flutter/material.dart';
 
 class AddRowButton extends StatelessWidget {
-  final Future<void> Function() updatePattern;
-  PatternPart part;
+  PatternPartModel patternPartModel;
   int startRow;
   int numberOfRows;
-  Map<int, String> yarnIdToNameMap;
   AddRowButton({
     super.key,
-    required this.part,
-    required this.updatePattern,
+    required this.patternPartModel,
     this.startRow = 1,
     this.numberOfRows = 1,
-    this.yarnIdToNameMap = const {},
   });
 
   @override
@@ -32,13 +28,13 @@ class AddRowButton extends StatelessWidget {
             builder: (BuildContext context) => RowScreen(
               patternRowModel: PatternRowModel(
                 patternRowRepository: PatternRowRepository(),
-                partId: part.partId,
-                patternId: part.patternId,
-                yarnNameMap: yarnIdToNameMap,
+                part: patternPartModel.part,
+                yarnNameMap: patternPartModel.yarnNameMap,
               ),
             ),
           ),
         );
+        patternPartModel.reload();
       },
       style: ButtonStyle(
         side: WidgetStatePropertyAll(

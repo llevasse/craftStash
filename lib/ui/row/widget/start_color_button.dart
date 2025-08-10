@@ -8,6 +8,6 @@ AddCustomDetailButton rowStartColorButton({
   return StartColorButton(
     onPressed: patternRowModel.addStartColor,
     rowId: patternRowModel.row!.rowId,
-    patternId: patternRowModel.patternId!,
+    patternId: patternRowModel.part!.patternId,
   );
 }

@@ -1,5 +1,6 @@
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/stitch.dart';
+import 'package:craft_stash/data/repository/pattern_row_repository.dart';
 import 'package:craft_stash/ui/core/widgets/dialogs/error_dialog.dart';
 import 'package:flutter/material.dart';
 
@@ -73,7 +74,7 @@ class _NewStitchDialogState extends State<NewStitchDialog> {
           onPressed: () async {
             try {
               await deleteStitchInDb(widget.base!);
-              await deletePatternRowInDb(widget.base!.sequenceId!);
+              await PatternRowRepository().deleteRow(widget.base!.sequenceId!);
               Navigator.pop(context);
             } on StitchIsUsed catch (e) {
               showDialog(

@@ -24,8 +24,7 @@ class RowSubrowButton extends AddCustomDetailButton {
                       patternRowModel: PatternRowModel(
                         patternRowRepository: PatternRowRepository(),
                         yarnNameMap: patternRowModel.yarnNameMap,
-                        partId: patternRowModel.partId,
-                        patternId: patternRowModel.patternId,
+                        part: patternRowModel.part,
                         isSubRow: true,
                       ),
                     ),

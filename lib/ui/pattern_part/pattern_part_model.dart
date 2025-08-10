@@ -29,6 +29,8 @@ class PatternPartModel extends ChangeNotifier {
         _part = await _patternPartRepository.getPartById(id: id!);
       } else {
         _part = PatternPart(name: "New part", patternId: patternId);
+        id = await _patternPartRepository.insertPart(_part!);
+        _part!.partId = id!;
       }
       _yarnNameMap = await _patternPartRepository.getYarnIdToNameMap(
         patternId: patternId,

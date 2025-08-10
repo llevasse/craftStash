@@ -1,5 +1,6 @@
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
+import 'package:craft_stash/data/repository/pattern_row_repository.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -135,7 +136,7 @@ Future<void> _insertScIncInDb({
   Database? db,
 }) async {
   PatternRow row = PatternRow(startRow: 0, numberOfRows: 0, stitchesPerRow: 3);
-  row.rowId = await insertPatternRowInDb(row, db);
+  row.rowId = await PatternRowRepository().insertRow(patternRow: row, db: db);
   row.details = [
     PatternRowDetail(rowId: row.rowId, stitchId: stitches[2].id),
     PatternRowDetail(rowId: row.rowId, stitchId: stitches[6].id),
@@ -164,7 +165,7 @@ Future<void> _insertScDecInDb({
   Database? db,
 }) async {
   PatternRow row = PatternRow(startRow: 0, numberOfRows: 0, stitchesPerRow: 2);
-  row.rowId = await insertPatternRowInDb(row, db);
+  row.rowId = await PatternRowRepository().insertRow(patternRow: row, db: db);
   row.details = [
     PatternRowDetail(rowId: row.rowId, stitchId: stitches[2].id),
     PatternRowDetail(rowId: row.rowId, stitchId: stitches[7].id),
@@ -265,7 +266,10 @@ Future<List<Stitch>> getAllStitchesInDb([Database? db]) async {
     for (Map<String, Object?> map in stitchMaps) {
       l.add(_fromMap(map));
       if (l.last.sequenceId != null) {
-        l.last.row = await getPatternRowByRowId(l.last.sequenceId!, db);
+        l.last.row = await PatternRowRepository().getRowById(
+          id: l.last.sequenceId!,
+          db: db,
+        );
       }
     }
     return l;
@@ -286,7 +290,10 @@ Future<List<Stitch>> getAllVisibleStitchesInDb([Database? db]) async {
     for (Map<String, Object?> map in stitchMaps) {
       l.add(_fromMap(map));
       if (l.last.sequenceId != null) {
-        l.last.row = await getPatternRowByRowId(l.last.sequenceId!, db);
+        l.last.row = await PatternRowRepository().getRowById(
+          id: l.last.sequenceId!,
+          db: db,
+        );
       }
     }
     return l;
@@ -309,7 +316,10 @@ Future<Stitch> getStitchInDbById(int id, [Database? db]) async {
     }
     Stitch s = _fromMap(stitchMaps.first);
     if (s.isSequence != 0 && s.sequenceId != null) {
-      s.row = await getPatternRowByRowId(s.sequenceId!, db);
+      s.row = await PatternRowRepository().getRowById(
+        id: s.sequenceId!,
+        db: db,
+      );
     }
     return s;
   } else {

@@ -36,7 +36,7 @@ class RowListTile extends StatelessWidget {
       subtitle: preview == null ? null : Text(preview),
       contentPadding: EdgeInsets.all(0),
       onTap: () async {
-        PatternRow r = await getPatternRowByRowId(row.rowId);
+        PatternRow r = await PatternRowRepository().getRowById(id: row.rowId);
         await Navigator.push(
           context,
           MaterialPageRoute<void>(
@@ -44,8 +44,7 @@ class RowListTile extends StatelessWidget {
             builder: (BuildContext context) => RowScreen(
               patternRowModel: PatternRowModel(
                 patternRowRepository: PatternRowRepository(),
-                partId: patternPartModel.part!.partId,
-                patternId: patternPartModel.patternId,
+                part: patternPartModel.part,
                 id: row.rowId,
                 yarnNameMap: patternPartModel.yarnNameMap,
               ),
@@ -67,7 +66,7 @@ class RowListTile extends StatelessWidget {
               ),
               TextButton(
                 onPressed: () async {
-                  await deletePatternRowInDb(row.rowId);
+                  await PatternRowRepository().deleteRow(row.rowId);
                   Navigator.pop(context);
                 },
                 child: Text("Delete"),
