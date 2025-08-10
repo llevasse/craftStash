@@ -1,5 +1,6 @@
 import 'package:craft_stash/class/patterns/pattern_row.dart' as patternRow;
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
+import 'package:craft_stash/data/repository/pattern_detail_repository.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -94,7 +95,9 @@ class PatternRowRepository {
       ];
       if (withDetails == true) {
         for (patternRow.PatternRow row in l) {
-          row.details = await getAllPatternRowDetailByRowId(row.rowId);
+          row.details = await PatternDetailRepository().getAllDetailsByRowId(
+            row.rowId,
+          );
         }
       }
       return (l);
@@ -116,7 +119,10 @@ class PatternRowRepository {
       List<patternRow.PatternRow> l = List.empty(growable: true);
       for (Map<String, Object?> map in patternRowMaps) {
         patternRow.PatternRow tmp = _fromMap(map);
-        tmp.details = await getAllPatternRowDetailByRowId(tmp.rowId, db);
+        tmp.details = await PatternDetailRepository().getAllDetailsByRowId(
+          tmp.rowId,
+          db,
+        );
         l.add(tmp);
       }
       return (l[0]);
@@ -140,7 +146,10 @@ class PatternRowRepository {
       List<patternRow.PatternRow> l = List.empty(growable: true);
       for (Map<String, Object?> map in patternRowMaps) {
         patternRow.PatternRow tmp = _fromMap(map);
-        tmp.details = await getAllPatternRowDetailByRowId(tmp.rowId, db);
+        tmp.details = await PatternDetailRepository().getAllDetailsByRowId(
+          tmp.rowId,
+          db,
+        );
         l.add(tmp);
       }
       return (l[0]);

@@ -4,6 +4,7 @@ import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
 import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/class/yarns/yarn.dart';
+import 'package:craft_stash/data/repository/pattern_detail_repository.dart';
 import 'package:craft_stash/data/repository/pattern_part_repository.dart';
 import 'package:craft_stash/data/repository/pattern_repository.dart';
 import 'package:craft_stash/data/repository/pattern_row_repository.dart';
@@ -25,7 +26,7 @@ Future<PatternPart> _createHeadPart(int patternId, Database? db) async {
     preview: "6sc",
   );
   r1.rowId = await PatternRowRepository().insertRow(patternRow: r1, db: db);
-  await insertPatternRowDetailInDb(
+  await PatternDetailRepository().insertDetail(
     PatternRowDetail(
       rowId: r1.rowId,
       repeatXTime: 6,
@@ -42,7 +43,7 @@ Future<PatternPart> _createHeadPart(int patternId, Database? db) async {
     preview: "6inc",
   );
   r2.rowId = await PatternRowRepository().insertRow(patternRow: r2, db: db);
-  await insertPatternRowDetailInDb(
+  await PatternDetailRepository().insertDetail(
     PatternRowDetail(
       rowId: r2.rowId,
       repeatXTime: 6,
@@ -64,7 +65,7 @@ Future<PatternPart> _createHeadPart(int patternId, Database? db) async {
     repeatXTime: 6,
     stitchId: _stitchesMap["(sc, inc)"]!.id,
   );
-  dr3.rowDetailId = await insertPatternRowDetailInDb(dr3, db);
+  dr3.rowDetailId = await PatternDetailRepository().insertDetail(dr3, db);
 
   PatternRow r4 = PatternRow(
     partId: head.partId,
@@ -74,7 +75,7 @@ Future<PatternPart> _createHeadPart(int patternId, Database? db) async {
     preview: "18sc",
   );
   r4.rowId = await PatternRowRepository().insertRow(patternRow: r4, db: db);
-  await insertPatternRowDetailInDb(
+  await PatternDetailRepository().insertDetail(
     PatternRowDetail(
       rowId: r4.rowId,
       repeatXTime: 18,
@@ -91,7 +92,7 @@ Future<PatternPart> _createHeadPart(int patternId, Database? db) async {
     preview: "9dec",
   );
   r6.rowId = await PatternRowRepository().insertRow(patternRow: r6, db: db);
-  await insertPatternRowDetailInDb(
+  await PatternDetailRepository().insertDetail(
     PatternRowDetail(
       rowId: r6.rowId,
       repeatXTime: 9,
@@ -121,7 +122,7 @@ Future<PatternPart> _createShortTentacles(int patternId, Database? db) async {
     preview: "8ch",
   );
   r1.rowId = await PatternRowRepository().insertRow(patternRow: r1, db: db);
-  await insertPatternRowDetailInDb(
+  await PatternDetailRepository().insertDetail(
     PatternRowDetail(
       rowId: r1.rowId,
       repeatXTime: 8,
@@ -150,7 +151,7 @@ Future<PatternPart> _createLongTentacles(int patternId, Database? db) async {
     preview: "12ch",
   );
   r1.rowId = await PatternRowRepository().insertRow(patternRow: r1, db: db);
-  await insertPatternRowDetailInDb(
+  await PatternDetailRepository().insertDetail(
     PatternRowDetail(
       rowId: r1.rowId,
       repeatXTime: 12,

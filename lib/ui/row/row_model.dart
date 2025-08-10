@@ -2,6 +2,7 @@ import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/class/stitch.dart';
+import 'package:craft_stash/data/repository/pattern_detail_repository.dart';
 import 'package:craft_stash/data/repository/pattern_row_repository.dart';
 import 'package:craft_stash/main.dart';
 import 'package:craft_stash/ui/row/widget/stitch_count_button.dart';
@@ -168,7 +169,7 @@ class PatternRowModel extends ChangeNotifier {
     if (detail == null) return;
     if (row!.details.isNotEmpty &&
         row!.details.last.hashCode == detail.hashCode) {
-      await deletePatternRowDetailInDb(detail.rowDetailId);
+      await PatternDetailRepository().deleteDetail(detail.rowDetailId);
       row!.details.last.repeatXTime += 1;
       detailsCountButtonList.removeLast();
     } else {
@@ -203,9 +204,11 @@ class PatternRowModel extends ChangeNotifier {
     if (detail == null) return;
     if (_row!.details.isNotEmpty) {
       if (_row!.details.last.hashCode == detail.hashCode) {
-        await deletePatternRowDetailInDb(detail.rowDetailId);
+        await PatternDetailRepository().deleteDetail(detail.rowDetailId);
       } else if (_row!.details.last.stitchId == stitchToIdMap['color change']) {
-        await deletePatternRowDetailInDb(_row!.details.last.rowDetailId);
+        await PatternDetailRepository().deleteDetail(
+          _row!.details.last.rowDetailId,
+        );
         _row!.details.removeLast();
         detailsCountButtonList.removeLast();
         _row!.details.add(detail);
@@ -221,7 +224,7 @@ class PatternRowModel extends ChangeNotifier {
         );
       } else if (_row!.details.last.stitchId == 'start color') {
         _row!.details.last.inPatternYarnId = detail.inPatternYarnId;
-        await updatePatternRowDetailInDb(_row!.details.last);
+        await PatternDetailRepository().updateDetail(_row!.details.last);
       } else {
         _row!.details.add(detail);
         detailsCountButtonList.add(
@@ -255,7 +258,7 @@ class PatternRowModel extends ChangeNotifier {
     if (_row!.details.isNotEmpty) {
       if (_row!.details.first.stitchId == stitchToIdMap["start color"]) {
         _row!.details.first.inPatternYarnId = detail.inPatternYarnId;
-        await updatePatternRowDetailInDb(_row!.details.first);
+        await PatternDetailRepository().updateDetail(_row!.details.first);
       } else {
         _row!.details.insert(0, detail);
         detailsCountButtonList.insert(
@@ -309,13 +312,15 @@ class PatternRowModel extends ChangeNotifier {
             _row?.details[i].rowId = _row!.rowId;
             _row?.details[i].order = i;
             if (_row?.details[i].rowDetailId == 0) {
-              await insertPatternRowDetailInDb(_row!.details[i]);
+              await PatternDetailRepository().insertDetail(_row!.details[i]);
             } else {
-              await updatePatternRowDetailInDb(_row!.details[i]);
+              await PatternDetailRepository().updateDetail(_row!.details[i]);
             }
           } else {
             if (_row?.details[i].rowDetailId != 0) {
-              await deletePatternRowDetailInDb(_row!.details[i].rowDetailId);
+              await PatternDetailRepository().deleteDetail(
+                _row!.details[i].rowDetailId,
+              );
             }
           }
         }
@@ -338,7 +343,7 @@ class PatternRowModel extends ChangeNotifier {
         for (PatternRowDetail e in _row!.details) {
           if (e.repeatXTime != 0) {
             e.rowId = _row!.rowId;
-            await insertPatternRowDetailInDb(e);
+            await PatternDetailRepository().insertDetail(e);
           }
         }
         detail.stitch = Stitch(
@@ -362,13 +367,13 @@ class PatternRowModel extends ChangeNotifier {
           if (e.repeatXTime != 0) {
             e.rowId = _row!.rowId;
             if (e.rowDetailId == 0) {
-              await insertPatternRowDetailInDb(e);
+              await PatternDetailRepository().insertDetail(e);
             } else {
-              await updatePatternRowDetailInDb(e);
+              await PatternDetailRepository().updateDetail(e);
             }
           } else {
             if (e.rowDetailId != 0) {
-              await deletePatternRowDetailInDb(e.rowDetailId);
+              await PatternDetailRepository().deleteDetail(e.rowDetailId);
             }
           }
         }

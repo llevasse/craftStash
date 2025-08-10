@@ -1,5 +1,6 @@
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
+import 'package:craft_stash/data/repository/pattern_detail_repository.dart';
 import 'package:craft_stash/data/repository/pattern_row_repository.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';
@@ -144,7 +145,7 @@ Future<void> _insertScIncInDb({
   for (PatternRowDetail e in row.details) {
     if (e.repeatXTime != 0) {
       e.rowId = row.rowId;
-      await insertPatternRowDetailInDb(e, db);
+      await PatternDetailRepository().insertDetail(e, db);
     }
   }
   await insertStitchInDb(
@@ -173,7 +174,7 @@ Future<void> _insertScDecInDb({
   for (PatternRowDetail e in row.details) {
     if (e.repeatXTime != 0) {
       e.rowId = row.rowId;
-      await insertPatternRowDetailInDb(e, db);
+      await PatternDetailRepository().insertDetail(e, db);
     }
   }
   await insertStitchInDb(
@@ -247,7 +248,9 @@ Future<void> updateStitchInDb(Stitch stitch) async {
 Future<void> deleteStitchInDb(Stitch stitch) async {
   final db = (await DbService().database);
   if (db != null) {
-    if ((await getAllPatternRowDetailByStitch(stitch)).isNotEmpty) {
+    if ((await PatternDetailRepository().getAllDetailsByStitch(
+      stitch,
+    )).isNotEmpty) {
       throw StitchIsUsed(
         "Can't delete a stitch that is currently used in a pattern.",
       );

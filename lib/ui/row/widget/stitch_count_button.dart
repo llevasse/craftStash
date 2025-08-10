@@ -1,4 +1,5 @@
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
+import 'package:craft_stash/data/repository/pattern_detail_repository.dart';
 import 'package:craft_stash/main.dart';
 import 'package:craft_stash/ui/core/widgets/buttons/count_button.dart';
 import 'package:craft_stash/ui/row/row_model.dart';
@@ -78,7 +79,7 @@ class RowStitchCountButton extends StatelessWidget {
         detail.repeatXTime * detail.stitch!.stitchNb;
     if (newDetail == null) {
       if (detail.rowDetailId != 0) {
-        await deletePatternRowDetailInDb(detail.rowDetailId);
+        await PatternDetailRepository().deleteDetail(detail.rowDetailId);
       }
       patternRowModel.detailsCountButtonList.removeAt(index);
       patternRowModel.row!.details.remove(detail);
