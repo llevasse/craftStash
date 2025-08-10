@@ -1,11 +1,5 @@
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
 import 'package:craft_stash/class/wip/wip_part.dart';
-import 'package:craft_stash/class/yarns/yarn.dart';
-import 'package:craft_stash/data/repository/pattern/pattern_repository.dart';
-import 'package:craft_stash/data/repository/yarn/yarn_repository.dart';
-import 'package:craft_stash/services/database_service.dart';
-import 'package:sqflite/sqflite.dart';
-
 
 class Wip {
   int id;

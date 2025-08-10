@@ -1,5 +1,7 @@
-import 'package:craft_stash/pages/settings_page.dart';
+import 'package:craft_stash/data/repository/settings_repository.dart';
 import 'package:craft_stash/pages/stitches_page.dart';
+import 'package:craft_stash/ui/settings/settings_model.dart';
+import 'package:craft_stash/ui/settings/settings_screen.dart';
 import 'package:flutter/material.dart';
 
 class PageSelectDropdownButton extends StatelessWidget {
@@ -29,7 +31,12 @@ class PageSelectDropdownButton extends StatelessWidget {
               context,
               MaterialPageRoute<void>(
                 settings: RouteSettings(name: "Settings"),
-                builder: (BuildContext context) => SettingsPage(onQuit: onQuit),
+                builder: (BuildContext context) => SettingsScreen(
+                  settingsModel: SettingsModel(
+                    onQuit: onQuit,
+                    SettingsRepository: SettingsRepository(),
+                  ),
+                ),
               ),
             );
           },
