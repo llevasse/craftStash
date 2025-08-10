@@ -53,7 +53,7 @@ class PatternPartsListTile extends StatelessWidget {
               ),
               TextButton(
                 onPressed: () async {
-                  await deletePatternPartInDb(part.partId);
+                  await PatternPartRepository().deletePart(part.partId);
                   patternModel.reload();
                   Navigator.pop(context);
                 },

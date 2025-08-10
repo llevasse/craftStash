@@ -1,5 +1,6 @@
 import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/pattern_row.dart';
+import 'package:craft_stash/data/repository/pattern_part_repository.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -120,7 +121,7 @@ Future<List<WipPart>> getAllWipPart({
     List<WipPart> l = [for (final map in patternPartMaps) _fromMap(map)];
 
     for (WipPart wipPart in l) {
-      wipPart.part = await getPatternPartByPartId(
+      wipPart.part = await PatternPartRepository().getPartById(
         id: wipPart.partId,
         withRows: withRows,
         withDetails: withDetails,
@@ -148,7 +149,7 @@ Future<WipPart> getWipPartByWipPartId({
       limit: 1,
     );
     WipPart p = _fromMap(patternPartMaps[0]);
-    p.part = await getPatternPartByPartId(
+    p.part = await PatternPartRepository().getPartById(
       id: p.partId,
       withRows: withRows,
       withDetails: withDetails,

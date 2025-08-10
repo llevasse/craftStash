@@ -26,7 +26,7 @@ class PatternPartModel extends ChangeNotifier {
   Future<void> load() async {
     try {
       if (id != null) {
-        _part = await _patternPartRepository.getPatternPartById(id: id!);
+        _part = await _patternPartRepository.getPartById(id: id!);
       } else {
         _part = PatternPart(name: "New part", patternId: patternId);
       }
@@ -45,7 +45,7 @@ class PatternPartModel extends ChangeNotifier {
       notifyListeners();
 
       if (id != null) {
-        _part = await _patternPartRepository.getPatternPartById(id: id!);
+        _part = await _patternPartRepository.getPartById(id: id!);
         loaded = true;
       }
     } finally {
@@ -69,13 +69,15 @@ class PatternPartModel extends ChangeNotifier {
       for (PatternRow row in _part!.rows) {
         _part!.totalStitchNb += row.stitchesPerRow * row.numberOfRows;
       }
-      await updatePatternPartInDb(_part!);
+      await PatternPartRepository().updatePart(_part!);
       return true;
     }
     return false;
   }
 
   Future<void> deletePart() async {
-    if (_part != null) await deletePatternPartInDb(_part!.partId);
+    if (_part != null) {
+      await PatternPartRepository().deletePart(_part!.partId);
+    }
   }
 }

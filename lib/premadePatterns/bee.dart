@@ -4,6 +4,7 @@ import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
 import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/class/yarns/yarn.dart';
+import 'package:craft_stash/data/repository/pattern_part_repository.dart';
 import 'package:craft_stash/data/repository/pattern_repository.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -13,7 +14,7 @@ List<Yarn> _yarns = List.empty(growable: true);
 Future<PatternPart> _createBody(int patternId, Database? db) async {
   PatternPart head = PatternPart(name: "Body", patternId: patternId);
   head.totalStitchNb = 108;
-  head.partId = await insertPatternPartInDb(head, db);
+  head.partId = await PatternPartRepository().insertPart(head, db);
 
   PatternRow r1 = PatternRow(
     partId: head.partId,

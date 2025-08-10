@@ -1,6 +1,6 @@
-import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
 import 'package:craft_stash/class/yarns/yarn.dart';
+import 'package:craft_stash/data/repository/pattern_part_repository.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -32,7 +32,9 @@ class PatternRepository {
         limit: 1,
       );
       craft.Pattern p = _fromMap(patternMaps[0]);
-      if (withParts) p.parts = await getAllPatternPart(patternId: id);
+      if (withParts) {
+        p.parts = await PatternPartRepository().getAllParts(patternId: id);
+      }
       if (withYarnNames) {
         p.yarnIdToNameMap = await getYarnIdToNameMapByPatternId(id);
       }
@@ -63,7 +65,9 @@ class PatternRepository {
       List<craft.Pattern> p = [for (final map in patternMaps) _fromMap(map)];
       if (withParts == true) {
         for (craft.Pattern pattern in p) {
-          pattern.parts = await getAllPatternPart(patternId: pattern.patternId);
+          pattern.parts = await PatternPartRepository().getAllParts(
+            patternId: pattern.patternId,
+          );
         }
       }
       return (p);

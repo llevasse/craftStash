@@ -4,6 +4,7 @@ import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
 import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/class/yarns/yarn.dart';
+import 'package:craft_stash/data/repository/pattern_part_repository.dart';
 import 'package:craft_stash/data/repository/pattern_repository.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -13,7 +14,7 @@ Future<PatternPart> _createHeadPart(int patternId, Database? db) async {
   PatternPart head = PatternPart(name: "head", patternId: patternId);
   head.totalStitchNb = 9 + 18 * 3 + 12 + 6;
 
-  head.partId = await insertPatternPartInDb(head, db);
+  head.partId = await PatternPartRepository().insertPart(head, db);
 
   PatternRow r1 = PatternRow(
     partId: head.partId,
@@ -109,7 +110,7 @@ Future<PatternPart> _createShortTentacles(int patternId, Database? db) async {
   );
   short.totalStitchNb = 8 * 4;
 
-  short.partId = await insertPatternPartInDb(short, db);
+  short.partId = await PatternPartRepository().insertPart(short, db);
 
   PatternRow r1 = PatternRow(
     partId: short.partId,
@@ -138,7 +139,7 @@ Future<PatternPart> _createLongTentacles(int patternId, Database? db) async {
   );
   long.totalStitchNb = 12 * 4;
 
-  long.partId = await insertPatternPartInDb(long, db);
+  long.partId = await PatternPartRepository().insertPart(long, db);
 
   PatternRow r1 = PatternRow(
     partId: long.partId,
