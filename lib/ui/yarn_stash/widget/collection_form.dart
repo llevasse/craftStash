@@ -2,6 +2,10 @@ import 'package:craft_stash/class/yarns/brand.dart';
 import 'package:craft_stash/class/yarns/material.dart';
 import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:craft_stash/class/yarns/yarn_collection.dart';
+import 'package:craft_stash/data/repository/yarn/brand_repository.dart';
+import 'package:craft_stash/data/repository/yarn/collection_repository.dart';
+import 'package:craft_stash/data/repository/yarn/material_repository.dart';
+import 'package:craft_stash/data/repository/yarn/yarn_repository.dart';
 import 'package:craft_stash/ui/core/widgets/dialogs/error_dialog.dart';
 import 'package:flutter/material.dart';
 
@@ -42,7 +46,7 @@ class _CollectionForm extends State<CollectionForm> {
   List<MenuEntry> materialMenuEntries = List.empty(growable: true);
 
   Future<List<String>> getAllBrandsAsList() async {
-    List<Brand> list = await getAllBrand();
+    List<Brand> list = await BrandRepository().getAllBrand();
     brandList.clear();
     for (Brand element in list) {
       brandList.add(element.name);
@@ -51,7 +55,7 @@ class _CollectionForm extends State<CollectionForm> {
   }
 
   Future<List<String>> getAllMaterialsAsList() async {
-    List<YarnMaterial> list = await getAllYarnMaterial();
+    List<YarnMaterial> list = await MaterialRepository().getAllMaterials();
     materialList.clear();
     for (YarnMaterial element in list) {
       materialList.add(element.name);
@@ -113,7 +117,9 @@ class _CollectionForm extends State<CollectionForm> {
                 TextButton(
                   onPressed: () async {
                     if (!brandList.contains(widget.base.brand)) {
-                      await insertBrandInDb(Brand(name: widget.base.brand));
+                      await BrandRepository().insertBrand(
+                        Brand(name: widget.base.brand),
+                      );
                     }
 
                     Navigator.pop(context);
@@ -157,7 +163,7 @@ class _CollectionForm extends State<CollectionForm> {
                   onPressed: () async {
                     await getAllMaterialsAsList();
                     if (!materialList.contains(widget.base.material)) {
-                      await insertYarnMaterialInDb(
+                      await MaterialRepository().insertMaterial(
                         YarnMaterial(name: widget.base.material),
                       );
                     }
@@ -299,8 +305,12 @@ class _CollectionForm extends State<CollectionForm> {
                         TextButton(
                           onPressed: () async {
                             try {
-                              await deleteYarnsByCollectionId(widget.base.id);
-                              await deleteYarnCollection(widget.base.id);
+                              await YarnRepository().deleteYarnsByCollectionId(
+                                widget.base.id,
+                              );
+                              await CollectionRepository().deleteYarnCollection(
+                                widget.base.id,
+                              );
                               await widget.updateYarn();
                             } catch (e) {
                               await showDialog(

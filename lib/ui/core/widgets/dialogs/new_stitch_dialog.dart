@@ -1,6 +1,6 @@
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/stitch.dart';
-import 'package:craft_stash/data/repository/pattern_row_repository.dart';
+import 'package:craft_stash/data/repository/pattern/pattern_row_repository.dart';
 import 'package:craft_stash/ui/core/widgets/dialogs/error_dialog.dart';
 import 'package:flutter/material.dart';
 

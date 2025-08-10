@@ -1,4 +1,4 @@
-import 'package:craft_stash/data/repository/wip_stash_repository.dart';
+import 'package:craft_stash/data/repository/wip/wip_stash_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:craft_stash/class/wip/wip.dart' as craft;
 

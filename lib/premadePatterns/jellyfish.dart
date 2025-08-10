@@ -4,10 +4,11 @@ import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
 import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/class/yarns/yarn.dart';
-import 'package:craft_stash/data/repository/pattern_detail_repository.dart';
-import 'package:craft_stash/data/repository/pattern_part_repository.dart';
-import 'package:craft_stash/data/repository/pattern_repository.dart';
-import 'package:craft_stash/data/repository/pattern_row_repository.dart';
+import 'package:craft_stash/data/repository/pattern/pattern_detail_repository.dart';
+import 'package:craft_stash/data/repository/pattern/pattern_part_repository.dart';
+import 'package:craft_stash/data/repository/pattern/pattern_repository.dart';
+import 'package:craft_stash/data/repository/pattern/pattern_row_repository.dart';
+import 'package:craft_stash/data/repository/yarn/yarn_repository.dart';
 import 'package:sqflite/sqflite.dart';
 
 Map<String, Stitch> _stitchesMap = {};
@@ -177,7 +178,7 @@ Future<void> insertJellyFishPattern([Database? db]) async {
     pattern: pattern,
     db: db,
   );
-  List<Yarn> y = await getAllYarn(db);
+  List<Yarn> y = await YarnRepository().getAllYarn(db);
   if (y.isNotEmpty) {
     await PatternRepository().insertYarnInPattern(
       yarnId: y.first.id,

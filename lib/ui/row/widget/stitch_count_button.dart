@@ -1,5 +1,5 @@
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
-import 'package:craft_stash/data/repository/pattern_detail_repository.dart';
+import 'package:craft_stash/data/repository/pattern/pattern_detail_repository.dart';
 import 'package:craft_stash/main.dart';
 import 'package:craft_stash/ui/core/widgets/buttons/count_button.dart';
 import 'package:craft_stash/ui/row/row_model.dart';

@@ -1,4 +1,4 @@
-import 'package:craft_stash/data/repository/pattern_repository.dart';
+import 'package:craft_stash/data/repository/pattern/pattern_repository.dart';
 import 'package:craft_stash/ui/pattern/pattern_model.dart';
 import 'package:craft_stash/ui/pattern/pattern_screen.dart';
 import 'package:flutter/material.dart';

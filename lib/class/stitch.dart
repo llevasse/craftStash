@@ -1,7 +1,7 @@
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
-import 'package:craft_stash/data/repository/pattern_detail_repository.dart';
-import 'package:craft_stash/data/repository/pattern_row_repository.dart';
+import 'package:craft_stash/data/repository/pattern/pattern_detail_repository.dart';
+import 'package:craft_stash/data/repository/pattern/pattern_row_repository.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';
 

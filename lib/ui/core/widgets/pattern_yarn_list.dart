@@ -1,4 +1,5 @@
 import 'package:craft_stash/class/yarns/yarn.dart';
+import 'package:craft_stash/data/repository/yarn/yarn_repository.dart';
 import 'package:flutter/material.dart';
 
 typedef MyBuilder =
@@ -52,12 +53,12 @@ class PatternYarnListState extends State<PatternYarnList> {
 
   Future<void> getAllYarns() async {
     if (widget.patternId == null && widget.wipId == null) {
-      yarns = await getAllYarn();
+      yarns = await YarnRepository().getAllYarn();
     } else {
       if (widget.patternId != null) {
-        yarns = await getAllYarnByPatternId(widget.patternId!);
+        yarns = await YarnRepository().getAllYarnByPatternId(widget.patternId!);
       } else if (widget.wipId != null) {
-        yarns = await getAllYarnByWipId(widget.wipId!);
+        yarns = await YarnRepository().getAllYarnByWipId(widget.wipId!);
       }
     }
     list.clear();

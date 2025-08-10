@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:craft_stash/class/stitch.dart';
-import 'package:craft_stash/data/repository/pattern_stash_repository.dart';
-import 'package:craft_stash/data/repository/wip_stash_repository.dart';
-import 'package:craft_stash/data/repository/yarn_stash_repository.dart';
+import 'package:craft_stash/data/repository/pattern/pattern_stash_repository.dart';
+import 'package:craft_stash/data/repository/wip/wip_stash_repository.dart';
+import 'package:craft_stash/data/repository/yarn/yarn_stash_repository.dart';
 import 'package:craft_stash/ui/pattern_stash/stash_model.dart';
 import 'package:craft_stash/ui/pattern_stash/stash_screen.dart';
 import 'package:craft_stash/ui/wip_stash/stash_model.dart';

@@ -1,6 +1,6 @@
 import 'package:craft_stash/class/yarns/yarn_collection.dart';
-import 'package:craft_stash/data/repository/pattern_stash_repository.dart';
-import 'package:craft_stash/data/repository/yarn_stash_repository.dart';
+import 'package:craft_stash/data/repository/pattern/pattern_stash_repository.dart';
+import 'package:craft_stash/data/repository/yarn/yarn_stash_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
 

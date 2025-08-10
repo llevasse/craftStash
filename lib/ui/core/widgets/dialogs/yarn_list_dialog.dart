@@ -1,5 +1,7 @@
 import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:craft_stash/class/yarns/yarn_collection.dart';
+import 'package:craft_stash/data/repository/yarn/collection_repository.dart';
+import 'package:craft_stash/data/repository/yarn/yarn_repository.dart';
 import 'package:craft_stash/ui/core/widgets/buttons/edit_yarn_button.dart';
 import 'package:flutter/material.dart';
 
@@ -19,7 +21,7 @@ class _YarnListDialogState extends State<YarnListDialog> {
   Map<String, List<Yarn>> yarnsByCollection = {};
 
   Future<void> _getAllCollections() async {
-    yarnCollection = await getAllYarnCollection();
+    yarnCollection = await CollectionRepository().getAllYarnCollection();
     yarnsByCollection.clear();
     collectionById.clear();
     collectionById[-1] = "Unique";
@@ -33,7 +35,7 @@ class _YarnListDialogState extends State<YarnListDialog> {
 
   Future<void> getAllYarns() async {
     await _getAllCollections();
-    yarns = await getAllYarn();
+    yarns = await YarnRepository().getAllYarn();
     for (Yarn yarn in yarns) {
       yarnsByCollection[collectionById[yarn.collectionId]]?.add(yarn);
     }

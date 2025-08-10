@@ -1,5 +1,7 @@
 import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:craft_stash/class/yarns/yarn_collection.dart';
+import 'package:craft_stash/data/repository/yarn/collection_repository.dart';
+import 'package:craft_stash/data/repository/yarn/yarn_repository.dart';
 import 'package:craft_stash/ui/yarn_stash/widget/collection_form.dart';
 import 'package:craft_stash/ui/core/widgets/dialogs/yarn_form_dialog.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +32,7 @@ class _YarnCollectionForm extends State<YarnCollectionForm> {
   }
 
   Future<void> updateListView() async {
-    collectionList = await getAllYarnCollection();
+    collectionList = await CollectionRepository().getAllYarnCollection();
 
     List<Widget> tmp = List.empty(growable: true);
     tmp.add(
@@ -43,7 +45,7 @@ class _YarnCollectionForm extends State<YarnCollectionForm> {
             builder: (BuildContext context) => YarnForm(
               base: Yarn(color: Colors.amber.toARGB32()),
               updateYarn: widget.updateYarn,
-              ifValidFunction: insertYarnInDb,
+              ifValidFunction: YarnRepository().insertYarn,
               title: "Add yarn",
               cancel: "Cancel",
               confirm: "Add",
@@ -63,7 +65,7 @@ class _YarnCollectionForm extends State<YarnCollectionForm> {
             builder: (BuildContext context) => CollectionForm(
               base: YarnCollection(),
               updateYarn: widget.updateYarn,
-              ifValideFunction: insertYarnCollection,
+              ifValideFunction: CollectionRepository().insertYarnCollection,
               title: "Add collection",
               cancel: "Cancel",
               confirm: "Add",
@@ -96,7 +98,7 @@ class _YarnCollectionForm extends State<YarnCollectionForm> {
                   thickness: element.thickness,
                 ),
                 updateYarn: widget.updateYarn,
-                ifValidFunction: insertYarnInDb,
+                ifValidFunction: YarnRepository().insertYarn,
                 title: "Add yarn",
                 cancel: "Cancel",
                 confirm: "Add",
@@ -111,7 +113,8 @@ class _YarnCollectionForm extends State<YarnCollectionForm> {
                   builder: (BuildContext context) => CollectionForm(
                     base: element,
                     updateYarn: widget.updateYarn,
-                    ifValideFunction: updateYarnCollection,
+                    ifValideFunction:
+                        CollectionRepository().updateYarnCollection,
                     title: "Edit collection",
                     cancel: "Cancel",
                     confirm: "Edit",

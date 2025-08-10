@@ -1,4 +1,5 @@
 import 'package:craft_stash/class/yarns/yarn.dart';
+import 'package:craft_stash/data/repository/yarn/yarn_repository.dart';
 import 'package:flutter/material.dart';
 
 class EditYarnButton extends StatefulWidget {
@@ -87,7 +88,7 @@ class _EditYarnButton extends State<EditYarnButton> {
               ),
               TextButton(
                 onPressed: () async {
-                  await deleteYarnInDb(widget.currentYarn.id);
+                  await YarnRepository().deleteYarn(widget.currentYarn.id);
                   await widget.updateYarn();
                   Navigator.pop(context);
                 },

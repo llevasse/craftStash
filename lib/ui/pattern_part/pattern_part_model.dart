@@ -1,6 +1,6 @@
 import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/pattern_row.dart';
-import 'package:craft_stash/data/repository/pattern_part_repository.dart';
+import 'package:craft_stash/data/repository/pattern/pattern_part_repository.dart';
 import 'package:flutter/material.dart';
 
 class PatternPartModel extends ChangeNotifier {

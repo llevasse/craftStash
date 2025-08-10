@@ -1,6 +1,6 @@
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/wip/wip_part.dart';
-import 'package:craft_stash/data/repository/wip_part_repository.dart';
+import 'package:craft_stash/data/repository/wip/wip_part_repository.dart';
 import 'package:craft_stash/main.dart';
 import 'package:flutter/material.dart';
 

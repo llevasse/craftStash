@@ -1,6 +1,8 @@
 import 'package:craft_stash/class/yarns/brand.dart';
 import 'package:craft_stash/class/yarns/material.dart';
 import 'package:craft_stash/class/yarns/yarn.dart';
+import 'package:craft_stash/data/repository/yarn/brand_repository.dart';
+import 'package:craft_stash/data/repository/yarn/material_repository.dart';
 import 'package:craft_stash/ui/core/widgets/buttons/int_control_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -48,7 +50,7 @@ class _YarnForm extends State<YarnForm> {
   List<MenuEntry> materialMenuEntries = List.empty(growable: true);
 
   Future<List<String>> getAllBrandsAsList() async {
-    List<Brand> list = await getAllBrand();
+    List<Brand> list = await BrandRepository().getAllBrand();
     brandList.clear();
     for (Brand element in list) {
       brandList.add(element.name);
@@ -57,7 +59,7 @@ class _YarnForm extends State<YarnForm> {
   }
 
   Future<List<String>> getAllMaterialsAsList() async {
-    List<YarnMaterial> list = await getAllYarnMaterial();
+    List<YarnMaterial> list = await MaterialRepository().getAllMaterials();
     materialList.clear();
     for (YarnMaterial element in list) {
       materialList.add(element.name);
@@ -154,7 +156,9 @@ class _YarnForm extends State<YarnForm> {
                 TextButton(
                   onPressed: () async {
                     if (!brandList.contains(widget.base.brand)) {
-                      await insertBrandInDb(Brand(name: widget.base.brand));
+                      await BrandRepository().insertBrand(
+                        Brand(name: widget.base.brand),
+                      );
                     }
 
                     Navigator.pop(context);
@@ -205,7 +209,7 @@ class _YarnForm extends State<YarnForm> {
                   onPressed: () async {
                     await getAllMaterialsAsList();
                     if (!materialList.contains(widget.base.material)) {
-                      await insertYarnMaterialInDb(
+                      await MaterialRepository().insertMaterial(
                         YarnMaterial(name: widget.base.material),
                       );
                     }

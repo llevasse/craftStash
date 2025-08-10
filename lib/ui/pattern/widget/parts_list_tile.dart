@@ -1,5 +1,5 @@
 import 'package:craft_stash/class/patterns/pattern_part.dart';
-import 'package:craft_stash/data/repository/pattern_part_repository.dart';
+import 'package:craft_stash/data/repository/pattern/pattern_part_repository.dart';
 import 'package:craft_stash/ui/pattern/pattern_model.dart';
 import 'package:craft_stash/ui/pattern_part/pattern_part_model.dart';
 import 'package:craft_stash/ui/pattern_part/pattern_part_screen.dart';

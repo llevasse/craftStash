@@ -6,6 +6,10 @@ import 'package:craft_stash/class/yarns/brand.dart';
 import 'package:craft_stash/class/yarns/material.dart';
 import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:craft_stash/class/yarns/yarn_collection.dart';
+import 'package:craft_stash/data/repository/yarn/brand_repository.dart';
+import 'package:craft_stash/data/repository/yarn/collection_repository.dart';
+import 'package:craft_stash/data/repository/yarn/material_repository.dart';
+import 'package:craft_stash/data/repository/yarn/yarn_repository.dart';
 import 'package:craft_stash/main.dart';
 import 'package:craft_stash/premadePatterns/bee.dart';
 import 'package:craft_stash/premadePatterns/jellyfish.dart';
@@ -104,10 +108,10 @@ class DbService {
   }
 
   Future<void> clearDb() async {
-    await removeAllYarnCollection();
-    await removeAllYarn();
-    await removeAllYarnMaterial();
-    await removeAllBrand();
+    await CollectionRepository().removeAllYarnCollection();
+    await YarnRepository().removeAllYarn();
+    await MaterialRepository().removeAllMaterials();
+    await BrandRepository().removeAllBrand();
   }
 
   Future<void> recreateDb() async {

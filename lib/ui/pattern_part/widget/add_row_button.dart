@@ -1,4 +1,4 @@
-import 'package:craft_stash/data/repository/pattern_row_repository.dart';
+import 'package:craft_stash/data/repository/pattern/pattern_row_repository.dart';
 import 'package:craft_stash/ui/pattern_part/pattern_part_model.dart';
 import 'package:craft_stash/ui/row/row_model.dart';
 import 'package:craft_stash/ui/row/row_screen.dart';

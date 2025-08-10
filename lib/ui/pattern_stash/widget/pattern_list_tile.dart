@@ -1,5 +1,5 @@
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
-import 'package:craft_stash/data/repository/pattern_repository.dart';
+import 'package:craft_stash/data/repository/pattern/pattern_repository.dart';
 import 'package:craft_stash/ui/pattern/pattern_model.dart';
 import 'package:craft_stash/ui/pattern/pattern_screen.dart';
 import 'package:craft_stash/ui/pattern_stash/stash_model.dart';

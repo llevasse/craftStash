@@ -1,6 +1,7 @@
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
 import 'package:craft_stash/class/yarns/yarn.dart';
-import 'package:craft_stash/data/repository/pattern_part_repository.dart';
+import 'package:craft_stash/data/repository/pattern/pattern_part_repository.dart';
+import 'package:craft_stash/data/repository/yarn/yarn_repository.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -46,7 +47,7 @@ class PatternRepository {
 
   Future<Map<int, String>> getYarnIdToNameMapByPatternId(int patternId) async {
     Map<int, String> map = {};
-    List<Yarn> yarns = await getAllYarnByPatternId(patternId);
+    List<Yarn> yarns = await YarnRepository().getAllYarnByPatternId(patternId);
     for (Yarn yarn in yarns) {
       if (yarn.inPreviewId != null) {
         map[yarn.inPreviewId!] = yarn.colorName;

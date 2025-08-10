@@ -1,5 +1,5 @@
 import 'package:craft_stash/class/stitch.dart';
-import 'package:craft_stash/data/repository/pattern_row_repository.dart';
+import 'package:craft_stash/data/repository/pattern/pattern_row_repository.dart';
 import 'package:craft_stash/ui/row/row_model.dart';
 import 'package:craft_stash/ui/row/row_screen.dart';
 import 'package:craft_stash/ui/core/widgets/dialogs/new_stitch_dialog.dart';

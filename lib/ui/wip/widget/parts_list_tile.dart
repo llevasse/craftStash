@@ -1,5 +1,5 @@
 import 'package:craft_stash/class/wip/wip_part.dart';
-import 'package:craft_stash/data/repository/wip_part_repository.dart';
+import 'package:craft_stash/data/repository/wip/wip_part_repository.dart';
 import 'package:craft_stash/ui/wip/wip_model.dart';
 import 'package:craft_stash/ui/wip_part/wip_part_model.dart';
 import 'package:craft_stash/ui/wip_part/wip_part_screen.dart';
