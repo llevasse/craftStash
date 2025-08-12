@@ -1,11 +1,10 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:math';
-import 'package:craft_stash/class/stitch.dart';
-import 'package:craft_stash/class/yarns/brand.dart';
-import 'package:craft_stash/class/yarns/material.dart';
-import 'package:craft_stash/class/yarns/yarn.dart';
-import 'package:craft_stash/class/yarns/yarn_collection.dart';
+import 'package:craft_stash/data/repository/stitch_repository.dart';
+import 'package:craft_stash/data/repository/yarn/brand_repository.dart';
+import 'package:craft_stash/data/repository/yarn/collection_repository.dart';
+import 'package:craft_stash/data/repository/yarn/material_repository.dart';
+import 'package:craft_stash/data/repository/yarn/yarn_repository.dart';
 import 'package:craft_stash/main.dart';
 import 'package:craft_stash/premadePatterns/bee.dart';
 import 'package:craft_stash/premadePatterns/jellyfish.dart';
@@ -75,9 +74,9 @@ class DbService {
     );
 
     await db.execute(
-      '''CREATE TABLE IF NOT EXISTS yarn_in_pattern(id INTEGER PRIMARY KEY, pattern_id INT, yarn_id INT, in_preview_id INT, FOREIGN KEY (pattern_id) REFERENCES pattern(pattern_id), FOREIGN KEY (yarn_id) REFERENCES yarn(id))''',
+      '''CREATE TABLE IF NOT EXISTS yarn_in_pattern(id INTEGER PRIMARY KEY, pattern_id INT, yarn_id INT, in_preview_id INT, FOREIGN KEY (pattern_id) REFERENCES pattern(pattern_id) ON DELETE CASCADE, FOREIGN KEY (yarn_id) REFERENCES yarn(id))''',
     );
-    await insertDefaultStitchesInDb(db);
+    await StitchRepository().insertDefaultStitches(db);
     if (debug) {
       await insertPhildarYarn(db);
       await insertJellyFishPattern(db);
@@ -91,7 +90,7 @@ class DbService {
       '''CREATE TABLE IF NOT EXISTS wip_part(id INTEGER PRIMARY KEY, wip_id INT, part_id INT, finished INT, stitch_done_nb INT, made_x_time INT, current_row_number INT, current_row_index INT, current_stitch_number INT, FOREIGN KEY (wip_id) REFERENCES wip(id) ON DELETE CASCADE, FOREIGN KEY (part_id) REFERENCES pattern_part(part_id) ON DELETE CASCADE)''',
     );
     await db.execute(
-      '''CREATE TABLE IF NOT EXISTS yarn_in_wip(id INTEGER PRIMARY KEY, wip_id INT, yarn_id INT, in_preview_id INT, FOREIGN KEY (wip_id) REFERENCES wip(id), FOREIGN KEY (yarn_id) REFERENCES yarn(id))''',
+      '''CREATE TABLE IF NOT EXISTS yarn_in_wip(id INTEGER PRIMARY KEY, wip_id INT, yarn_id INT, in_preview_id INT, FOREIGN KEY (wip_id) REFERENCES wip(id) ON DELETE CASCADE, FOREIGN KEY (yarn_id) REFERENCES yarn(id))''',
     );
   }
 
@@ -104,10 +103,10 @@ class DbService {
   }
 
   Future<void> clearDb() async {
-    await removeAllYarnCollection();
-    await removeAllYarn();
-    await removeAllYarnMaterial();
-    await removeAllBrand();
+    await CollectionRepository().removeAllYarnCollection();
+    await YarnRepository().removeAllYarn();
+    await MaterialRepository().removeAllMaterials();
+    await BrandRepository().removeAllBrand();
   }
 
   Future<void> recreateDb() async {

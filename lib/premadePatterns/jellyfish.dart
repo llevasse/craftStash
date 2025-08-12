@@ -4,6 +4,12 @@ import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
 import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/class/yarns/yarn.dart';
+import 'package:craft_stash/data/repository/pattern/pattern_detail_repository.dart';
+import 'package:craft_stash/data/repository/pattern/pattern_part_repository.dart';
+import 'package:craft_stash/data/repository/pattern/pattern_repository.dart';
+import 'package:craft_stash/data/repository/pattern/pattern_row_repository.dart';
+import 'package:craft_stash/data/repository/stitch_repository.dart';
+import 'package:craft_stash/data/repository/yarn/yarn_repository.dart';
 import 'package:sqflite/sqflite.dart';
 
 Map<String, Stitch> _stitchesMap = {};
@@ -12,7 +18,7 @@ Future<PatternPart> _createHeadPart(int patternId, Database? db) async {
   PatternPart head = PatternPart(name: "head", patternId: patternId);
   head.totalStitchNb = 9 + 18 * 3 + 12 + 6;
 
-  head.partId = await insertPatternPartInDb(head, db);
+  head.partId = await PatternPartRepository().insertPart(head, db);
 
   PatternRow r1 = PatternRow(
     partId: head.partId,
@@ -21,8 +27,8 @@ Future<PatternPart> _createHeadPart(int patternId, Database? db) async {
     stitchesPerRow: 6,
     preview: "6sc",
   );
-  r1.rowId = await insertPatternRowInDb(r1, db);
-  await insertPatternRowDetailInDb(
+  r1.rowId = await PatternRowRepository().insertRow(patternRow: r1, db: db);
+  await PatternDetailRepository().insertDetail(
     PatternRowDetail(
       rowId: r1.rowId,
       repeatXTime: 6,
@@ -38,8 +44,8 @@ Future<PatternPart> _createHeadPart(int patternId, Database? db) async {
     stitchesPerRow: 12,
     preview: "6inc",
   );
-  r2.rowId = await insertPatternRowInDb(r2, db);
-  await insertPatternRowDetailInDb(
+  r2.rowId = await PatternRowRepository().insertRow(patternRow: r2, db: db);
+  await PatternDetailRepository().insertDetail(
     PatternRowDetail(
       rowId: r2.rowId,
       repeatXTime: 6,
@@ -55,13 +61,13 @@ Future<PatternPart> _createHeadPart(int patternId, Database? db) async {
     stitchesPerRow: 18,
     preview: "(sc, inc)x6",
   );
-  r3.rowId = await insertPatternRowInDb(r3, db);
+  r3.rowId = await PatternRowRepository().insertRow(patternRow: r3, db: db);
   PatternRowDetail dr3 = PatternRowDetail(
     rowId: r3.rowId,
     repeatXTime: 6,
     stitchId: _stitchesMap["(sc, inc)"]!.id,
   );
-  dr3.rowDetailId = await insertPatternRowDetailInDb(dr3, db);
+  dr3.rowDetailId = await PatternDetailRepository().insertDetail(dr3, db);
 
   PatternRow r4 = PatternRow(
     partId: head.partId,
@@ -70,8 +76,8 @@ Future<PatternPart> _createHeadPart(int patternId, Database? db) async {
     stitchesPerRow: 18,
     preview: "18sc",
   );
-  r4.rowId = await insertPatternRowInDb(r4, db);
-  await insertPatternRowDetailInDb(
+  r4.rowId = await PatternRowRepository().insertRow(patternRow: r4, db: db);
+  await PatternDetailRepository().insertDetail(
     PatternRowDetail(
       rowId: r4.rowId,
       repeatXTime: 18,
@@ -87,8 +93,8 @@ Future<PatternPart> _createHeadPart(int patternId, Database? db) async {
     stitchesPerRow: 9,
     preview: "9dec",
   );
-  r6.rowId = await insertPatternRowInDb(r6, db);
-  await insertPatternRowDetailInDb(
+  r6.rowId = await PatternRowRepository().insertRow(patternRow: r6, db: db);
+  await PatternDetailRepository().insertDetail(
     PatternRowDetail(
       rowId: r6.rowId,
       repeatXTime: 9,
@@ -108,7 +114,7 @@ Future<PatternPart> _createShortTentacles(int patternId, Database? db) async {
   );
   short.totalStitchNb = 8 * 4;
 
-  short.partId = await insertPatternPartInDb(short, db);
+  short.partId = await PatternPartRepository().insertPart(short, db);
 
   PatternRow r1 = PatternRow(
     partId: short.partId,
@@ -117,8 +123,8 @@ Future<PatternPart> _createShortTentacles(int patternId, Database? db) async {
     stitchesPerRow: 8,
     preview: "8ch",
   );
-  r1.rowId = await insertPatternRowInDb(r1, db);
-  await insertPatternRowDetailInDb(
+  r1.rowId = await PatternRowRepository().insertRow(patternRow: r1, db: db);
+  await PatternDetailRepository().insertDetail(
     PatternRowDetail(
       rowId: r1.rowId,
       repeatXTime: 8,
@@ -137,7 +143,7 @@ Future<PatternPart> _createLongTentacles(int patternId, Database? db) async {
   );
   long.totalStitchNb = 12 * 4;
 
-  long.partId = await insertPatternPartInDb(long, db);
+  long.partId = await PatternPartRepository().insertPart(long, db);
 
   PatternRow r1 = PatternRow(
     partId: long.partId,
@@ -146,8 +152,8 @@ Future<PatternPart> _createLongTentacles(int patternId, Database? db) async {
     stitchesPerRow: 12,
     preview: "12ch",
   );
-  r1.rowId = await insertPatternRowInDb(r1, db);
-  await insertPatternRowDetailInDb(
+  r1.rowId = await PatternRowRepository().insertRow(patternRow: r1, db: db);
+  await PatternDetailRepository().insertDetail(
     PatternRowDetail(
       rowId: r1.rowId,
       repeatXTime: 12,
@@ -161,7 +167,7 @@ Future<PatternPart> _createLongTentacles(int patternId, Database? db) async {
 
 Future<void> insertJellyFishPattern([Database? db]) async {
   // print("insert jelly");
-  List<Stitch> l = await getAllStitchesInDb(db);
+  List<Stitch> l = await StitchRepository().getAllStitches(db);
   // print(l);
   for (Stitch s in l) {
     _stitchesMap.addAll({s.abreviation: s});
@@ -169,10 +175,13 @@ Future<void> insertJellyFishPattern([Database? db]) async {
   // print(_stitchesMap);
   craft.Pattern pattern = craft.Pattern(name: "Jellyfish");
   pattern.totalStitchNb = (12 * 4) + (8 * 4) + (9 + 18 * 3 + 12 + 6);
-  pattern.patternId = await craft.insertPatternInDb(pattern, db);
-  List<Yarn> y = await getAllYarn(db);
+  pattern.patternId = await PatternRepository().insertPattern(
+    pattern: pattern,
+    db: db,
+  );
+  List<Yarn> y = await YarnRepository().getAllYarn(db);
   if (y.isNotEmpty) {
-    await craft.insertYarnInPattern(
+    await PatternRepository().insertYarnInPattern(
       yarnId: y.first.id,
       patternId: pattern.patternId,
       inPreviewId: 1,

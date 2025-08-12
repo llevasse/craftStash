@@ -1,6 +1,8 @@
 import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
+import 'package:craft_stash/data/repository/pattern/pattern_part_repository.dart';
+import 'package:craft_stash/data/repository/pattern/pattern_repository.dart';
 import 'package:sqflite/sqflite.dart';
 
 Future<void> dbUpgradeV2(Batch batch) async {
@@ -28,19 +30,23 @@ Future<void> dbUpgradeV2(Batch batch) async {
   await batch.commit();
 
   // UPDATE pattern_part AND pattern table total_stitch_nb
-  List<PatternPart> parts = await getAllPatternPart(withRow: true);
+  List<PatternPart> parts = await PatternPartRepository().getAllParts(
+    withRow: true,
+  );
   Map<int, craft.Pattern> map = {};
   for (PatternPart part in parts) {
     for (PatternRow row in part.rows) {
       part.totalStitchNb += row.stitchesPerRow * row.numberOfRows;
     }
-    await updatePatternPartInDb(part);
+    await PatternPartRepository().updatePart(part);
     if (!map.containsKey(part.patternId)) {
-      map[part.patternId] = await craft.getPatternById(id: part.patternId);
+      map[part.patternId] = await PatternRepository().getPatternById(
+        id: part.patternId,
+      );
     }
     map[part.patternId]?.totalStitchNb += part.totalStitchNb;
   }
   for (craft.Pattern pattern in map.values) {
-    await craft.updatePatternInDb(pattern);
+    await PatternRepository().updatePattern(pattern);
   }
 }
