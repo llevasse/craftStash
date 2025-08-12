@@ -1,6 +1,5 @@
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/class/stitch.dart';
-import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:craft_stash/data/repository/stitch_repository.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';

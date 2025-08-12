@@ -223,7 +223,7 @@ class PatternRowModel extends ChangeNotifier {
             showCount: false,
           ),
         );
-      } else if (_row!.details.last.stitchId == 'start color') {
+      } else if (_row!.details.last.stitchId == stitchToIdMap['start color']) {
         _row!.details.last.inPatternYarnId = detail.inPatternYarnId;
         await PatternDetailRepository().updateDetail(_row!.details.last);
       } else {
@@ -338,7 +338,7 @@ class PatternRowModel extends ChangeNotifier {
       PatternRowDetail detail = PatternRowDetail(rowId: 0, stitchId: 0);
 
       if (row?.rowId != null) {
-        detail.rowId = row!.rowId!;
+        detail.rowId = row!.rowId;
       }
       if (id == null) {
         for (PatternRowDetail e in _row!.details) {

@@ -1,5 +1,4 @@
-import 'package:craft_stash/class/patterns/pattern_row.dart' as patternRow;
-import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
+import 'package:craft_stash/class/patterns/pattern_row.dart' as pattern_row;
 import 'package:craft_stash/data/repository/pattern/pattern_detail_repository.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';
@@ -9,8 +8,8 @@ class PatternRowRepository {
 
   const PatternRowRepository();
 
-  patternRow.PatternRow _fromMap(Map<String, Object?> map) {
-    return patternRow.PatternRow(
+  pattern_row.PatternRow _fromMap(Map<String, Object?> map) {
+    return pattern_row.PatternRow(
       rowId: map['row_id'] as int,
       partId: map['part_id'] as int?,
       startRow: map['start_row'] as int,
@@ -23,7 +22,7 @@ class PatternRowRepository {
   }
 
   Future<int> insertRow({
-    required patternRow.PatternRow patternRow,
+    required pattern_row.PatternRow patternRow,
     Database? db,
   }) async {
     db ??= (await DbService().database);
@@ -38,7 +37,7 @@ class PatternRowRepository {
     }
   }
 
-  Future<void> updateRow(patternRow.PatternRow patternRow) async {
+  Future<void> updateRow(pattern_row.PatternRow patternRow) async {
     final db = (await DbService().database);
     if (db != null) {
       await db.update(
@@ -71,7 +70,7 @@ class PatternRowRepository {
     }
   }
 
-  Future<List<patternRow.PatternRow>> getAllRows([
+  Future<List<pattern_row.PatternRow>> getAllRows([
     int? partId,
     bool withDetails = false,
     Database? db,
@@ -90,11 +89,11 @@ class PatternRowRepository {
         whereArgs: whereArgs,
         orderBy: "start_row ASC",
       );
-      List<patternRow.PatternRow> l = [
+      List<pattern_row.PatternRow> l = [
         for (final map in patternRowMaps) _fromMap(map),
       ];
       if (withDetails == true) {
-        for (patternRow.PatternRow row in l) {
+        for (pattern_row.PatternRow row in l) {
           row.details = await PatternDetailRepository().getAllDetailsByRowId(
             row.rowId,
           );
@@ -106,7 +105,7 @@ class PatternRowRepository {
     }
   }
 
-  Future<patternRow.PatternRow> getRowByDetailId(int id, [Database? db]) async {
+  Future<pattern_row.PatternRow> getRowByDetailId(int id, [Database? db]) async {
     db ??= (await DbService().database);
     if (db != null) {
       final List<Map<String, Object?>> patternRowMaps = await db.query(
@@ -116,9 +115,9 @@ class PatternRowRepository {
         orderBy: "start_row ASC",
         limit: 1,
       );
-      List<patternRow.PatternRow> l = List.empty(growable: true);
+      List<pattern_row.PatternRow> l = List.empty(growable: true);
       for (Map<String, Object?> map in patternRowMaps) {
-        patternRow.PatternRow tmp = _fromMap(map);
+        pattern_row.PatternRow tmp = _fromMap(map);
         tmp.details = await PatternDetailRepository().getAllDetailsByRowId(
           tmp.rowId,
           db,
@@ -131,7 +130,7 @@ class PatternRowRepository {
     }
   }
 
-  Future<patternRow.PatternRow> getRowById({
+  Future<pattern_row.PatternRow> getRowById({
     required int id,
     Database? db,
   }) async {
@@ -143,9 +142,9 @@ class PatternRowRepository {
         whereArgs: [id],
         limit: 1,
       );
-      List<patternRow.PatternRow> l = List.empty(growable: true);
+      List<pattern_row.PatternRow> l = List.empty(growable: true);
       for (Map<String, Object?> map in patternRowMaps) {
-        patternRow.PatternRow tmp = _fromMap(map);
+        pattern_row.PatternRow tmp = _fromMap(map);
         tmp.details = await PatternDetailRepository().getAllDetailsByRowId(
           tmp.rowId,
           db,

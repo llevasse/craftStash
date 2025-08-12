@@ -1,4 +1,3 @@
-import 'package:craft_stash/class/wip/wip.dart';
 import 'package:craft_stash/class/wip/wip_part.dart';
 import 'package:craft_stash/data/repository/wip/wip_repository.dart';
 
@@ -7,9 +6,8 @@ import 'package:craft_stash/data/repository/pattern/pattern_row_repository.dart'
 import 'package:craft_stash/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';
 
-String _tableName = "wip_part";
-
 class WipPartRepository {
+  static const String _tableName = "wip_part";
   const WipPartRepository();
 
   Future<Map<int, String>> getYarnIdToNameMap({required int wipId}) async {

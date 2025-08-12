@@ -61,7 +61,7 @@ class PatternScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    patternYarnList(
+                    PatternYarnListWidget(
                       context: context,
                       patternModel: patternModel,
                     ),

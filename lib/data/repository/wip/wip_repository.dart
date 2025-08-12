@@ -1,5 +1,4 @@
 import 'package:craft_stash/class/wip/wip.dart';
-import 'package:craft_stash/class/wip/wip_part.dart';
 import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:craft_stash/data/repository/pattern/pattern_repository.dart';
 import 'package:craft_stash/data/repository/wip/wip_part_repository.dart';

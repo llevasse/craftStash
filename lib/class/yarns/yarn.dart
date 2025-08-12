@@ -1,6 +1,3 @@
-import 'package:craft_stash/services/database_service.dart';
-import 'package:sqflite/sqflite.dart';
-
 class Yarn {
   Yarn({
     this.id = 0,

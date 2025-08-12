@@ -36,7 +36,6 @@ class RowListTile extends StatelessWidget {
       subtitle: preview == null ? null : Text(preview),
       contentPadding: EdgeInsets.all(0),
       onTap: () async {
-        PatternRow r = await PatternRowRepository().getRowById(id: row.rowId);
         await Navigator.push(
           context,
           MaterialPageRoute<void>(

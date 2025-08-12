@@ -14,6 +14,9 @@ class PatternStashModel extends ChangeNotifier {
   bool loaded = false;
 
   Future<void> load() async {
+    print("Pattern stash state");
+    print("Loaded : $loaded");
+    print("Pattern : $_patterns");
     try {
       _patterns = await _patternStashRepository.getAllPattern();
 

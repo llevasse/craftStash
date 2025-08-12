@@ -1,4 +1,3 @@
-import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/data/repository/pattern/pattern_row_repository.dart';
 import 'package:craft_stash/data/repository/stitch_repository.dart';

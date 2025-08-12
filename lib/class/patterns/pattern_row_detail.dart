@@ -1,9 +1,5 @@
 import 'package:craft_stash/class/stitch.dart';
-import 'package:craft_stash/class/yarns/yarn.dart';
-import 'package:craft_stash/services/database_service.dart';
-import 'package:sqflite/sqflite.dart';
 
-final String _tableName = "pattern_row_detail";
 
 class PatternRowDetail {
   int rowId;

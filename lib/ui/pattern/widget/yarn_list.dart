@@ -4,10 +4,9 @@ import 'package:craft_stash/ui/core/widgets/pattern_yarn_list.dart';
 import 'package:craft_stash/ui/core/widgets/dialogs/yarn_list_dialog.dart';
 import 'package:craft_stash/ui/core/widgets/dialogs/yarn_form_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 
-class patternYarnList extends StatelessWidget {
-  patternYarnList({
+class PatternYarnListWidget extends StatelessWidget {
+  PatternYarnListWidget({
     super.key,
     required this.context,
     required this.patternModel,

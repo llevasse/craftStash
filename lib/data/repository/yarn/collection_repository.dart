@@ -1,4 +1,3 @@
-import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:craft_stash/class/yarns/yarn_collection.dart';
 import 'package:craft_stash/data/repository/yarn/yarn_repository.dart';
 import 'package:craft_stash/services/database_service.dart';

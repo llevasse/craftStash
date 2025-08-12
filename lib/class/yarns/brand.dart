@@ -1,6 +1,3 @@
-import 'package:craft_stash/services/database_service.dart';
-import 'package:sqflite/sqflite.dart';
-
 class Brand {
   Brand({this.id = 0, required this.name});
   int id;

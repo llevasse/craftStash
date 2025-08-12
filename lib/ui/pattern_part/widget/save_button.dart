@@ -1,4 +1,3 @@
-import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/ui/pattern_part/pattern_part_model.dart';
 import 'package:flutter/material.dart';
 
