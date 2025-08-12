@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/data/repository/pattern/pattern_part_repository.dart';
+import 'package:craft_stash/main.dart';
 import 'package:flutter/material.dart';
 
 class PatternPartModel extends ChangeNotifier {
@@ -14,6 +17,7 @@ class PatternPartModel extends ChangeNotifier {
 
   int? id;
   final int patternId;
+  Timer? timer;
 
   PatternPart? _part;
   PatternPart? get part => _part;
@@ -55,26 +59,38 @@ class PatternPartModel extends ChangeNotifier {
     }
   }
 
+  void _setUpdateTimer() {
+    print("Set timer");
+    if (timer != null) {
+      timer!.cancel();
+    }
+    if (formKey.currentState!.validate()) {
+      timer = Timer(const Duration(seconds: 1), () async {
+        await savePart();
+        timer = null;
+      });
+    }
+  }
+
   void setTitle(String title) {
     _part?.name = title;
+    _setUpdateTimer();
     notifyListeners();
   }
 
   void setNumberToMake(int value) {
     _part?.numbersToMake = value;
+    _setUpdateTimer();
     notifyListeners();
   }
 
-  Future<bool> savePart() async {
-    if (formKey.currentState!.validate()) {
-      _part!.totalStitchNb = 0;
-      for (PatternRow row in _part!.rows) {
-        _part!.totalStitchNb += row.stitchesPerRow * row.numberOfRows;
-      }
-      await PatternPartRepository().updatePart(_part!);
-      return true;
+  Future<void> savePart() async {
+    _part!.totalStitchNb = 0;
+    for (PatternRow row in _part!.rows) {
+      _part!.totalStitchNb += row.stitchesPerRow * row.numberOfRows;
     }
-    return false;
+    await PatternPartRepository().updatePart(_part!);
+    if (debug) print("Part saved");
   }
 
   Future<void> deletePart() async {

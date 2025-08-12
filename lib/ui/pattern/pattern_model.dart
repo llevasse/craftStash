@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/data/repository/pattern/pattern_repository.dart';
+import 'package:craft_stash/main.dart';
 import 'package:flutter/material.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
 
@@ -8,8 +11,8 @@ class PatternModel extends ChangeNotifier {
     : _patternRepository = patternRepository;
   final PatternRepository _patternRepository;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
   int? id;
+  Timer? timer;
 
   craft.Pattern? _pattern;
   craft.Pattern? get pattern => _pattern;
@@ -44,8 +47,23 @@ class PatternModel extends ChangeNotifier {
     load();
   }
 
+  void _setUpdateTimer() {
+    print("Set timer");
+    if (timer != null) {
+      timer!.cancel();
+    }
+    if (formKey.currentState!.validate()) {
+      timer = Timer(const Duration(seconds: 1), () async {
+        await savePattern();
+        timer = null;
+        
+      });
+    }
+  }
+
   void setTitle(String title) {
     _pattern?.name = title;
+    _setUpdateTimer();
     notifyListeners();
   }
 
@@ -55,21 +73,20 @@ class PatternModel extends ChangeNotifier {
     } else {
       pattern?.hookSize = null;
     }
+    _setUpdateTimer();
+
     notifyListeners();
   }
 
-  Future<bool> savePattern() async {
-    if (formKey.currentState!.validate()) {
-      if (pattern == null) return true;
-      formKey.currentState!.save();
-      pattern?.totalStitchNb = 0;
-      for (PatternPart part in pattern!.parts) {
-        pattern?.totalStitchNb += part.totalStitchNb * part.numbersToMake;
-      }
-      await _patternRepository.updatePattern(pattern!);
-      return true;
+  Future<void> savePattern() async {
+    formKey.currentState!.save();
+    pattern?.totalStitchNb = 0;
+    for (PatternPart part in pattern!.parts) {
+      pattern?.totalStitchNb += part.totalStitchNb * part.numbersToMake;
     }
-    return false;
+    await _patternRepository.updatePattern(pattern!);
+    if (debug) print("Pattern saved");
+    
   }
 
   Future<void> deletePattern() async {

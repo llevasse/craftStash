@@ -4,7 +4,6 @@ import 'package:craft_stash/ui/pattern/widget/assembly_input.dart';
 import 'package:craft_stash/ui/pattern/widget/delete_button.dart';
 import 'package:craft_stash/ui/pattern/widget/hook_size_input.dart';
 import 'package:craft_stash/ui/pattern/widget/parts_list.dart';
-import 'package:craft_stash/ui/pattern/widget/save_button.dart';
 import 'package:craft_stash/ui/pattern/widget/title_input.dart';
 import 'package:craft_stash/ui/pattern/widget/yarn_list.dart';
 import 'package:craft_stash/ui/pattern/widget/add_part_button.dart';
@@ -36,7 +35,6 @@ class PatternScreen extends StatelessWidget {
                   patternModel: patternModel,
                   context: context,
                 ),
-                patternSaveButton(patternModel: patternModel, context: context),
               ],
             ),
 

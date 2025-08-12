@@ -32,6 +32,7 @@ class PatternListTile extends StatelessWidget {
             ),
           ),
         );
+        patternStashModel.reload();
       },
       onLongPress: () async {
         await showDialog(
@@ -60,6 +61,7 @@ class PatternListTile extends StatelessWidget {
             ],
           ),
         );
+        patternStashModel.reload();
       },
     );
   }

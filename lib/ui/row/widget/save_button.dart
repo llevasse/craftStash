@@ -7,13 +7,7 @@ IconButton rowSaveButton({
 }) {
   return IconButton(
     onPressed: () async {
-      if (patternRowModel.isSubRow == false) {
-        if ((await patternRowModel.saveRow()) == true) {
-          Navigator.pop(context, patternRowModel.row);
-        }
-      } else {
-        if ((await patternRowModel.saveSequence(context)) == true) {}
-      }
+      await patternRowModel.saveSequence(context);
     },
     icon: Icon(Icons.save),
   );

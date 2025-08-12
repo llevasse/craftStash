@@ -9,6 +9,9 @@ Widget patternHookSizeInput({required PatternModel patternModel}) {
     validator: (value) {
       return null;
     },
+    onChanged: (value) {
+      patternModel.setHookSize(value.trim());
+    },
     onSaved: (newValue) {
       patternModel.setHookSize(newValue?.trim());
     },

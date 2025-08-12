@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
@@ -32,6 +34,8 @@ class PatternRowModel extends ChangeNotifier {
 
   double buttonHeight = 50;
   bool needScroll = false;
+
+  Timer? timer;
 
   ScrollController stitchDetailsScrollController = ScrollController();
   ScrollController previewScrollController = ScrollController();
@@ -104,18 +108,35 @@ class PatternRowModel extends ChangeNotifier {
     await load();
   }
 
+  void _setUpdateTimer() {
+    print("Set timer");
+    if (timer != null) {
+      timer!.cancel();
+    }
+    if (formKey.currentState!.validate()) {
+      formKey.currentState!.save();
+      timer = Timer(const Duration(seconds: 1), () async {
+        await saveRow();
+        timer = null;
+      });
+    }
+  }
+
   void setStartRow(int value) {
     _row?.startRow = value;
+    _setUpdateTimer();
     notifyListeners();
   }
 
   void setStitchNb(int value) {
     _row?.stitchesPerRow = value;
+    _setUpdateTimer();
     notifyListeners();
   }
 
   void setNumberOfRows(int value) {
     _row?.numberOfRows = value;
+    _setUpdateTimer();
     notifyListeners();
   }
 
@@ -126,12 +147,13 @@ class PatternRowModel extends ChangeNotifier {
       }
     }
     _row?.preview = text;
-    print("set preview to $text");
     previewControler.text = text;
+    _setUpdateTimer();
     notifyListeners();
   }
 
   void setRow(PatternRow newRow) {
+    _setUpdateTimer();
     _row = newRow;
   }
 
@@ -281,34 +303,30 @@ class PatternRowModel extends ChangeNotifier {
     setPreview(_row!.detailsAsString());
   }
 
-  Future<bool> saveRow() async {
-    if (formKey.currentState!.validate()) {
-      if (debug) print("Row stitch nb : ${_row?.stitchesPerRow}");
-      if (_row!.stitchesPerRow < 1) {
-        await _patternRowRepository.deleteRow(_row!.rowId);
-      } else {
-        _row?.preview = _row?.detailsAsString();
-        await _patternRowRepository.updateRow(row!);
-        for (int i = 0; i < _row!.details.length; i++) {
-          if (_row?.details[i].repeatXTime != 0) {
-            _row?.details[i].order = i;
-            await PatternDetailRepository().updateDetail(_row!.details[i]);
-          } else {
-            if (_row?.details[i].rowDetailId != 0) {
-              await PatternDetailRepository().deleteDetail(
-                _row!.details[i].rowDetailId,
-              );
-            }
+  Future<void> saveRow() async {
+    if (debug) print("Row stitch nb : ${_row?.stitchesPerRow}");
+    if (_row!.stitchesPerRow < 1) {
+      await _patternRowRepository.deleteRow(_row!.rowId);
+    } else {
+      _row?.preview = _row?.detailsAsString();
+      await _patternRowRepository.updateRow(row!);
+      for (int i = 0; i < _row!.details.length; i++) {
+        if (_row?.details[i].repeatXTime != 0) {
+          _row?.details[i].order = i;
+          await PatternDetailRepository().updateDetail(_row!.details[i]);
+        } else {
+          if (_row?.details[i].rowDetailId != 0) {
+            await PatternDetailRepository().deleteDetail(
+              _row!.details[i].rowDetailId,
+            );
           }
         }
       }
-      return true;
     }
-    return false;
   }
 
   Future<PatternRowDetail?> saveSequence(BuildContext context) async {
-    if (formKey.currentState!.validate()) {
+    if (formKey.currentState!.mounted && formKey.currentState!.validate()) {
       formKey.currentState!.save();
       if (debug) print("Row stitch nb : ${_row!.stitchesPerRow}");
       PatternRowDetail detail = PatternRowDetail(rowId: 0, stitchId: 0);

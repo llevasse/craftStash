@@ -54,10 +54,12 @@ class RowScreen extends StatelessWidget {
                   patternRowModel: patternRowModel,
                   context: context,
                 ),
-                rowSaveButton(
-                  patternRowModel: patternRowModel,
-                  context: context,
-                ),
+                ?patternRowModel.isSubRow == true
+                    ? rowSaveButton(
+                        patternRowModel: patternRowModel,
+                        context: context,
+                      )
+                    : null,
               ],
             ),
 

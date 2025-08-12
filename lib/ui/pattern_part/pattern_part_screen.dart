@@ -3,7 +3,6 @@ import 'package:craft_stash/ui/pattern_part/pattern_part_model.dart';
 import 'package:craft_stash/ui/pattern_part/widget/delete_button.dart';
 import 'package:craft_stash/ui/pattern_part/widget/repeat_x_time_button.dart';
 import 'package:craft_stash/ui/pattern_part/widget/row_list_tile.dart';
-import 'package:craft_stash/ui/pattern_part/widget/save_button.dart';
 import 'package:craft_stash/ui/pattern_part/widget/title_input.dart';
 import 'package:craft_stash/ui/pattern_part/widget/add_row_button.dart';
 import 'package:flutter/material.dart';
@@ -31,10 +30,6 @@ class PatternPartScreen extends StatelessWidget {
               backgroundColor: theme.colorScheme.primary,
               actions: [
                 partDeleteButton(
-                  patternPartModel: patternPartModel,
-                  context: context,
-                ),
-                partSaveButton(
                   patternPartModel: patternPartModel,
                   context: context,
                 ),
