@@ -61,7 +61,7 @@ class PatternRowModel extends ChangeNotifier {
             RowStitchCountButton(
               patternRowModel: this,
               detail: detail,
-              index: detailsCountButtonList.length - 1,
+              index: detailsCountButtonList.length,
               text: text,
               showCount: !isColorChange,
               allowDecrease: !isColorChange,
@@ -120,8 +120,19 @@ class PatternRowModel extends ChangeNotifier {
   }
 
   void setPreview(String text) {
+    if (yarnNameMap != null) {
+      for (MapEntry<int, String> entry in yarnNameMap!.entries) {
+        text = text.replaceAll("\${${entry.key}}", entry.value);
+      }
+    }
     _row?.preview = text;
+    print("set preview to $text");
+    previewControler.text = text;
     notifyListeners();
+  }
+
+  void setRow(PatternRow newRow) {
+    _row = newRow;
   }
 
   void scrollDown({required ScrollController ctrl, int duration = 0}) {
@@ -139,9 +150,13 @@ class PatternRowModel extends ChangeNotifier {
       _row!.details.last.repeatXTime += 1;
       detailsCountButtonList.removeLast();
     } else {
-      _row!.details.add(
-        PatternRowDetail(rowId: -1, stitchId: stitch.id, stitch: stitch),
+      PatternRowDetail prd = PatternRowDetail(
+        rowId: _row!.rowId,
+        stitchId: stitch.id,
+        stitch: stitch,
       );
+      prd.rowDetailId = await PatternDetailRepository().insertDetail(prd);
+      _row!.details.add(prd);
     }
     _row!.stitchesPerRow += stitch.stitchNb;
 
@@ -151,18 +166,11 @@ class PatternRowModel extends ChangeNotifier {
       RowStitchCountButton(
         patternRowModel: this,
         detail: _row!.details.last,
-        index: detailsCountButtonList.length - 1,
+        index: detailsCountButtonList.length,
       ),
     );
-    String preview = _row!.detailsAsString();
-    if (yarnNameMap != null) {
-      for (MapEntry<int, String> entry in yarnNameMap!.entries) {
-        preview = preview.replaceAll("\${${entry.key}}", entry.value);
-      }
-    }
-    previewControler.text = preview;
     needScroll = true;
-    notifyListeners();
+    setPreview(_row!.detailsAsString());
     return null;
   }
 
@@ -184,21 +192,12 @@ class PatternRowModel extends ChangeNotifier {
       RowStitchCountButton(
         patternRowModel: this,
         detail: detail,
-        index: detailsCountButtonList.length - 1,
+        index: detailsCountButtonList.length,
       ),
     );
 
-    String preview = _row!.detailsAsString();
-    if (yarnNameMap != null) {
-      for (MapEntry<int, String> entry in yarnNameMap!.entries) {
-        preview = preview.replaceAll("\${${entry.key}}", entry.value);
-      }
-    }
-    previewControler.text = preview;
-
     needScroll = true;
-
-    notifyListeners();
+    setPreview(_row!.detailsAsString());
   }
 
   Future<void> addColorChange(PatternRowDetail? detail) async {
@@ -217,7 +216,7 @@ class PatternRowModel extends ChangeNotifier {
           RowStitchCountButton(
             patternRowModel: this,
             detail: detail,
-            index: detailsCountButtonList.length - 1,
+            index: detailsCountButtonList.length,
             allowIncrease: false,
             allowDecrease: false,
             showCount: false,
@@ -232,7 +231,7 @@ class PatternRowModel extends ChangeNotifier {
           RowStitchCountButton(
             patternRowModel: this,
             detail: detail,
-            index: detailsCountButtonList.length - 1,
+            index: detailsCountButtonList.length,
             allowIncrease: false,
             allowDecrease: false,
             showCount: false,
@@ -241,17 +240,8 @@ class PatternRowModel extends ChangeNotifier {
       }
     }
 
-    String preview = _row!.detailsAsString();
-    if (yarnNameMap != null) {
-      for (MapEntry<int, String> entry in yarnNameMap!.entries) {
-        preview = preview.replaceAll("\${${entry.key}}", entry.value);
-      }
-    }
-    previewControler.text = preview;
-
     needScroll = true;
-
-    notifyListeners();
+    setPreview(_row!.detailsAsString());
   }
 
   Future<void> addStartColor(PatternRowDetail? detail) async {
@@ -287,17 +277,8 @@ class PatternRowModel extends ChangeNotifier {
         ),
       );
     }
-    String preview = _row!.detailsAsString();
-    if (yarnNameMap != null) {
-      for (MapEntry<int, String> entry in yarnNameMap!.entries) {
-        preview = preview.replaceAll("\${${entry.key}}", entry.value);
-      }
-    }
-    previewControler.text = preview;
-
     needScroll = true;
-
-    notifyListeners();
+    setPreview(_row!.detailsAsString());
   }
 
   Future<bool> saveRow() async {
@@ -310,13 +291,8 @@ class PatternRowModel extends ChangeNotifier {
         await _patternRowRepository.updateRow(row!);
         for (int i = 0; i < _row!.details.length; i++) {
           if (_row?.details[i].repeatXTime != 0) {
-            _row?.details[i].rowId = _row!.rowId;
             _row?.details[i].order = i;
-            if (_row?.details[i].rowDetailId == 0) {
-              await PatternDetailRepository().insertDetail(_row!.details[i]);
-            } else {
-              await PatternDetailRepository().updateDetail(_row!.details[i]);
-            }
+            await PatternDetailRepository().updateDetail(_row!.details[i]);
           } else {
             if (_row?.details[i].rowDetailId != 0) {
               await PatternDetailRepository().deleteDetail(

@@ -1,9 +1,9 @@
+import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/data/repository/pattern/pattern_detail_repository.dart';
 import 'package:craft_stash/main.dart';
 import 'package:craft_stash/ui/core/widgets/buttons/count_button.dart';
 import 'package:craft_stash/ui/row/row_model.dart';
-import 'package:craft_stash/ui/wip_part/wip_part_model.dart';
 import 'package:craft_stash/ui/core/widgets/dialogs/stitch_detail_dialog.dart';
 import 'package:flutter/material.dart';
 
@@ -59,8 +59,10 @@ class RowStitchCountButton extends StatelessWidget {
           );
         }
         detail.repeatXTime = value;
-        if (debug)
+        if (debug) {
           print("Row stitch nb : ${patternRowModel.row!.stitchesPerRow}");
+        }
+        patternRowModel.setPreview(patternRowModel.row!.detailsAsString());
       },
       onLongPress: () async {
         await stitchCountLongPress(context);
@@ -69,37 +71,42 @@ class RowStitchCountButton extends StatelessWidget {
   }
 
   Future<void> stitchCountLongPress(BuildContext context) async {
+    PatternRow tmpRow = patternRowModel.row!;
+    tmpRow.details.remove(detail);
+    tmpRow.stitchesPerRow -= detail.repeatXTime * detail.stitch!.stitchNb;
+
     PatternRowDetail? newDetail = await showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return StitchDetailDialog(detail: detail);
       },
     );
-    patternRowModel.row!.stitchesPerRow -=
-        detail.repeatXTime * detail.stitch!.stitchNb;
     if (newDetail == null) {
-      if (detail.rowDetailId != 0) {
-        await PatternDetailRepository().deleteDetail(detail.rowDetailId);
-      }
-      patternRowModel.detailsCountButtonList.removeAt(index);
-      patternRowModel.row!.details.remove(detail);
-    } else {
-      patternRowModel.row!.stitchesPerRow +=
-          detail.repeatXTime * detail.stitch!.stitchNb;
-      if (detail.rowDetailId != 0) {
-        patternRowModel.row!.details.remove(detail);
-        patternRowModel.row!.details.insert(index, newDetail);
-        patternRowModel.detailsCountButtonList.removeAt(index);
-        patternRowModel.detailsCountButtonList.insert(
-          index,
-          RowStitchCountButton(
-            patternRowModel: patternRowModel,
-            detail: detail,
-            index: index,
-          ),
-        );
-      }
+      tmpRow.stitchesPerRow += detail.repeatXTime * detail.stitch!.stitchNb;
+      tmpRow.details.insert(index, detail);
+
+      return;
     }
-    patternRowModel.setPreview(patternRowModel.row!.detailsAsString());
+
+    if (newDetail.rowId == -1) {
+      // if detail is set to be deleted
+      await PatternDetailRepository().deleteDetail(detail.rowDetailId);
+      patternRowModel.detailsCountButtonList.removeAt(index);
+    } else {
+      tmpRow.stitchesPerRow += detail.repeatXTime * detail.stitch!.stitchNb;
+      tmpRow.details.insert(index, newDetail);
+      patternRowModel.detailsCountButtonList.removeAt(index);
+      patternRowModel.detailsCountButtonList.insert(
+        index,
+        RowStitchCountButton(
+          patternRowModel: patternRowModel,
+          detail: detail,
+          index: index,
+        ),
+      );
+    }
+    patternRowModel.setRow(tmpRow);
+    patternRowModel.setPreview(tmpRow.detailsAsString());
   }
 }

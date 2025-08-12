@@ -38,7 +38,8 @@ class _StitchDetailDialogState extends State<StitchDetailDialog> {
   TextButton deleteButton() {
     return TextButton(
       onPressed: () {
-        Navigator.pop(context);
+        widget.detail.rowId = -1;
+        Navigator.pop(context, widget.detail);
       },
       child: Text("Delete"),
     );
@@ -48,14 +49,18 @@ class _StitchDetailDialogState extends State<StitchDetailDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text("Edit row detail"),
+
       content: Form(
         key: _formKey,
-        child: Column(children: [_repeatXTimeInput(), deleteButton()]),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [_repeatXTimeInput(), deleteButton()],
+        ),
       ),
       actions: [
         TextButton(
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pop(context, widget.detail);
           },
           child: Text("Cancel"),
         ),
@@ -66,7 +71,8 @@ class _StitchDetailDialogState extends State<StitchDetailDialog> {
               _formKey.currentState!.save();
 
               if (widget.detail.repeatXTime <= 0) {
-                Navigator.pop(context);
+                widget.detail.rowId = -1;
+                Navigator.pop(context, widget.detail);
               }
 
               Navigator.pop(context, widget.detail);

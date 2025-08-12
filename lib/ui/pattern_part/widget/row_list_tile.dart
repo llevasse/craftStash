@@ -50,6 +50,7 @@ class RowListTile extends StatelessWidget {
             ),
           ),
         );
+        patternPartModel.reload();
       },
       onLongPress: () async {
         await showDialog(
@@ -73,6 +74,7 @@ class RowListTile extends StatelessWidget {
             ],
           ),
         );
+        patternPartModel.reload();
       },
     );
   }
