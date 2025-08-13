@@ -1,10 +1,5 @@
-import 'package:craft_stash/class/yarns/brand.dart';
-import 'package:craft_stash/class/yarns/material.dart';
-import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:craft_stash/class/yarns/yarn_collection.dart';
-import 'package:craft_stash/data/repository/yarn/brand_repository.dart';
 import 'package:craft_stash/data/repository/yarn/collection_repository.dart';
-import 'package:craft_stash/data/repository/yarn/material_repository.dart';
 import 'package:craft_stash/data/repository/yarn/yarn_repository.dart';
 import 'package:craft_stash/ui/core/widgets/dialogs/error_dialog.dart';
 import 'package:flutter/material.dart';
@@ -40,150 +35,6 @@ typedef MenuEntry = DropdownMenuEntry<String>;
 class _CollectionForm extends State<CollectionForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  List<String> brandList = List.empty(growable: true);
-  List<String> materialList = List.empty(growable: true);
-  List<MenuEntry> brandMenuEntries = List.empty(growable: true);
-  List<MenuEntry> materialMenuEntries = List.empty(growable: true);
-
-  Future<List<String>> getAllBrandsAsList() async {
-    List<Brand> list = await BrandRepository().getAllBrand();
-    brandList.clear();
-    for (Brand element in list) {
-      brandList.add(element.name);
-    }
-    return brandList;
-  }
-
-  Future<List<String>> getAllMaterialsAsList() async {
-    List<YarnMaterial> list = await MaterialRepository().getAllMaterials();
-    materialList.clear();
-    for (YarnMaterial element in list) {
-      materialList.add(element.name);
-    }
-    return materialList;
-  }
-
-  Future<void> updateDropdownMenuList() async {
-    await getAllBrandsAsList();
-    await getAllMaterialsAsList();
-    List<MenuEntry> brandMenuEntriesTmp = List.empty(growable: true);
-    List<MenuEntry> materialMenuEntriesTmp = List.empty(growable: true);
-    for (String brand in brandList) {
-      if (brand == "Unknown") continue;
-      brandMenuEntriesTmp.add(DropdownMenuEntry(value: brand, label: brand));
-    }
-    brandMenuEntriesTmp.add(
-      DropdownMenuEntry(value: "Unknown", label: "Unknown"),
-    );
-    brandMenuEntriesTmp.add(DropdownMenuEntry(value: "New", label: "New"));
-
-    for (String material in materialList) {
-      if (material == "Unknown") continue;
-      materialMenuEntriesTmp.add(
-        DropdownMenuEntry(value: material, label: material),
-      );
-    }
-    materialMenuEntriesTmp.add(
-      DropdownMenuEntry(value: "Unknown", label: "Unknown"),
-    );
-    materialMenuEntriesTmp.add(DropdownMenuEntry(value: "New", label: "New"));
-    setState(() {
-      brandMenuEntries = brandMenuEntriesTmp;
-      materialMenuEntries = materialMenuEntriesTmp;
-    });
-  }
-
-  Widget getBrandDropdownMenu() {
-    if (brandMenuEntries.isEmpty) return Text("");
-    return DropdownMenu(
-      inputDecorationTheme: InputDecorationTheme(border: InputBorder.none),
-      expandedInsets: EdgeInsets.all(0),
-      dropdownMenuEntries: brandMenuEntries,
-      initialSelection: widget.base.brand,
-
-      onSelected: (value) {
-        if (value == "New") {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) => AlertDialog(
-              title: Text("New brand name"),
-              content: TextField(
-                onChanged: (value) {
-                  value = value.trim();
-                  widget.base.brand = value;
-                },
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () async {
-                    if (!brandList.contains(widget.base.brand)) {
-                      await BrandRepository().insertBrand(
-                        Brand(name: widget.base.brand),
-                      );
-                    }
-
-                    Navigator.pop(context);
-                    await updateDropdownMenuList();
-                    setState(() {});
-                  },
-                  child: Text("Add"),
-                ),
-              ],
-            ),
-          );
-        } else {
-          widget.base.brand = value!;
-        }
-      },
-    );
-  }
-
-  Widget getMaterialDropdownMenu() {
-    if (materialMenuEntries.isEmpty) return Text("");
-
-    return DropdownMenu(
-      inputDecorationTheme: InputDecorationTheme(border: InputBorder.none),
-      expandedInsets: EdgeInsets.all(0),
-      dropdownMenuEntries: materialMenuEntries,
-      initialSelection: widget.base.material,
-      onSelected: (value) {
-        if (value == "New") {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) => AlertDialog(
-              title: Text("New material name"),
-              content: TextField(
-                onChanged: (value) {
-                  value = value.trim();
-                  widget.base.material = value;
-                },
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () async {
-                    await getAllMaterialsAsList();
-                    if (!materialList.contains(widget.base.material)) {
-                      await MaterialRepository().insertMaterial(
-                        YarnMaterial(name: widget.base.material),
-                      );
-                    }
-
-                    Navigator.pop(context);
-                    await updateDropdownMenuList();
-                    setState(() {});
-                  },
-                  child: Text("Add"),
-                ),
-              ],
-            ),
-          );
-        } else {
-          widget.base.material = value!;
-        }
-      },
-    );
-  }
-
   Form _createForm() {
     return Form(
       key: _formKey,
@@ -208,10 +59,6 @@ class _CollectionForm extends State<CollectionForm> {
                   widget.base.name = newValue;
                 },
               ),
-
-              getBrandDropdownMenu(),
-
-              getMaterialDropdownMenu(),
 
               TextFormField(
                 initialValue: widget.fill == true
@@ -276,7 +123,7 @@ class _CollectionForm extends State<CollectionForm> {
   @override
   void initState() {
     super.initState();
-    updateDropdownMenuList();
+    // updateDropdownMenuList();
     setState(() {});
   }
 

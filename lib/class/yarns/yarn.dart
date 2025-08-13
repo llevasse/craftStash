@@ -1,25 +1,23 @@
-class Yarn {
+import 'package:craft_stash/class/yarns/yarn_collection.dart';
+import 'package:flutter/material.dart';
+
+class Yarn extends YarnCollection {
   Yarn({
-    this.id = 0,
+    super.id,
+    super.name,
+    super.brand,
+    super.material,
+    super.minHook,
+    super.maxHook,
+    super.thickness,
     this.collectionId,
-    required this.color,
-    this.brand = "Unknown",
-    this.material = "Unknown",
+    this.color = 0xFFFFC107,
     this.colorName = "Unknown",
-    this.minHook = 0,
-    this.maxHook = 0,
-    this.thickness = 0,
     this.nbOfSkeins = 1,
     this.inPreviewId,
   });
-  int id;
   int? collectionId;
-  String brand; // ex : "my brand"
-  String material; // ex : "coton"
   String colorName; // ex : "ocean"
-  double thickness; // ex : "3mm"
-  double minHook; // ex : "2.5mm"
-  double maxHook; // ex : "3.5mm"
   int color; // ex : 0xFFFFC107
   int nbOfSkeins; // ex : 1
   int? inPreviewId;
@@ -56,4 +54,16 @@ class Yarn {
     minHook,
     thickness,
   );
+
+  YarnCollection toCollection() {
+    return YarnCollection(
+      id: id,
+      name: name,
+      brand: brand,
+      material: material,
+      thickness: thickness,
+      minHook: minHook,
+      maxHook: maxHook,
+    );
+  }
 }

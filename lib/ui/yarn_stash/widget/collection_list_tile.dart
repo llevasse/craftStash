@@ -2,10 +2,11 @@ import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:craft_stash/class/yarns/yarn_collection.dart';
 import 'package:craft_stash/data/repository/yarn/collection_repository.dart';
 import 'package:craft_stash/data/repository/yarn/yarn_repository.dart';
+import 'package:craft_stash/ui/yarn_form_dialog/collection_form_dialog_model.dart';
+import 'package:craft_stash/ui/yarn_form_dialog/yarn_form_dialog_model.dart';
 import 'package:craft_stash/ui/yarn_stash/yarn_model.dart';
-import 'package:craft_stash/ui/yarn_stash/widget/collection_form.dart';
 import 'package:craft_stash/ui/core/widgets/buttons/edit_yarn_button.dart';
-import 'package:craft_stash/ui/core/widgets/dialogs/yarn_form_dialog.dart';
+import 'package:craft_stash/ui/yarn_form_dialog/yarn_form_dialog_screen.dart';
 import 'package:flutter/material.dart';
 
 class CollectionListTile extends StatelessWidget {
@@ -36,13 +37,15 @@ class CollectionListTile extends StatelessWidget {
       onClick: () => showDialog(
         context: context,
         builder: (BuildContext context) => YarnForm(
-          base: yarn,
-          updateYarn: yarnStashModel.reload,
-          ifValidFunction: YarnRepository().updateYarn,
-          title: "Edit yarn",
-          cancel: "Cancel",
-          confirm: "Edit",
-          fill: true,
+          model: YarnFormDialogModel(
+            base: yarn,
+            updateYarn: yarnStashModel.reload,
+            ifValidFunction: YarnRepository().updateYarn,
+            title: "Edit yarn",
+            cancel: "Cancel",
+            confirm: "Edit",
+            fill: true,
+          ),
         ),
       ),
     ));
@@ -69,15 +72,21 @@ class CollectionListTile extends StatelessWidget {
             onLongPress: () async {
               await showDialog(
                 context: context,
-                builder: (BuildContext context) => CollectionForm(
-                  allowDelete: true,
-                  fill: true,
-                  base: collection,
-                  updateYarn: yarnStashModel.reload,
-                  ifValideFunction: CollectionRepository().updateYarnCollection,
-                  title: "Edit collection",
-                  cancel: "Cancel",
-                  confirm: "Edit",
+                builder: (BuildContext context) => YarnForm(
+                  model: CollectionFormDialogModel(
+                    base: collection.toYarn(),
+                    updateYarn: yarnStashModel.reload,
+                    ifValidFunction: (yarn) async {
+                      YarnCollection collection = yarn.toCollection();
+                      print(collection);
+                      CollectionRepository().updateYarnCollection(collection);
+                    },
+                    title: "Edit collection",
+                    cancel: "Cancel",
+                    confirm: "Edit",
+                    fill: true,
+                    allowDelete: true,
+                  ),
                 ),
               );
             },

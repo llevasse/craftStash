@@ -2,8 +2,9 @@ import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:craft_stash/class/yarns/yarn_collection.dart';
 import 'package:craft_stash/data/repository/yarn/collection_repository.dart';
 import 'package:craft_stash/data/repository/yarn/yarn_repository.dart';
+import 'package:craft_stash/ui/yarn_form_dialog/yarn_form_dialog_model.dart';
 import 'package:craft_stash/ui/yarn_stash/widget/collection_form.dart';
-import 'package:craft_stash/ui/core/widgets/dialogs/yarn_form_dialog.dart';
+import 'package:craft_stash/ui/yarn_form_dialog/yarn_form_dialog_screen.dart';
 import 'package:flutter/material.dart';
 
 class YarnCollectionForm extends StatefulWidget {
@@ -43,13 +44,15 @@ class _YarnCollectionForm extends State<YarnCollectionForm> {
           await showDialog(
             context: context,
             builder: (BuildContext context) => YarnForm(
-              base: Yarn(color: Colors.amber.toARGB32()),
-              updateYarn: widget.updateYarn,
-              ifValidFunction: YarnRepository().insertYarn,
-              title: "Add yarn",
-              cancel: "Cancel",
-              confirm: "Add",
-              fromCategory: false,
+              model: YarnFormDialogModel(
+                base: Yarn(color: Colors.amber.toARGB32()),
+                updateYarn: widget.updateYarn,
+                ifValidFunction: YarnRepository().insertYarn,
+                title: "Add yarn",
+                cancel: "Cancel",
+                confirm: "Add",
+                fromCategory: false,
+              ),
             ),
           );
         },
@@ -88,21 +91,23 @@ class _YarnCollectionForm extends State<YarnCollectionForm> {
             await showDialog(
               context: context,
               builder: (BuildContext context) => YarnForm(
-                base: Yarn(
-                  collectionId: element.id,
-                  color: Colors.amber.toARGB32(),
-                  brand: element.brand,
-                  material: element.material,
-                  minHook: element.minHook,
-                  maxHook: element.maxHook,
-                  thickness: element.thickness,
+                model: YarnFormDialogModel(
+                  base: Yarn(
+                    collectionId: element.id,
+                    color: Colors.amber.toARGB32(),
+                    brand: element.brand,
+                    material: element.material,
+                    minHook: element.minHook,
+                    maxHook: element.maxHook,
+                    thickness: element.thickness,
+                  ),
+                  updateYarn: widget.updateYarn,
+                  ifValidFunction: YarnRepository().insertYarn,
+                  title: "Add yarn",
+                  cancel: "Cancel",
+                  confirm: "Add",
+                  fill: true,
                 ),
-                updateYarn: widget.updateYarn,
-                ifValidFunction: YarnRepository().insertYarn,
-                title: "Add yarn",
-                cancel: "Cancel",
-                confirm: "Add",
-                fill: true,
               ),
             );
           },

@@ -1,9 +1,10 @@
 import 'package:craft_stash/class/yarns/yarn.dart';
 import 'package:craft_stash/data/repository/wip/wip_repository.dart';
+import 'package:craft_stash/ui/yarn_form_dialog/yarn_form_dialog_model.dart';
 import 'package:craft_stash/ui/wip/wip_model.dart';
 import 'package:craft_stash/ui/core/widgets/pattern_yarn_list.dart';
 import 'package:craft_stash/ui/core/widgets/dialogs/yarn_list_dialog.dart';
-import 'package:craft_stash/ui/core/widgets/dialogs/yarn_form_dialog.dart';
+import 'package:craft_stash/ui/yarn_form_dialog/yarn_form_dialog_screen.dart';
 import 'package:flutter/material.dart';
 
 class WipYarnList extends StatelessWidget {
@@ -23,13 +24,15 @@ class WipYarnList extends StatelessWidget {
     await showDialog(
       context: context,
       builder: (BuildContext context) => YarnForm(
-        fill: true,
-        readOnly: true,
-        base: yarn,
-        confirm: "close",
-        cancel: "",
-        title: yarn.colorName,
-        showSkeins: false,
+        model: YarnFormDialogModel(
+          fill: true,
+          readOnly: true,
+          base: yarn,
+          confirm: "close",
+          cancel: "",
+          title: yarn.colorName,
+          showSkeins: false,
+        ),
       ),
     );
   }

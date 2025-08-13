@@ -45,4 +45,16 @@ class YarnCollection {
   String toString() {
     return toMap().toString();
   }
+
+  Yarn toYarn() {
+    return Yarn(
+      id: id,
+      name: name,
+      brand: brand,
+      material: material,
+      thickness: thickness,
+      minHook: minHook,
+      maxHook: maxHook,
+    );
+  }
 }
