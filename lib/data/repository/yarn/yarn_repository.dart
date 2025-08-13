@@ -9,7 +9,7 @@ class YarnRepository {
   Yarn _fromMap(Map<String, Object?> map) {
     return Yarn(
       id: map["id"] as int,
-      collectionId: map["collection_id"] as int,
+      collectionId: map["collection_id"] as int?,
       color: map["color"] as int,
       brand: map["brand"] as String,
       material: map["material"] as String,
@@ -187,6 +187,24 @@ class YarnRepository {
             collectionId: collectionId,
           ),
       ];
+    } else {
+      throw DatabaseDoesNotExistException("Could not get database");
+    }
+  }
+
+  Future<List<Yarn>> getAllUniqueYarn([Database? db]) async {
+    db ??= (await DbService().database);
+    if (db != null) {
+      final List<Map<String, Object?>> connectionsMaps = await db.query(
+        _tablename,
+        where: "collection_id is NULL",
+        whereArgs: [],
+      );
+      List<Yarn> l = List.empty(growable: true);
+      for (Map<String, Object?> map in connectionsMaps) {
+        l.add(_fromMap(map));
+      }
+      return l;
     } else {
       throw DatabaseDoesNotExistException("Could not get database");
     }

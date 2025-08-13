@@ -1,4 +1,3 @@
-import 'package:craft_stash/ui/yarn_form_dialog/yarn_form_dialog_model.dart';
 import 'package:craft_stash/ui/yarn_form_dialog/yarn_form_dialog_model_abstart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';

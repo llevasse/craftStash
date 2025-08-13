@@ -78,6 +78,7 @@ class _YarnCollectionForm extends State<YarnCollectionForm> {
       ),
     );
     for (YarnCollection element in collectionList) {
+      if (element.id == -1) continue;
       tmp.add(
         ListTile(
           title: Text(

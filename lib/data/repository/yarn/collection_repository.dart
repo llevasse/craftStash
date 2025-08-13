@@ -60,6 +60,11 @@ class CollectionRepository {
     if (db != null) {
       final List<Map<String, Object?>> yarnMaps = await db.query(_tablename);
       List<YarnCollection> l = List.empty(growable: true);
+
+      YarnCollection unique = YarnCollection(name: "Unique", id: -1);
+      unique.yarns = await YarnRepository().getAllUniqueYarn();
+      l.add(unique);
+
       for (final {
             'id': id as int,
             "name": name as String,

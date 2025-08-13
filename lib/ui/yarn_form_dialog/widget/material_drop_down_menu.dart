@@ -1,6 +1,5 @@
 import 'package:craft_stash/class/yarns/material.dart';
 import 'package:craft_stash/data/repository/yarn/material_repository.dart';
-import 'package:craft_stash/ui/yarn_form_dialog/yarn_form_dialog_model.dart';
 import 'package:craft_stash/ui/yarn_form_dialog/yarn_form_dialog_model_abstart.dart';
 import 'package:flutter/material.dart';
 

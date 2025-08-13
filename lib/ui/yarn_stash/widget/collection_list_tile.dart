@@ -24,6 +24,7 @@ class CollectionListTile extends StatelessWidget {
     required Yarn yarn,
     YarnCollection? collection,
   }) {
+    if (collection != null && collection.id == -1) collection = null;
     if (collection != null) {
       yarn.brand = collection.brand;
       yarn.material = collection.material;
@@ -48,6 +49,9 @@ class CollectionListTile extends StatelessWidget {
           ),
         ),
       ),
+      showBrand: collection == null,
+      showMaterial: collection == null,
+      showThickness: collection == null,
     ));
   }
 
@@ -70,6 +74,7 @@ class CollectionListTile extends StatelessWidget {
                   : controller.expand();
             },
             onLongPress: () async {
+              if (collection.id == -1) return;
               await showDialog(
                 context: context,
                 builder: (BuildContext context) => YarnForm(
