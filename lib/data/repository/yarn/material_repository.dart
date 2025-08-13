@@ -14,7 +14,7 @@ class MaterialRepository {
         whereArgs: [yarnMaterial.hashCode],
       );
       if (list.isEmpty) {
-        db.insert(
+        await db.insert(
           _tablename,
           yarnMaterial.toMap(),
           conflictAlgorithm: ConflictAlgorithm.abort,
@@ -28,7 +28,7 @@ class MaterialRepository {
   Future<void> updateMaterial(YarnMaterial yarnMaterial) async {
     final db = (await DbService().database);
     if (db != null) {
-      db.update(
+      await db.update(
         _tablename,
         yarnMaterial.toMap(),
         where: "id = ?",
@@ -42,7 +42,7 @@ class MaterialRepository {
   Future<void> deleteMaterial(int id) async {
     final db = (await DbService().database);
     if (db != null) {
-      db.delete(_tablename, where: "id = ?", whereArgs: [id]);
+      await db.delete(_tablename, where: "id = ?", whereArgs: [id]);
     } else {
       throw DatabaseDoesNotExistException("Could not get database");
     }
@@ -67,7 +67,7 @@ class MaterialRepository {
   Future<void> removeAllMaterials() async {
     final db = (await DbService().database);
     if (db != null) {
-      db.rawDelete('DELETE FROM $_tablename');
+      await db.rawDelete('DELETE FROM $_tablename');
     } else {
       throw DatabaseDoesNotExistException("Could not get database");
     }

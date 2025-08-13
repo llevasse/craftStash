@@ -44,7 +44,7 @@ abstract class YarnFormDialogModelAbstart extends ChangeNotifier {
   List<MenuEntry> brandMenuEntries = List.empty(growable: true);
   List<MenuEntry> materialMenuEntries = List.empty(growable: true);
 
-  double spacing = 10;
+  double spacing = 5;
 
   bool loaded = false;
 
@@ -55,10 +55,20 @@ abstract class YarnFormDialogModelAbstart extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> reload() async {
+    loaded = false;
+    notifyListeners();
+    await load();
+  }
+
   Future<List<String>> getAllBrandsAsList() async {
     List<Brand> list = await BrandRepository().getAllBrand();
     brandList.clear();
     brandMenuEntries.clear();
+
+    brandMenuEntries.add(DropdownMenuEntry(value: "Unknown", label: "Unknown"));
+    brandMenuEntries.add(DropdownMenuEntry(value: "New", label: "New"));
+
     for (Brand element in list) {
       if (element.name == "Unknown") continue;
       brandMenuEntries.add(
@@ -67,8 +77,6 @@ abstract class YarnFormDialogModelAbstart extends ChangeNotifier {
 
       brandList.add(element.name);
     }
-    brandMenuEntries.add(DropdownMenuEntry(value: "Unknown", label: "Unknown"));
-    brandMenuEntries.add(DropdownMenuEntry(value: "New", label: "New"));
 
     return brandList;
   }
@@ -76,17 +84,20 @@ abstract class YarnFormDialogModelAbstart extends ChangeNotifier {
   Future<List<String>> getAllMaterialsAsList() async {
     List<YarnMaterial> list = await MaterialRepository().getAllMaterials();
     materialList.clear();
-    for (YarnMaterial element in list) {
-      materialList.add(element.name);
-      if (element.name == "Unknown") continue;
-      materialMenuEntries.add(
-        DropdownMenuEntry(value: element.name, label: element.name),
-      );
-    }
+    materialMenuEntries.clear();
+
     materialMenuEntries.add(
       DropdownMenuEntry(value: "Unknown", label: "Unknown"),
     );
     materialMenuEntries.add(DropdownMenuEntry(value: "New", label: "New"));
+
+    for (YarnMaterial element in list) {
+      if (element.name == "Unknown") continue;
+      materialMenuEntries.add(
+        DropdownMenuEntry(value: element.name, label: element.name),
+      );
+      materialList.add(element.name);
+    }
     return materialList;
   }
 

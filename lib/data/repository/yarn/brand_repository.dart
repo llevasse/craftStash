@@ -15,7 +15,7 @@ class BrandRepository {
         whereArgs: [brand.hashCode],
       );
       if (list.isEmpty) {
-        db.insert(
+        await db.insert(
           'brand',
           brand.toMap(),
           conflictAlgorithm: ConflictAlgorithm.abort,
@@ -29,7 +29,7 @@ class BrandRepository {
   Future<void> updateBrand(Brand brand) async {
     final db = (await DbService().database);
     if (db != null) {
-      db.update(
+      await db.update(
         _tablename,
         brand.toMap(),
         where: "id = ?",
@@ -43,7 +43,7 @@ class BrandRepository {
   Future<void> deleteBrand(int id) async {
     final db = (await DbService().database);
     if (db != null) {
-      db.delete(_tablename, where: "id = ?", whereArgs: [id]);
+      await db.delete(_tablename, where: "id = ?", whereArgs: [id]);
     } else {
       throw DatabaseDoesNotExistException("Could not get database");
     }
@@ -65,7 +65,7 @@ class BrandRepository {
   Future<void> removeAllBrand() async {
     final db = (await DbService().database);
     if (db != null) {
-      db.rawDelete('DELETE FROM $_tablename');
+      await db.rawDelete('DELETE FROM $_tablename');
     } else {
       throw DatabaseDoesNotExistException("Could not get database");
     }

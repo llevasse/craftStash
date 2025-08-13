@@ -77,8 +77,8 @@ class YarnForm extends StatelessWidget {
                 if (model.updateYarn != null) {
                   await model.updateYarn!();
                 }
+
                 Navigator.pop(context);
-                model.load();
               },
               child: Text(model.confirm),
             ),

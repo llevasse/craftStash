@@ -38,15 +38,14 @@ class MaterialDropdownMenu extends StatelessWidget {
               actions: [
                 TextButton(
                   onPressed: () async {
-                    await model.getAllMaterialsAsList();
                     if (!model.materialList.contains(model.base.material)) {
                       await MaterialRepository().insertMaterial(
                         YarnMaterial(name: model.base.material),
                       );
                     }
 
+                    await model.reload();
                     Navigator.pop(context);
-                    await model.load();
                   },
                   child: Text("Add"),
                 ),

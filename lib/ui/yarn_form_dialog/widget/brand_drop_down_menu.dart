@@ -31,8 +31,7 @@ class BrandDropdownMenu extends StatelessWidget {
               title: Text("New brand name"),
               content: TextField(
                 onChanged: (value) {
-                  value = value.trim();
-                  model.base.brand = value;
+                  model.base.brand = value.trim();
                 },
               ),
               actions: [
@@ -44,8 +43,8 @@ class BrandDropdownMenu extends StatelessWidget {
                       );
                     }
 
+                    await model.reload();
                     Navigator.pop(context);
-                    await model.load();
                   },
                   child: Text("Add"),
                 ),
