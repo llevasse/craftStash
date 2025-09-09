@@ -65,6 +65,12 @@ class PatternPartScreen extends StatelessWidget {
                         itemBuilder: (_, index) => RowListTile(
                           row: patternPartModel.part!.rows[index],
                           patternPartModel: patternPartModel,
+                          prevRowStitchNumber: index > 0
+                              ? patternPartModel
+                                    .part!
+                                    .rows[index - 1]
+                                    .stitchesPerRow
+                              : 0,
                         ),
                       ),
                     ),

@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 
 class StitchDetailDialog extends StatefulWidget {
   PatternRowDetail detail;
+  int? prevRowStitchNb;
 
-  StitchDetailDialog({super.key, required this.detail});
+  StitchDetailDialog({super.key, required this.detail, this.prevRowStitchNb});
   @override
   State<StatefulWidget> createState() => _StitchDetailDialogState();
 }
@@ -20,6 +21,7 @@ class _StitchDetailDialogState extends State<StitchDetailDialog> {
   TextFormField _repeatXTimeInput() {
     return TextFormField(
       initialValue: widget.detail.repeatXTime.toString(),
+      decoration: InputDecoration(label: Text("Repeat x times")),
       keyboardType: TextInputType.number,
       validator: (value) {
         if (value == null ||
@@ -30,7 +32,27 @@ class _StitchDetailDialogState extends State<StitchDetailDialog> {
         return null;
       },
       onSaved: (newValue) {
-        widget.detail.repeatXTime = int.parse(newValue!.trim());
+        if (selection.first == false) {
+          widget.detail.repeatXTime = int.parse(newValue!.trim());
+        }
+      },
+    );
+  }
+
+  Set selection = {false};
+
+  Widget _toggleButton() {
+    return SegmentedButton(
+      segments: [
+        ButtonSegment(value: true, label: Text("True")),
+        ButtonSegment(value: false, label: Text("False")),
+      ],
+      selected: selection,
+      onSelectionChanged: (p0) {
+        setState(() {
+          widget.detail.repeatXTime = widget.prevRowStitchNb!;
+          selection = p0;
+        });
       },
     );
   }
@@ -54,7 +76,11 @@ class _StitchDetailDialogState extends State<StitchDetailDialog> {
         key: _formKey,
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [_repeatXTimeInput(), deleteButton()],
+          children: [
+            _repeatXTimeInput(),
+            ?widget.prevRowStitchNb != null ? _toggleButton() : null,
+            deleteButton(),
+          ],
         ),
       ),
       actions: [

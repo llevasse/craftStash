@@ -17,6 +17,7 @@ class RowStitchCountButton extends StatelessWidget {
     this.allowIncrease = true,
     this.allowDecrease = true,
     this.text,
+    this.prevRowStitchNb,
   });
   final int index;
   final PatternRowModel patternRowModel;
@@ -25,6 +26,7 @@ class RowStitchCountButton extends StatelessWidget {
   final bool allowIncrease;
   final bool allowDecrease;
   final String? text;
+  final int? prevRowStitchNb;
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +81,10 @@ class RowStitchCountButton extends StatelessWidget {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return StitchDetailDialog(detail: detail);
+        return StitchDetailDialog(
+          detail: detail,
+          prevRowStitchNb: prevRowStitchNb,
+        );
       },
     );
     if (newDetail == null) {

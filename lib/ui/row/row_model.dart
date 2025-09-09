@@ -19,12 +19,14 @@ class PatternRowModel extends ChangeNotifier {
     this.isSubRow = false,
     this.stitchId,
     this.id,
+    this.prevRowStitchNb,
   }) : _patternRowRepository = patternRowRepository;
   final PatternRowRepository _patternRowRepository;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final Map<int, String>? yarnNameMap;
   final bool isSubRow;
   final int? stitchId;
+  final int? prevRowStitchNb;
 
   int? id;
   final PatternPart? part;
@@ -70,9 +72,12 @@ class PatternRowModel extends ChangeNotifier {
               showCount: !isColorChange,
               allowDecrease: !isColorChange,
               allowIncrease: !isColorChange,
+              prevRowStitchNb: isColorChange == false ? prevRowStitchNb : null,
             ),
           );
         }
+        print("prev row stitshes : $prevRowStitchNb");
+        print(row);
       } else {
         _row = PatternRow(
           startRow: part!.rows.isEmpty
@@ -189,6 +194,7 @@ class PatternRowModel extends ChangeNotifier {
         patternRowModel: this,
         detail: _row!.details.last,
         index: detailsCountButtonList.length,
+        prevRowStitchNb: prevRowStitchNb,
       ),
     );
     needScroll = true;
@@ -215,6 +221,7 @@ class PatternRowModel extends ChangeNotifier {
         patternRowModel: this,
         detail: detail,
         index: detailsCountButtonList.length,
+        prevRowStitchNb: prevRowStitchNb,
       ),
     );
 

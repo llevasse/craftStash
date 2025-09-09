@@ -10,7 +10,9 @@ class RowListTile extends StatelessWidget {
     super.key,
     required this.row,
     required this.patternPartModel,
+    this.prevRowStitchNumber = 0,
   });
+  final int prevRowStitchNumber;
   final PatternRow row;
 
   final PatternPartModel patternPartModel;
@@ -46,6 +48,9 @@ class RowListTile extends StatelessWidget {
                 part: patternPartModel.part,
                 id: row.rowId,
                 yarnNameMap: patternPartModel.yarnNameMap,
+                prevRowStitchNb: prevRowStitchNumber != 0
+                    ? prevRowStitchNumber
+                    : null,
               ),
             ),
           ),
