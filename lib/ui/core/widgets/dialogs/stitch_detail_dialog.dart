@@ -4,18 +4,45 @@ import 'package:flutter/material.dart';
 class StitchDetailDialog extends StatefulWidget {
   PatternRowDetail detail;
   int? prevRowStitchNb;
+  int previousRowStitchNbUsed;
+  int originalCurrentRowStitchNb = 0;
 
-  StitchDetailDialog({super.key, required this.detail, this.prevRowStitchNb});
+  StitchDetailDialog({
+    super.key,
+    required this.detail,
+    this.prevRowStitchNb,
+    this.previousRowStitchNbUsed = 0,
+  });
   @override
   State<StatefulWidget> createState() => _StitchDetailDialogState();
 }
 
 class _StitchDetailDialogState extends State<StitchDetailDialog> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool displaySelector = false;
+  Set selection = {false};
 
   @override
   void initState() {
     super.initState();
+    widget.originalCurrentRowStitchNb = widget.previousRowStitchNbUsed;
+    widget.previousRowStitchNbUsed += widget.detail.repeatXTime;
+    displaySelectorChecker();
+    print("Init StitchDetailDialog with var : ");
+    print("\tDetail : ${widget.detail.toString()}");
+    print("\tPrevious row stitch nb : ${widget.prevRowStitchNb}");
+    print("\tPrevious row stitch nb used : ${widget.previousRowStitchNbUsed}");
+    print(
+      "\tCurrent row without this detail stitch nb : ${widget.originalCurrentRowStitchNb}",
+    );
+  }
+
+  displaySelectorChecker() {
+    displaySelector = false;
+    if (widget.prevRowStitchNb != null &&
+        widget.prevRowStitchNb! > widget.previousRowStitchNbUsed) {
+      displaySelector = true;
+    }
   }
 
   TextFormField _repeatXTimeInput() {
@@ -23,6 +50,15 @@ class _StitchDetailDialogState extends State<StitchDetailDialog> {
       initialValue: widget.detail.repeatXTime.toString(),
       decoration: InputDecoration(label: Text("Repeat x times")),
       keyboardType: TextInputType.number,
+      onChanged: (value) {
+        widget.previousRowStitchNbUsed =
+            widget.originalCurrentRowStitchNb +
+            (int.tryParse(value.trim()) ?? 0) *
+                (widget.detail.stitch?.stitchNb ?? 1);
+        if (widget.prevRowStitchNb != null) {
+          setState(() {});
+        }
+      },
       validator: (value) {
         if (value == null ||
             value.isEmpty ||
@@ -38,8 +74,6 @@ class _StitchDetailDialogState extends State<StitchDetailDialog> {
       },
     );
   }
-
-  Set selection = {false};
 
   Widget _toggleButton() {
     return SegmentedButton(
@@ -78,12 +112,8 @@ class _StitchDetailDialogState extends State<StitchDetailDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            widget.prevRowStitchNb != null
-                ? _toggleButton()
-                : _repeatXTimeInput(),
-            ?widget.prevRowStitchNb != null && selection.first == false
-                ? _repeatXTimeInput()
-                : null, // if user selected custom value in _toggleButton()
+            ?displaySelector ? _toggleButton() : null,
+            ?selection.first == false ? _repeatXTimeInput() : null,
           ],
         ),
       ),
@@ -105,6 +135,11 @@ class _StitchDetailDialogState extends State<StitchDetailDialog> {
                 Navigator.pop(context, widget.detail);
               }
 
+              if (widget.prevRowStitchNb != null && selection.first == true) {
+                // if set as around, set to prevRowStitchNumber - preRowStitchUsed
+                widget.detail.repeatXTime =
+                    widget.prevRowStitchNb! - widget.previousRowStitchNbUsed;
+              }
               Navigator.pop(context, widget.detail);
             }
           },

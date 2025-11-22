@@ -7,6 +7,8 @@ class PatternRow {
   int inSameStitch;
   int startRow, numberOfRows;
   int stitchesPerRow;
+  int stitchesUsedFromPreviousRow =
+      0; // if previous row was 6sc, and current row is 6inc, current row used 6sts from previous row and has 12sts in this row
   String? note;
   List<PatternRowDetail> details = List.empty(growable: true);
   PatternRow({
@@ -85,6 +87,7 @@ class PatternRow {
     print("${s}start_row $startRow");
     print("${s}number_of_rows $numberOfRows");
     print("${s}stitches_per_row $stitchesPerRow");
+    print("${s}stitches_used_from_previous_row $stitchesUsedFromPreviousRow");
     for (PatternRowDetail detail in details) {
       detail.printDetail(tab + 1);
     }

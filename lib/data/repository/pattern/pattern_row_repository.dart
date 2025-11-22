@@ -1,5 +1,6 @@
 import 'package:craft_stash/class/patterns/pattern_row.dart' as pattern_row;
 import 'package:craft_stash/data/repository/pattern/pattern_detail_repository.dart';
+import 'package:craft_stash/main.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -97,6 +98,12 @@ class PatternRowRepository {
           row.details = await PatternDetailRepository().getAllDetailsByRowId(
             row.rowId,
           );
+          row.stitchesUsedFromPreviousRow = row.details.fold(0, (
+            total,
+            currentDetail,
+          ) {
+            return currentDetail.repeatXTime;
+          });
         }
       }
       return (l);
@@ -105,7 +112,10 @@ class PatternRowRepository {
     }
   }
 
-  Future<pattern_row.PatternRow> getRowByDetailId(int id, [Database? db]) async {
+  Future<pattern_row.PatternRow> getRowByDetailId(
+    int id, [
+    Database? db,
+  ]) async {
     db ??= (await DbService().database);
     if (db != null) {
       final List<Map<String, Object?>> patternRowMaps = await db.query(
@@ -122,6 +132,12 @@ class PatternRowRepository {
           tmp.rowId,
           db,
         );
+        tmp.stitchesUsedFromPreviousRow = tmp.details.fold(0, (
+          total,
+          currentDetail,
+        ) {
+          return currentDetail.repeatXTime;
+        });
         l.add(tmp);
       }
       return (l[0]);
@@ -142,16 +158,25 @@ class PatternRowRepository {
         whereArgs: [id],
         limit: 1,
       );
-      List<pattern_row.PatternRow> l = List.empty(growable: true);
-      for (Map<String, Object?> map in patternRowMaps) {
-        pattern_row.PatternRow tmp = _fromMap(map);
-        tmp.details = await PatternDetailRepository().getAllDetailsByRowId(
-          tmp.rowId,
-          db,
-        );
-        l.add(tmp);
+      if (patternRowMaps.isEmpty) {
+        throw Exception("Row not found");
       }
-      return (l[0]);
+      pattern_row.PatternRow row = _fromMap(patternRowMaps[0]);
+      row.details = await PatternDetailRepository().getAllDetailsByRowId(
+        row.rowId,
+        db,
+      );
+      row.stitchesUsedFromPreviousRow = row.details.fold(0, (
+        total,
+        currentDetail,
+      ) {
+        return currentDetail.repeatXTime;
+      });
+      // if (debug) {
+      //   print("getRowById with id = $id returned :");
+      //   row.printDetails(1);
+      // }
+      return (row);
     } else {
       throw DatabaseDoesNotExistException("Could not get database");
     }

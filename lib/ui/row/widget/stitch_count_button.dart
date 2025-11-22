@@ -55,10 +55,12 @@ class RowStitchCountButton extends StatelessWidget {
           patternRowModel.setStitchNb(
             patternRowModel.row!.stitchesPerRow += detail.stitch!.stitchNb,
           );
+          patternRowModel.row!.stitchesUsedFromPreviousRow += 1;
         } else {
           patternRowModel.setStitchNb(
             patternRowModel.row!.stitchesPerRow -= detail.stitch!.stitchNb,
           );
+          patternRowModel.row!.stitchesUsedFromPreviousRow -= 1;
         }
         detail.repeatXTime = value;
         if (debug) {
@@ -76,14 +78,17 @@ class RowStitchCountButton extends StatelessWidget {
     PatternRow tmpRow = patternRowModel.row!;
     tmpRow.details.remove(detail);
     tmpRow.stitchesPerRow -= detail.repeatXTime * detail.stitch!.stitchNb;
+    tmpRow.stitchesUsedFromPreviousRow -= detail.repeatXTime;
 
     PatternRowDetail? newDetail = await showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
+        tmpRow.printDetails();
         return StitchDetailDialog(
           detail: detail,
           prevRowStitchNb: prevRowStitchNb,
+          previousRowStitchNbUsed: tmpRow.stitchesUsedFromPreviousRow,
         );
       },
     );
@@ -99,14 +104,18 @@ class RowStitchCountButton extends StatelessWidget {
       await PatternDetailRepository().deleteDetail(detail.rowDetailId);
       patternRowModel.detailsCountButtonList.removeAt(index);
     } else {
-      tmpRow.stitchesPerRow += detail.repeatXTime * detail.stitch!.stitchNb;
+      print("Add button");
+      tmpRow.stitchesPerRow +=
+          newDetail.repeatXTime * newDetail.stitch!.stitchNb;
+      tmpRow.stitchesUsedFromPreviousRow += newDetail.repeatXTime;
       tmpRow.details.insert(index, newDetail);
       patternRowModel.detailsCountButtonList.removeAt(index);
       patternRowModel.detailsCountButtonList.insert(
         index,
         RowStitchCountButton(
           patternRowModel: patternRowModel,
-          detail: detail,
+          prevRowStitchNb: prevRowStitchNb,
+          detail: newDetail,
           index: index,
         ),
       );
