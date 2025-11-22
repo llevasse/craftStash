@@ -44,15 +44,16 @@ class _StitchDetailDialogState extends State<StitchDetailDialog> {
   Widget _toggleButton() {
     return SegmentedButton(
       segments: [
-        ButtonSegment(value: true, label: Text("True")),
-        ButtonSegment(value: false, label: Text("False")),
+        ButtonSegment(value: true, label: Text("Around")),
+        ButtonSegment(value: false, label: Text("Custom")),
       ],
       selected: selection,
       onSelectionChanged: (p0) {
-        setState(() {
+        if (p0.first == true) {
           widget.detail.repeatXTime = widget.prevRowStitchNb!;
-          selection = p0;
-        });
+        }
+        selection = p0;
+        setState(() {});
       },
     );
   }
@@ -77,9 +78,12 @@ class _StitchDetailDialogState extends State<StitchDetailDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _repeatXTimeInput(),
-            ?widget.prevRowStitchNb != null ? _toggleButton() : null,
-            deleteButton(),
+            widget.prevRowStitchNb != null
+                ? _toggleButton()
+                : _repeatXTimeInput(),
+            ?widget.prevRowStitchNb != null && selection.first == false
+                ? _repeatXTimeInput()
+                : null, // if user selected custom value in _toggleButton()
           ],
         ),
       ),
@@ -90,7 +94,7 @@ class _StitchDetailDialogState extends State<StitchDetailDialog> {
           },
           child: Text("Cancel"),
         ),
-
+        deleteButton(),
         TextButton(
           onPressed: () async {
             if (_formKey.currentState!.validate()) {
