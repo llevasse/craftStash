@@ -67,7 +67,7 @@ class DbService {
       '''CREATE TABLE IF NOT EXISTS pattern_row(row_id INTEGER PRIMARY KEY, part_id INT, start_row INT, number_of_rows INT, stitches_count_per_row INT, in_same_stitch INT, preview TEXT, note TEXT, FOREIGN KEY (part_id) REFERENCES pattern_part(part_id) ON DELETE CASCADE)''',
     );
     await db.execute(
-      '''CREATE TABLE IF NOT EXISTS stitch(id INTEGER PRIMARY KEY, sequence_id INT, abreviation TEXT, name TEXT, description TEXT, is_sequence INT, hidden INT, stitch_nb INT, hash INT, FOREIGN KEY (sequence_id) REFERENCES pattern_row(row_id) ON DELETE CASCADE)''',
+      '''CREATE TABLE IF NOT EXISTS stitch(id INTEGER PRIMARY KEY, sequence_id INT, abreviation TEXT, name TEXT, description TEXT, is_sequence INT, hidden INT, stitch_nb INT, nb_of_stitches_taken INT, hash INT, FOREIGN KEY (sequence_id) REFERENCES pattern_row(row_id) ON DELETE CASCADE)''',
     );
     await db.execute(
       '''CREATE TABLE IF NOT EXISTS pattern_row_detail(row_detail_id INTEGER PRIMARY KEY, pattern_id INT, row_id INT, stitch_id INT, repeat_x_time INT, in_row_order INT, yarn_id INT, FOREIGN KEY (row_id) REFERENCES pattern_row(row_id) ON DELETE CASCADE, FOREIGN KEY (stitch_id) REFERENCES stitch(id), FOREIGN KEY (yarn_id) REFERENCES yarn(id))''',
@@ -98,6 +98,9 @@ class DbService {
     Batch batch = db.batch();
     if (oldVersion < 2) {
       dbUpgradeV2(batch);
+    }
+    if (oldVersion < 3) {
+      dbUpgradeV3(batch);
     }
     batch.commit();
   }

@@ -1,8 +1,10 @@
 import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
+import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/data/repository/pattern/pattern_part_repository.dart';
 import 'package:craft_stash/data/repository/pattern/pattern_repository.dart';
+import 'package:craft_stash/data/repository/stitch_repository.dart';
 import 'package:sqflite/sqflite.dart';
 
 Future<void> dbUpgradeV2(Batch batch) async {
@@ -48,5 +50,26 @@ Future<void> dbUpgradeV2(Batch batch) async {
   }
   for (craft.Pattern pattern in map.values) {
     await PatternRepository().updatePattern(pattern);
+  }
+}
+
+Future<void> dbUpgradeV3(Batch batch) async {
+  batch.execute('''ALTER TABLE stitch ADD COLUMN nb_of_stitches_taken INT''');
+  await batch.commit();
+  List<Stitch> stitches = await StitchRepository().getAllStitches();
+  stitches.forEach(updateStitchesNbOfStitchesTaken);
+}
+
+void updateStitchesNbOfStitchesTaken(Stitch stitch) {
+  stitch.nbStsTaken = 1;
+  if (stitch.row != null) {
+    stitch.row?.details.forEach((detail) {
+      if (detail.stitch != null) {
+        updateStitchesNbOfStitchesTaken(detail.stitch!);
+      }
+    });
+    stitch.nbStsTaken = stitch.row!.details.fold(0, (total, currentDetail) {
+      return currentDetail.stitch?.nbStsTaken ?? 1;
+    });
   }
 }

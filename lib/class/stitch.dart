@@ -12,6 +12,7 @@ class Stitch {
     this.sequenceId,
     this.hidden = 0,
     this.stitchNb = 1,
+    this.nbStsTaken = 1,
   });
   int id;
   int stitchNb;
@@ -20,6 +21,7 @@ class Stitch {
   String? description;
   int isSequence;
   int? sequenceId;
+  int nbStsTaken;
   PatternRow? row;
   int hidden;
 
@@ -33,6 +35,7 @@ class Stitch {
       "hidden": hidden,
       "hash": hashCode,
       "stitch_nb": stitchNb,
+      "nb_of_stitches_taken": nbStsTaken,
     };
   }
 

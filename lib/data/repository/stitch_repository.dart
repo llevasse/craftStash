@@ -20,6 +20,9 @@ class StitchRepository {
       sequenceId: map["sequence_id"] as int?,
       hidden: map["hidden"] as int,
       stitchNb: map['stitch_nb'] as int,
+      nbStsTaken: map['nb_of_stitches_taken'] != null
+          ? (map['nb_of_stitches_taken'] as int)
+          : 1,
     );
   }
 
@@ -33,7 +36,12 @@ class StitchRepository {
 
   Future<void> insertDefaultStitches([Database? db]) async {
     List<Stitch> stitches = [
-      Stitch(abreviation: "ch", name: "chain", description: null),
+      Stitch(
+        abreviation: "ch",
+        name: "chain",
+        description: null,
+        nbStsTaken: 0,
+      ),
       Stitch(abreviation: "sl st", name: "slip stitch", description: null),
       Stitch(abreviation: "sc", name: "single crochet", description: null),
       Stitch(
@@ -49,7 +57,12 @@ class StitchRepository {
         description: null,
         stitchNb: 2,
       ),
-      Stitch(abreviation: "dec", name: "decrease", description: null),
+      Stitch(
+        abreviation: "dec",
+        name: "decrease",
+        description: null,
+        nbStsTaken: 2,
+      ),
       Stitch(abreviation: "sk", name: "skip", description: null, stitchNb: 0),
       Stitch(
         abreviation: "color change",
@@ -103,6 +116,7 @@ class StitchRepository {
         isSequence: 1,
         sequenceId: row.rowId,
         stitchNb: 3,
+        nbStsTaken: 2,
       ),
       db,
     );
@@ -136,6 +150,7 @@ class StitchRepository {
         isSequence: 1,
         sequenceId: row.rowId,
         stitchNb: 2,
+        nbStsTaken: 3,
       ),
       db,
     );
