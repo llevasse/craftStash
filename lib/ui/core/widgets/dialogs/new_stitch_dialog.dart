@@ -18,6 +18,12 @@ class _NewStitchDialogState extends State<NewStitchDialog> {
   String abreviation = "";
   String? fullName;
   String? description;
+  late int fillXStitches;
+
+  @override
+  void initState() {
+    fillXStitches = widget.base?.nbStsTaken ?? 0;
+  }
 
   Widget _createAbreviationInput() {
     return TextFormField(
@@ -66,6 +72,25 @@ class _NewStitchDialogState extends State<NewStitchDialog> {
     );
   }
 
+  Widget _createStitchFillNumberInput() {
+    return TextFormField(
+      decoration: InputDecoration(
+        label: Text("Number of stitch field from previous row"),
+      ),
+      initialValue: fillXStitches.toString(),
+      keyboardType: TextInputType.number,
+      validator: (value) {
+        if (value == null || int.tryParse(value) == null) {
+          return "Value must be a valid number";
+        }
+        return null;
+      },
+      onSaved: (newValue) {
+        fillXStitches = int.tryParse((newValue!.trim())) ?? 0;
+      },
+    );
+  }
+
   List<Widget> actions() {
     List<Widget> l = List.empty(growable: true);
     if (widget.base != null) {
@@ -96,6 +121,7 @@ class _NewStitchDialogState extends State<NewStitchDialog> {
               abreviation: abreviation,
               name: fullName,
               description: description,
+              nbStsTaken: fillXStitches,
             );
             if (widget.base == null) {
               await StitchRepository().insertStitch(s);
@@ -125,6 +151,7 @@ class _NewStitchDialogState extends State<NewStitchDialog> {
             _createAbreviationInput(),
             _createFullNameInput(),
             _createDescriptionInput(),
+            _createStitchFillNumberInput(),
           ],
         ),
       ),

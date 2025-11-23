@@ -341,6 +341,14 @@ class PatternRowModel extends ChangeNotifier {
       if (row?.rowId != null) {
         detail.rowId = row!.rowId;
       }
+      Stitch stitch = Stitch(
+        abreviation: _row!.toString(),
+        isSequence: 1,
+        sequenceId: _row!.rowId,
+        stitchNb: _row!.stitchesPerRow,
+        nbStsTaken: _row!.stitchesUsedFromPreviousRow,
+      );
+
       if (id == null) {
         for (PatternRowDetail e in _row!.details) {
           if (e.repeatXTime != 0) {
@@ -348,23 +356,12 @@ class PatternRowModel extends ChangeNotifier {
             await PatternDetailRepository().insertDetail(e);
           }
         }
-        detail.stitch = Stitch(
-          abreviation: _row!.toString(),
-          isSequence: 1,
-          sequenceId: _row!.rowId,
-          stitchNb: _row!.stitchesPerRow,
-        );
+        detail.stitch = stitch;
         detail.stitchId = await StitchRepository().insertStitch(detail.stitch!);
       } else {
         await _patternRowRepository.updateRow(row!);
-        await StitchRepository().updateStitch(
-          Stitch(
-            id: stitchId as int,
-            abreviation: _row!.toString(),
-            isSequence: 1,
-            sequenceId: _row!.rowId,
-          ),
-        );
+        await StitchRepository().updateStitch(stitch);
+
         for (PatternRowDetail e in _row!.details) {
           if (e.repeatXTime != 0) {
             e.rowId = _row!.rowId;
