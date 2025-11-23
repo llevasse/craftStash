@@ -30,6 +30,8 @@ class AddRowButton extends StatelessWidget {
                 patternRowRepository: PatternRowRepository(),
                 part: patternPartModel.part,
                 yarnNameMap: patternPartModel.yarnNameMap,
+                prevRowStitchNb:
+                    patternPartModel.part?.rows.last.stitchesPerRow ?? 0,
               ),
             ),
           ),
