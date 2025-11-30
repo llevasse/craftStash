@@ -8,7 +8,7 @@ IconButton rowDeleteButton({
 }) {
   return IconButton(
     onPressed: () async {
-      await showDialog(
+      bool? close = await showDialog(
         context: context,
         builder: (BuildContext context) => AlertDialog(
           title: Text("Do you want to delete this row"),
@@ -22,13 +22,16 @@ IconButton rowDeleteButton({
             TextButton(
               onPressed: () async {
                 await patternRowModel.deleteRow();
-                Navigator.pop(context);
+                Navigator.pop(context, true);
               },
               child: Text("Delete"),
             ),
           ],
         ),
       );
+      if (close != null && close == true) {
+        Navigator.pop(context);
+      }
     },
     icon: Icon(LucideIcons.trash),
   );
