@@ -65,9 +65,9 @@ class RowStitchCountButton extends StatelessWidget {
               detail.stitch!.nbStsTaken;
         }
         detail.repeatXTime = value;
-        if (debug) {
-          print("Row stitch nb : ${patternRowModel.row!.stitchesPerRow}");
-        }
+        // if (debug) {
+        //   print("Row stitch nb : ${patternRowModel.row!.stitchesPerRow}");
+        // }
         patternRowModel.setPreview(patternRowModel.row!.detailsAsString());
       },
       onLongPress: () async {
@@ -106,15 +106,20 @@ class RowStitchCountButton extends StatelessWidget {
     }
 
     if (debug) {
-      print("Returned detail : ${newDetail.toMap()}");
+      print("Returned detail : ");
+      newDetail.printDetail();
     }
 
     if (newDetail.rowId == -1) {
       // if detail is set to be deleted
       await PatternDetailRepository().deleteDetail(detail.rowDetailId);
-      patternRowModel.detailsCountButtonList.removeAt(index);
+      patternRowModel.detailsCountButtonList.removeAt(
+        patternRowModel.detailsCountButtonList.indexWhere(
+          (testDetail) => testDetail.detail.rowDetailId == detail.rowDetailId,
+        ),
+      );
     } else {
-      print("Add button");
+      // print("Add button");
       tmpRow.stitchesPerRow +=
           newDetail.repeatXTime * newDetail.stitch!.stitchNb;
       tmpRow.stitchesUsedFromPreviousRow +=

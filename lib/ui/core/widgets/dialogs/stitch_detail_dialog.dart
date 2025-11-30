@@ -31,14 +31,14 @@ class _StitchDetailDialogState extends State<StitchDetailDialog> {
     widget.previousRowStitchNbUsed +=
         widget.detail.repeatXTime * (widget.detail.stitch?.stitchNb ?? 1);
     displaySelectorChecker();
-    print("Init StitchDetailDialog with var : ");
-    print("\tDetail : ${widget.detail.toString()}");
-    print("\tPrevious row stitch nb : ${widget.prevRowStitchNb}");
-    print("\tPrevious row stitch nb used : ${widget.previousRowStitchNbUsed}");
-    print(
-      "\tPrevious row stitch nb used (without this detail) : ${widget.originalPreviousRowStitchNbUsed}",
-    );
-    print("\tCurrent row stitch nb : ${widget.currentRowStitchNb}");
+    // print("Init StitchDetailDialog with var : ");
+    // print("\tDetail : ${widget.detail.toString()}");
+    // print("\tPrevious row stitch nb : ${widget.prevRowStitchNb}");
+    // print("\tPrevious row stitch nb used : ${widget.previousRowStitchNbUsed}");
+    // print(
+    //   "\tPrevious row stitch nb used (without this detail) : ${widget.originalPreviousRowStitchNbUsed}",
+    // );
+    // print("\tCurrent row stitch nb : ${widget.currentRowStitchNb}");
   }
 
   displaySelectorChecker() {
