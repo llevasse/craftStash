@@ -47,13 +47,13 @@ class PatternModel extends ChangeNotifier {
     load();
   }
 
-  void _setUpdateTimer() {
+  void _setUpdateTimer([int seconds = 1]) {
     if (timer != null) {
       timer!.cancel();
       timer = null;
     }
     if (formKey.currentState!.validate()) {
-      timer = Timer(const Duration(seconds: 1), () async {
+      timer = Timer(Duration(seconds: seconds), () async {
         if (debug) {
           print("Save pattern");
         }
@@ -65,7 +65,7 @@ class PatternModel extends ChangeNotifier {
 
   void setTitle(String title) {
     _pattern?.name = title;
-    _setUpdateTimer();
+    _setUpdateTimer(5);
     notifyListeners();
   }
 
@@ -75,17 +75,34 @@ class PatternModel extends ChangeNotifier {
     } else {
       pattern?.hookSize = null;
     }
-    _setUpdateTimer();
+    _setUpdateTimer(5);
+
+    notifyListeners();
+  }
+
+  void setAssembly(String? value) {
+    if (value != null) {
+      pattern?.note = value.trim();
+    } else {
+      pattern?.note = null;
+    }
+    _setUpdateTimer(5);
 
     notifyListeners();
   }
 
   Future<void> savePattern() async {
+    if (timer != null) {
+      timer!
+          .cancel(); // just to avoid potential call to this function after pattern page is closed
+      timer = null;
+    }
     formKey.currentState!.save();
     pattern?.totalStitchNb = 0;
     for (PatternPart part in pattern!.parts) {
       pattern?.totalStitchNb += part.totalStitchNb * part.numbersToMake;
     }
+    print("${pattern?.toMap()}");
     await _patternRepository.updatePattern(pattern!);
     if (debug) print("Pattern saved");
   }

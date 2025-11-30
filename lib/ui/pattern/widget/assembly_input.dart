@@ -9,8 +9,11 @@ Widget patternAssemblyInput({required PatternModel patternModel}) {
     validator: (value) {
       return null;
     },
-    onSaved: (newValue) {
-      patternModel.pattern?.note = newValue?.trim();
+    onChanged: (value) {
+      patternModel.setAssembly(value);
     },
+    // onSaved: (newValue) {
+    //   patternModel.pattern?.note = newValue?.trim();
+    // },
   );
 }
