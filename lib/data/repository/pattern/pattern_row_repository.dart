@@ -102,7 +102,8 @@ class PatternRowRepository {
             total,
             currentDetail,
           ) {
-            return currentDetail.repeatXTime;
+            return currentDetail.repeatXTime *
+                (currentDetail.stitch?.nbStsTaken ?? 1);
           });
         }
       }
@@ -170,7 +171,8 @@ class PatternRowRepository {
         total,
         currentDetail,
       ) {
-        return currentDetail.repeatXTime;
+        return currentDetail.repeatXTime *
+            (currentDetail.stitch?.nbStsTaken ?? 1);
       });
       // if (debug) {
       //   print("getRowById with id = $id returned :");

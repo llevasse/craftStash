@@ -1,6 +1,5 @@
 import 'package:craft_stash/class/stitch.dart';
 
-
 class PatternRowDetail {
   int rowId;
   int rowDetailId;

@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 class StitchDetailDialog extends StatefulWidget {
   PatternRowDetail detail;
   int? prevRowStitchNb;
+  int currentRowStitchNb;
   int previousRowStitchNbUsed;
-  int originalCurrentRowStitchNb = 0;
+  int originalPreviousRowStitchNbUsed = 0;
 
   StitchDetailDialog({
     super.key,
     required this.detail,
+    required this.currentRowStitchNb,
     this.prevRowStitchNb,
     this.previousRowStitchNbUsed = 0,
   });
@@ -25,16 +27,18 @@ class _StitchDetailDialogState extends State<StitchDetailDialog> {
   @override
   void initState() {
     super.initState();
-    widget.originalCurrentRowStitchNb = widget.previousRowStitchNbUsed;
-    widget.previousRowStitchNbUsed += widget.detail.repeatXTime;
+    widget.originalPreviousRowStitchNbUsed = widget.previousRowStitchNbUsed;
+    widget.previousRowStitchNbUsed +=
+        widget.detail.repeatXTime * (widget.detail.stitch?.stitchNb ?? 1);
     displaySelectorChecker();
     print("Init StitchDetailDialog with var : ");
     print("\tDetail : ${widget.detail.toString()}");
     print("\tPrevious row stitch nb : ${widget.prevRowStitchNb}");
     print("\tPrevious row stitch nb used : ${widget.previousRowStitchNbUsed}");
     print(
-      "\tCurrent row without this detail stitch nb : ${widget.originalCurrentRowStitchNb}",
+      "\tPrevious row stitch nb used (without this detail) : ${widget.originalPreviousRowStitchNbUsed}",
     );
+    print("\tCurrent row stitch nb : ${widget.currentRowStitchNb}");
   }
 
   displaySelectorChecker() {
@@ -52,7 +56,7 @@ class _StitchDetailDialogState extends State<StitchDetailDialog> {
       keyboardType: TextInputType.number,
       onChanged: (value) {
         widget.previousRowStitchNbUsed =
-            widget.originalCurrentRowStitchNb +
+            widget.originalPreviousRowStitchNbUsed +
             (int.tryParse(value.trim()) ?? 0) *
                 (widget.detail.stitch?.stitchNb ?? 1);
         if (widget.prevRowStitchNb != null) {
@@ -138,7 +142,10 @@ class _StitchDetailDialogState extends State<StitchDetailDialog> {
               if (widget.prevRowStitchNb != null && selection.first == true) {
                 // if set as around, set to prevRowStitchNumber - preRowStitchUsed
                 widget.detail.repeatXTime =
-                    widget.prevRowStitchNb! - widget.previousRowStitchNbUsed;
+                    ((widget.prevRowStitchNb! -
+                                widget.originalPreviousRowStitchNbUsed) /
+                            (widget.detail.stitch?.nbStsTaken ?? 1))
+                        .floor();
               }
               Navigator.pop(context, widget.detail);
             }

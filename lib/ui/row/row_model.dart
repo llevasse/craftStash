@@ -77,7 +77,7 @@ class PatternRowModel extends ChangeNotifier {
           );
         }
         print("prev row stitshes : $prevRowStitchNb");
-        print(row);
+        print(row!.toMap());
       } else {
         _row = PatternRow(
           startRow: part!.rows.isEmpty
@@ -186,6 +186,7 @@ class PatternRowModel extends ChangeNotifier {
       _row!.details.add(prd);
     }
     _row!.stitchesPerRow += stitch.stitchNb;
+    _row!.stitchesUsedFromPreviousRow += stitch.nbStsTaken;
 
     if (debug) print("Row stitch nb : ${_row!.stitchesPerRow}");
 

@@ -55,12 +55,14 @@ class RowStitchCountButton extends StatelessWidget {
           patternRowModel.setStitchNb(
             patternRowModel.row!.stitchesPerRow += detail.stitch!.stitchNb,
           );
-          patternRowModel.row!.stitchesUsedFromPreviousRow += 1;
+          patternRowModel.row!.stitchesUsedFromPreviousRow +=
+              detail.stitch!.nbStsTaken;
         } else {
           patternRowModel.setStitchNb(
             patternRowModel.row!.stitchesPerRow -= detail.stitch!.stitchNb,
           );
-          patternRowModel.row!.stitchesUsedFromPreviousRow -= 1;
+          patternRowModel.row!.stitchesUsedFromPreviousRow -=
+              detail.stitch!.nbStsTaken;
         }
         detail.repeatXTime = value;
         if (debug) {
@@ -78,25 +80,33 @@ class RowStitchCountButton extends StatelessWidget {
     PatternRow tmpRow = patternRowModel.row!;
     tmpRow.details.remove(detail);
     tmpRow.stitchesPerRow -= detail.repeatXTime * detail.stitch!.stitchNb;
-    tmpRow.stitchesUsedFromPreviousRow -= detail.repeatXTime;
+    tmpRow.stitchesUsedFromPreviousRow -=
+        detail.repeatXTime * detail.stitch!.nbStsTaken;
 
     PatternRowDetail? newDetail = await showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        tmpRow.printDetails();
+        // tmpRow.printDetails();
         return StitchDetailDialog(
           detail: detail,
           prevRowStitchNb: prevRowStitchNb,
+          currentRowStitchNb: tmpRow.stitchesPerRow,
           previousRowStitchNbUsed: tmpRow.stitchesUsedFromPreviousRow,
         );
       },
     );
     if (newDetail == null) {
       tmpRow.stitchesPerRow += detail.repeatXTime * detail.stitch!.stitchNb;
+      tmpRow.stitchesUsedFromPreviousRow +=
+          detail.repeatXTime * detail.stitch!.nbStsTaken;
       tmpRow.details.insert(index, detail);
 
       return;
+    }
+
+    if (debug) {
+      print("Returned detail : ${newDetail.toMap()}");
     }
 
     if (newDetail.rowId == -1) {
@@ -107,7 +117,8 @@ class RowStitchCountButton extends StatelessWidget {
       print("Add button");
       tmpRow.stitchesPerRow +=
           newDetail.repeatXTime * newDetail.stitch!.stitchNb;
-      tmpRow.stitchesUsedFromPreviousRow += newDetail.repeatXTime;
+      tmpRow.stitchesUsedFromPreviousRow +=
+          newDetail.repeatXTime * newDetail.stitch!.nbStsTaken;
       tmpRow.details.insert(index, newDetail);
       patternRowModel.detailsCountButtonList.removeAt(index);
       patternRowModel.detailsCountButtonList.insert(
