@@ -18,6 +18,12 @@ class AddRowButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    int prevRowStitchNb =
+        (patternPartModel.part == null ||
+            patternPartModel.part!.rows.isEmpty == true)
+        ? 0
+        : patternPartModel.part!.rows.last.stitchesPerRow;
+
     ThemeData theme = Theme.of(context);
     return TextButton(
       onPressed: () async {
@@ -30,8 +36,7 @@ class AddRowButton extends StatelessWidget {
                 patternRowRepository: PatternRowRepository(),
                 part: patternPartModel.part,
                 yarnNameMap: patternPartModel.yarnNameMap,
-                prevRowStitchNb:
-                    patternPartModel.part?.rows.last.stitchesPerRow ?? 0,
+                prevRowStitchNb: prevRowStitchNb,
               ),
             ),
           ),
