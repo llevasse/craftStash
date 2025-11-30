@@ -114,13 +114,16 @@ class PatternRowModel extends ChangeNotifier {
   }
 
   void _setUpdateTimer() {
-    print("Set timer");
     if (timer != null) {
       timer!.cancel();
+      timer = null;
     }
     if (formKey.currentState!.validate()) {
       formKey.currentState!.save();
       timer = Timer(const Duration(seconds: 1), () async {
+        if (debug) {
+          print("Save row");
+        }
         await saveRow();
         timer = null;
       });

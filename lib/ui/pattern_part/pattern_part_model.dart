@@ -60,12 +60,15 @@ class PatternPartModel extends ChangeNotifier {
   }
 
   void _setUpdateTimer() {
-    print("Set timer");
     if (timer != null) {
       timer!.cancel();
+      timer = null;
     }
     if (formKey.currentState!.validate()) {
       timer = Timer(const Duration(seconds: 1), () async {
+        if (debug) {
+          print("Save part");
+        }
         await savePart();
         timer = null;
       });

@@ -13,7 +13,7 @@ Widget patternHookSizeInput({required PatternModel patternModel}) {
       patternModel.setHookSize(value.trim());
     },
     onSaved: (newValue) {
-      patternModel.setHookSize(newValue?.trim());
+      // patternModel.setHookSize(newValue?.trim());
     },
   );
 }

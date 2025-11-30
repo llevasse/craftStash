@@ -48,15 +48,17 @@ class PatternModel extends ChangeNotifier {
   }
 
   void _setUpdateTimer() {
-    print("Set timer");
     if (timer != null) {
       timer!.cancel();
+      timer = null;
     }
     if (formKey.currentState!.validate()) {
       timer = Timer(const Duration(seconds: 1), () async {
+        if (debug) {
+          print("Save pattern");
+        }
         await savePattern();
         timer = null;
-        
       });
     }
   }
@@ -86,7 +88,6 @@ class PatternModel extends ChangeNotifier {
     }
     await _patternRepository.updatePattern(pattern!);
     if (debug) print("Pattern saved");
-    
   }
 
   Future<void> deletePattern() async {

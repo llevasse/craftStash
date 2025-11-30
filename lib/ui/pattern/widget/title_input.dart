@@ -16,9 +16,11 @@ Widget patternTitleInput({required PatternModel patternModel}) {
     },
     onChanged: (value) {
       patternModel.setTitle(value.trim());
+      print("changed title");
     },
     onSaved: (newValue) {
-      patternModel.setTitle(newValue!.trim());
+      // patternModel.setTitle(newValue!.trim());
+      // print("saved title");
     },
   );
 }
