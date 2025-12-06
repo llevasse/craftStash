@@ -73,3 +73,8 @@ void updateStitchesNbOfStitchesTaken(Stitch stitch) {
     });
   }
 }
+
+Future<void> dbUpgradeV4(Batch batch) async {
+  batch.execute('''ALTER TABLE pattern_row_detail ADD COLUMN note TEXT''');
+  await batch.commit();
+}

@@ -49,6 +49,24 @@ class _StitchDetailDialogState extends State<StitchDetailDialog> {
     }
   }
 
+  TextFormField _inStitchInput() {
+    return TextFormField(
+      initialValue: widget.detail.note,
+      decoration: InputDecoration(label: Text("In ...")),
+      keyboardType: TextInputType.text,
+      onChanged: (value) {
+        widget.detail.note = value.trim();
+        setState(() {});
+      },
+      validator: (value) {
+        return null;
+      },
+      onSaved: (newValue) {
+        widget.detail.note = newValue?.trim();
+      },
+    );
+  }
+
   TextFormField _repeatXTimeInput() {
     return TextFormField(
       initialValue: widget.detail.repeatXTime.toString(),
@@ -118,6 +136,7 @@ class _StitchDetailDialogState extends State<StitchDetailDialog> {
           children: [
             ?displaySelector ? _toggleButton() : null,
             ?selection.first == false ? _repeatXTimeInput() : null,
+            _inStitchInput(),
           ],
         ),
       ),

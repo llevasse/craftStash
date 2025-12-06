@@ -45,7 +45,8 @@ class RowStitchCountButton extends StatelessWidget {
     }
     return CountButton(
       signed: false,
-      suffixText: detail.stitch?.abreviation,
+      suffixText:
+          "${detail.stitch?.abreviation} ${detail.note == null ? "" : "in ${detail.note}"}",
       showCount: showCount,
       count: detail.repeatXTime,
       allowIncrease: allowIncrease,

@@ -1,6 +1,7 @@
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/data/repository/stitch_repository.dart';
+import 'package:craft_stash/main.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -17,6 +18,7 @@ class PatternDetailRepository {
       repeatXTime: map['repeat_x_time'] as int,
       inPatternYarnId: map['yarn_id'] as int?,
       patternId: map['pattern_id'] as int?,
+      note: map['note'] as String?,
     );
   }
 
