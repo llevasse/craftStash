@@ -44,6 +44,7 @@ class AddRowButton extends StatelessWidget {
         patternPartModel.reload();
       },
       style: ButtonStyle(
+        minimumSize: WidgetStatePropertyAll(Size.fromHeight(50)),
         side: WidgetStatePropertyAll(
           BorderSide(color: theme.colorScheme.primary, width: 5),
         ),

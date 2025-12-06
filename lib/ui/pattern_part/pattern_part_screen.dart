@@ -1,10 +1,10 @@
 import 'package:craft_stash/ui/core/loading_screen.dart';
 import 'package:craft_stash/ui/pattern_part/pattern_part_model.dart';
+import 'package:craft_stash/ui/pattern_part/widget/basic_info_input.dart';
 import 'package:craft_stash/ui/pattern_part/widget/delete_button.dart';
-import 'package:craft_stash/ui/pattern_part/widget/repeat_x_time_button.dart';
-import 'package:craft_stash/ui/pattern_part/widget/row_list_tile.dart';
-import 'package:craft_stash/ui/pattern_part/widget/title_input.dart';
 import 'package:craft_stash/ui/pattern_part/widget/add_row_button.dart';
+import 'package:craft_stash/ui/pattern_part/widget/note_input.dart';
+import 'package:craft_stash/ui/pattern_part/widget/row_list_view.dart';
 import 'package:flutter/material.dart';
 
 class PatternPartScreen extends StatelessWidget {
@@ -44,42 +44,15 @@ class PatternPartScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   spacing: spacing,
                   children: [
-                    Row(
-                      spacing: spacing,
-                      children: [
-                        Expanded(
-                          child: partTitleInput(
-                            patternPartModel: patternPartModel,
-                          ),
-                        ),
-                        Expanded(
-                          child: partRepeatXTimeButton(
-                            patternPartModel: patternPartModel,
-                          ),
-                        ),
-                      ],
-                    ),
+                    BasicInfoInput(patternPartModel: patternPartModel),
+                    AddRowButton(patternPartModel: patternPartModel),
                     Expanded(
-                      child: ListView.builder(
-                        itemCount: patternPartModel.part!.rows.length,
-                        itemBuilder: (_, index) => RowListTile(
-                          row: patternPartModel.part!.rows[index],
-                          patternPartModel: patternPartModel,
-                          prevRowStitchNumber: index > 0
-                              ? patternPartModel
-                                    .part!
-                                    .rows[index - 1]
-                                    .stitchesPerRow
-                              : 0,
-                        ),
-                      ),
+                      child: RowListView(patternPartModel: patternPartModel),
                     ),
+                    PartNoteInput(patternPartModel: patternPartModel),
                   ],
                 ),
               ),
-            ),
-            floatingActionButton: AddRowButton(
-              patternPartModel: patternPartModel,
             ),
           );
         }

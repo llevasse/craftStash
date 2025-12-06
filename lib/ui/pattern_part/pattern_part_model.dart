@@ -87,6 +87,12 @@ class PatternPartModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setNote(String note) {
+    _part?.note = note;
+    _setUpdateTimer();
+    notifyListeners();
+  }
+
   Future<void> savePart() async {
     _part!.totalStitchNb = 0;
     for (PatternRow row in _part!.rows) {
