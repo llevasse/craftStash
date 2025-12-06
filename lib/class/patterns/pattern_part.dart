@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 
 class PatternPart {
@@ -19,7 +21,6 @@ class PatternPart {
 
   Map<String, dynamic> toMap() {
     return {
-      'pattern_id': patternId,
       'numbers_to_make': numbersToMake,
       'name': name,
       'note': note,
@@ -35,6 +36,12 @@ class PatternPart {
     }
 
     return tmp;
+  }
+
+  toJson() {
+    var obj = toMap();
+    obj["row"] = [for (final row in rows) row.toJson()];
+    return obj;
   }
 
   @override

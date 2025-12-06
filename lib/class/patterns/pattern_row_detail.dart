@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:craft_stash/class/stitch.dart';
 
 class PatternRowDetail {
@@ -50,6 +52,12 @@ class PatternRowDetail {
       return ("${repeatXTime.toString()}${stitch.toString()}${note == null ? "" : " in $note"}");
     }
     return "";
+  }
+
+  toJson() {
+    var obj = toMap();
+    obj["stitch"] = stitch?.toMap();
+    return obj;
   }
 
   void printDetail([int tab = 0]) {

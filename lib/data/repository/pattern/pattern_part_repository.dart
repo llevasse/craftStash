@@ -84,6 +84,7 @@ class PatternPartRepository {
       List<PatternPart> l = [for (final map in patternPartMaps) _fromMap(map)];
       if (withRow == true) {
         for (PatternPart part in l) {
+          print(part);
           part.rows = await PatternRowRepository().getAllRows(
             part.partId,
             withDetails,

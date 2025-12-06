@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 
 class PatternRow {
@@ -50,6 +52,12 @@ class PatternRow {
     }
     tmp += inSameStitch == 0 ? ")" : "]";
     return tmp;
+  }
+
+  toJson() {
+    var obj = toMap();
+    obj["details"] = [for (final detail in details) detail.toJson()];
+    return obj;
   }
 
   @override

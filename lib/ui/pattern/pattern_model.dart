@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/data/repository/pattern/pattern_repository.dart';

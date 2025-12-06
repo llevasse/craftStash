@@ -22,6 +22,8 @@ class PatternRepository {
   Future<craft.Pattern> getPatternById({
     required int id,
     bool withParts = false,
+    bool withRows = false,
+    bool withDetails = false,
     bool withYarnNames = false,
   }) async {
     final db = (await DbService().database);
@@ -34,7 +36,11 @@ class PatternRepository {
       );
       craft.Pattern p = _fromMap(patternMaps[0]);
       if (withParts) {
-        p.parts = await PatternPartRepository().getAllParts(patternId: id);
+        p.parts = await PatternPartRepository().getAllParts(
+          patternId: id,
+          withRow: withRows,
+          withDetails: withDetails,
+        );
       }
       if (withYarnNames) {
         p.yarnIdToNameMap = await getYarnIdToNameMapByPatternId(id);
