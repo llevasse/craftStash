@@ -2,6 +2,7 @@ import 'package:craft_stash/ui/core/loading_screen.dart';
 import 'package:craft_stash/ui/pattern/pattern_model.dart';
 import 'package:craft_stash/ui/pattern/widget/assembly_input.dart';
 import 'package:craft_stash/ui/pattern/widget/delete_button.dart';
+import 'package:craft_stash/ui/pattern/widget/download_button.dart';
 import 'package:craft_stash/ui/pattern/widget/hook_size_input.dart';
 import 'package:craft_stash/ui/pattern/widget/parts_list.dart';
 import 'package:craft_stash/ui/pattern/widget/return_button.dart';
@@ -36,6 +37,10 @@ class PatternScreen extends StatelessWidget {
               title: Text(patternModel.pattern!.name),
               backgroundColor: theme.colorScheme.primary,
               actions: [
+                patternDownloadButton(
+                  patternModel: patternModel,
+                  context: context,
+                ),
                 patternDeleteButton(
                   patternModel: patternModel,
                   context: context,

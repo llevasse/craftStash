@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:craft_stash/class/patterns/pattern_part.dart';
 import 'package:craft_stash/data/repository/pattern/pattern_repository.dart';
@@ -40,6 +39,15 @@ class PatternModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<craft.Pattern?> get fullPattern async =>
+      await _patternRepository.getPatternById(
+        id: id!,
+        withRows: true,
+        withParts: true,
+        withDetails: true,
+        withYarnNames: true,
+      );
 
   Future<void> reload() async {
     loaded = false;

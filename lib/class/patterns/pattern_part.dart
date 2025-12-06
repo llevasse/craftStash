@@ -21,6 +21,7 @@ class PatternPart {
 
   Map<String, dynamic> toMap() {
     return {
+      'pattern_id': patternId,
       'numbers_to_make': numbersToMake,
       'name': name,
       'note': note,
