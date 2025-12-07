@@ -39,6 +39,12 @@ class Stitch {
     };
   }
 
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> obj = toMap();
+    obj.remove('hash');
+    return obj;
+  }
+
   @override
   String toString() {
     return abreviation;

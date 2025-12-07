@@ -1,5 +1,4 @@
 import 'package:craft_stash/class/yarns/yarn_collection.dart';
-import 'package:flutter/material.dart';
 
 class Yarn extends YarnCollection {
   Yarn({
@@ -41,6 +40,12 @@ class Yarn extends YarnCollection {
       "hash": hashCode,
       "in_preview_id": inPreviewId,
     };
+  }
+
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> obj = toMap();
+    obj.remove('hash');
+    return obj; 
   }
 
   @override

@@ -96,6 +96,33 @@ class CollectionRepository {
     }
   }
 
+  Future<YarnCollection> getYarnCollectionById({
+    required int id,
+    bool getYarn = false,
+    Database? db,
+  }) async {
+    db ??= (await DbService().database);
+    if (db != null) {
+      final List<Map<String, Object?>> yarnMaps = await db.query(
+        _tablename,
+        where: "id = ?",
+        whereArgs: [id],
+      );
+      YarnCollection yarnCollection = YarnCollection(
+        id: id,
+        name: yarnMaps[0]['name'] as String,
+        brand: yarnMaps[0]['brand'] as String,
+        material: yarnMaps[0]['material'] as String,
+        minHook: yarnMaps[0]['min_hook'] as double,
+        maxHook: yarnMaps[0]['max_hook'] as double,
+        thickness: yarnMaps[0]['thickness'] as double,
+      );
+      return yarnCollection;
+    } else {
+      throw DatabaseDoesNotExistException("Could not get database");
+    }
+  }
+
   Future<void> removeAllYarnCollection() async {
     final db = (await DbService().database);
     if (db != null) {

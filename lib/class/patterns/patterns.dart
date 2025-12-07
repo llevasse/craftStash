@@ -39,7 +39,7 @@ class Pattern {
     return tmp;
   }
 
-  toJson() {
+  Map<String, dynamic> toJson() {
     var obj = toMap();
 
     obj['parts'] = [];

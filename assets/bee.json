@@ -197,7 +197,7 @@
       "is_sequence":0,
       "sequence_id":null,
       "hidden":1,
-      "hash":349506769,
+      "hash":240154463,
       "stitch_nb":0,
       "nb_of_stitches_taken":1
     },
@@ -208,7 +208,7 @@
       "is_sequence":0,
       "sequence_id":null,
       "hidden":0,
-      "hash":85736728,
+      "hash":434614026,
       "stitch_nb":1,
       "nb_of_stitches_taken":1
     },
@@ -219,7 +219,7 @@
       "is_sequence":0,
       "sequence_id":null,
       "hidden":0,
-      "hash":280258003,
+      "hash":271270149,
       "stitch_nb":2,
       "nb_of_stitches_taken":1
     },
@@ -230,7 +230,7 @@
       "is_sequence":1,
       "sequence_id":1,
       "hidden":0,
-      "hash":147124660,
+      "hash":495509418,
       "stitch_nb":3,
       "nb_of_stitches_taken":2
     },
@@ -241,7 +241,7 @@
       "is_sequence":0,
       "sequence_id":null,
       "hidden":1,
-      "hash":75177251,
+      "hash":177118770,
       "stitch_nb":0,
       "nb_of_stitches_taken":1
     },
@@ -252,7 +252,7 @@
       "is_sequence":1,
       "sequence_id":2,
       "hidden":0,
-      "hash":366189797,
+      "hash":525834771,
       "stitch_nb":2,
       "nb_of_stitches_taken":3
     },
@@ -263,9 +263,45 @@
       "is_sequence":0,
       "sequence_id":null,
       "hidden":0,
-      "hash":319911541,
+      "hash":126333173,
       "stitch_nb":1,
       "nb_of_stitches_taken":2
+    }
+  },
+  "yarns":{
+    "1":{
+      "color":4294951175,
+      "collection_id":1,
+      "brand":"Phildar",
+      "material":"Coton",
+      "color_name":"Amber",
+      "min_hook":2.5,
+      "max_hook":3.5,
+      "thickness":3.0,
+      "number_of_skeins":1,
+      "in_preview_id":1
+    },
+    "4":{
+      "color":4284955319,
+      "collection_id":1,
+      "brand":"Phildar",
+      "material":"Coton",
+      "color_name":"Deep purple",
+      "min_hook":2.5,
+      "max_hook":3.5,
+      "thickness":3.0,
+      "number_of_skeins":1,
+      "in_preview_id":2
+    }
+  },
+  "yarn_collections":{
+    "1":{
+      "name":"Phil coton 3",
+      "brand":"Phildar",
+      "material":"Coton",
+      "min_hook":2.5,
+      "max_hook":3.5,
+      "thickness":3.0
     }
   }
 }

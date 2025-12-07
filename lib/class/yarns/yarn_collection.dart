@@ -31,6 +31,12 @@ class YarnCollection {
     };
   }
 
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> obj = toMap();
+    obj.remove('hash');
+    return obj; 
+  }
+
   @override
   int get hashCode => Object.hash(
     name.toLowerCase(),
