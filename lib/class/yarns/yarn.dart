@@ -23,7 +23,7 @@ class Yarn extends YarnCollection {
 
   @override
   String toString() {
-    return ("color: $color\ncollection_id: $collectionId\nbrand: $brand\nmaterial: $material\ncolor_name: $colorName\nmin_hook: $minHook\nmax_hook: $maxHook\nthickness: $thickness\nnumber_of_skeins: $nbOfSkeins\nhash: $hashCode\n");
+    return ("color: $color, collection_id: $collectionId, brand: $brand, material: $material, color_name: $colorName, min_hook: $minHook, max_hook: $maxHook, thickness: $thickness, number_of_skeins: $nbOfSkeins, hash: $hashCode, ");
   }
 
   Map<String, dynamic> toMap() {
@@ -45,7 +45,7 @@ class Yarn extends YarnCollection {
   Map<String, dynamic> toJson() {
     Map<String, dynamic> obj = toMap();
     obj.remove('hash');
-    return obj; 
+    return obj;
   }
 
   @override

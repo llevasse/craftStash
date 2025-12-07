@@ -165,9 +165,7 @@ class StitchRepository {
         whereArgs: [stitch.hashCode],
       );
       if (list.isNotEmpty) {
-        throw StitchAlreadyExist(
-          "Stitch with hash ${stitch.hashCode} already exist",
-        );
+        return list[0]['id'] as int;
       }
       return await db.insert(
         _tableName,

@@ -1,5 +1,6 @@
 import 'package:craft_stash/class/yarns/yarn_collection.dart';
 import 'package:craft_stash/data/repository/yarn/yarn_repository.dart';
+import 'package:craft_stash/main.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -7,7 +8,7 @@ class CollectionRepository {
   static const _tablename = "yarn_collection";
   const CollectionRepository();
 
-  Future<int?> insertYarnCollection(YarnCollection yarn, [Database? db]) async {
+  Future<int> insertYarnCollection(YarnCollection yarn, [Database? db]) async {
     db ??= (await DbService().database);
 
     if (db != null) {
@@ -17,13 +18,21 @@ class CollectionRepository {
         whereArgs: [yarn.hashCode],
       );
       if (list.isEmpty) {
-        return db.insert(
+        yarn.id = await db.insert(
           _tablename,
           yarn.toMap(),
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
+        if (debug) {
+          print("Collection $yarn added");
+        }
+      } else {
+        if (debug) {
+          print("Collection $yarn already exist");
+        }
+        yarn.id = list[0]['id'] as int;
       }
-      return null;
+      return yarn.id;
     } else {
       throw DatabaseDoesNotExistException("Could not get database");
     }

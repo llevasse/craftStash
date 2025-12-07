@@ -197,7 +197,6 @@
       "is_sequence":0,
       "sequence_id":null,
       "hidden":1,
-      "hash":240154463,
       "stitch_nb":0,
       "nb_of_stitches_taken":1
     },
@@ -208,7 +207,6 @@
       "is_sequence":0,
       "sequence_id":null,
       "hidden":0,
-      "hash":434614026,
       "stitch_nb":1,
       "nb_of_stitches_taken":1
     },
@@ -219,7 +217,6 @@
       "is_sequence":0,
       "sequence_id":null,
       "hidden":0,
-      "hash":271270149,
       "stitch_nb":2,
       "nb_of_stitches_taken":1
     },
@@ -230,7 +227,6 @@
       "is_sequence":1,
       "sequence_id":1,
       "hidden":0,
-      "hash":495509418,
       "stitch_nb":3,
       "nb_of_stitches_taken":2
     },
@@ -241,7 +237,6 @@
       "is_sequence":0,
       "sequence_id":null,
       "hidden":1,
-      "hash":177118770,
       "stitch_nb":0,
       "nb_of_stitches_taken":1
     },
@@ -252,7 +247,6 @@
       "is_sequence":1,
       "sequence_id":2,
       "hidden":0,
-      "hash":525834771,
       "stitch_nb":2,
       "nb_of_stitches_taken":3
     },
@@ -263,7 +257,6 @@
       "is_sequence":0,
       "sequence_id":null,
       "hidden":0,
-      "hash":126333173,
       "stitch_nb":1,
       "nb_of_stitches_taken":2
     }

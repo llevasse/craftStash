@@ -79,11 +79,11 @@ class DbService {
     );
     await StitchRepository().insertDefaultStitches(db);
     if (debug) {
-      await insertPhildarYarn(db);
+      // await insertPhildarYarn(db);
       // await insertJellyFishPattern(db);
-      await insertBeePattern(db);
+      // await insertBeePattern(db);
       await StitchRepository().setStitchToIdMap(db);
-      // await createFromJsons(db);
+      await createFromJsons(db);
     }
 
     await db.execute(

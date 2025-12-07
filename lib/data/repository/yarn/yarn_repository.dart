@@ -1,4 +1,5 @@
 import 'package:craft_stash/class/yarns/yarn.dart';
+import 'package:craft_stash/main.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -21,8 +22,12 @@ class YarnRepository {
       inPreviewId: map["in_preview_id"] as int?,
     );
   }
-
-  Future<void> insertYarn(Yarn yarn, [Database? db]) async {
+  
+  Future<int> insertYarn(
+    Yarn yarn, [
+    Database? db,
+    bool increaseIfPresent = true,
+  ]) async {
     db ??= (await DbService().database);
     if (db != null) {
       final list = await db.query(
@@ -31,16 +36,25 @@ class YarnRepository {
         whereArgs: [yarn.hashCode],
       );
       if (list.isEmpty) {
-        db.insert(
+        yarn.id = await db.insert(
           _tablename,
           yarn.toMap(),
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
+        if (debug) {
+          print("Yarn $yarn added");
+        }
       } else {
         yarn.id = list[0]['id'] as int;
-        yarn.nbOfSkeins = (list[0]['number_of_skeins'] as int) + 1;
-        updateYarn(yarn);
+        if (debug) {
+          print("Yarn $yarn already exists");
+        }
+        if (increaseIfPresent) {
+          yarn.nbOfSkeins = (list[0]['number_of_skeins'] as int) + 1;
+          updateYarn(yarn);
+        }
       }
+      return yarn.id;
     } else {
       throw DatabaseDoesNotExistException("Could not get database");
     }
