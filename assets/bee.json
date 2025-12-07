@@ -10,7 +10,7 @@
       "name": "Body",
       "note": null,
       "total_stitch_nb": 108,
-      "row": [
+      "rows": [
         {
           "part_id": 4,
           "start_row": 1,
@@ -47,7 +47,7 @@
               "yarn_id": null,
               "in_row_order": null,
               "pattern_id": 2,
-              "note": null,
+              "note": "MR",
               "stitch": {
                 "abreviation": "sc",
                 "name": "single crochet",

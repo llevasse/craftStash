@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:craft_stash/class/patterns/pattern_part.dart';
-import 'package:craft_stash/data/repository/pattern/pattern_repository.dart';
 
 class Pattern {
   int patternId;
@@ -38,7 +37,7 @@ class Pattern {
     return tmp;
   }
 
-  toJson() {    
+  toJson() {
     var obj = toMap();
     obj["parts"] = [for (final part in parts) part.toJson()];
     return jsonEncode(obj);

@@ -26,8 +26,8 @@ class StitchRepository {
     );
   }
 
-  Future<void> setStitchToIdMap() async {
-    List<Stitch> l = await getAllStitches();
+  Future<void> setStitchToIdMap([Database? db]) async {
+    List<Stitch> l = await getAllStitches(db);
     stitchToIdMap.clear();
     for (Stitch s in l) {
       stitchToIdMap.addAll({s.abreviation: s.id});

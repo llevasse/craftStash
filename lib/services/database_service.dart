@@ -7,6 +7,7 @@ import 'package:craft_stash/data/repository/yarn/material_repository.dart';
 import 'package:craft_stash/data/repository/yarn/yarn_repository.dart';
 import 'package:craft_stash/main.dart';
 import 'package:craft_stash/premadePatterns/bee.dart';
+import 'package:craft_stash/premadePatterns/createFromJsons.dart';
 import 'package:craft_stash/premadePatterns/jellyfish.dart';
 import 'package:craft_stash/premadeYarns/phildar.dart';
 import 'package:craft_stash/services/database_versioning.dart';
@@ -79,8 +80,10 @@ class DbService {
     await StitchRepository().insertDefaultStitches(db);
     if (debug) {
       await insertPhildarYarn(db);
-      await insertJellyFishPattern(db);
-      await insertBeePattern(db);
+      // await insertJellyFishPattern(db);
+      // await insertBeePattern(db);
+      await StitchRepository().setStitchToIdMap(db);
+      await createFromJsons(db);
     }
 
     await db.execute(

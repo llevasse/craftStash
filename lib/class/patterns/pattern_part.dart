@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 
@@ -41,7 +42,7 @@ class PatternPart {
 
   toJson() {
     var obj = toMap();
-    obj["row"] = [for (final row in rows) row.toJson()];
+    obj["rows"] = [for (final row in rows) row.toJson()];
     return obj;
   }
 
