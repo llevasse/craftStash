@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:craft_stash/class/patterns/pattern_part.dart';
+import 'package:flutter/material.dart';
 
 class Pattern {
   int patternId;
@@ -39,8 +41,16 @@ class Pattern {
 
   toJson() {
     var obj = toMap();
-    obj["parts"] = [for (final part in parts) part.toJson()];
-    return jsonEncode(obj);
+
+    obj['parts'] = [];
+    obj['stitches'] = {};
+    for (final part in parts) {
+      Map<String, dynamic> partObj = part.toJson();
+      obj['stitches'].addAll(partObj['stitches']);
+      partObj.remove('stitches');
+      obj['parts'].add(partObj);
+    }
+    return obj;
   }
 
   @override

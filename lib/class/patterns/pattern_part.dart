@@ -42,7 +42,15 @@ class PatternPart {
 
   toJson() {
     var obj = toMap();
-    obj["rows"] = [for (final row in rows) row.toJson()];
+    obj.remove('pattern_id');
+    obj['rows'] = [];
+    obj['stitches'] = {};
+    for (final row in rows) {
+      Map<String, dynamic> rowObj = row.toJson();
+      obj['stitches'].addAll(rowObj['stitches']);
+      rowObj.remove('stitches');
+      obj['rows'].add(rowObj);
+    }
     return obj;
   }
 

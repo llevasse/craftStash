@@ -15,7 +15,7 @@ IconButton patternDownloadButton({
       craft.Pattern? pattern = await patternModel.fullPattern;
       if (pattern != null) {
         await FileStorage.writeCounter(
-          pattern.toJson(),
+          jsonEncode(pattern.toJson()),
           "${pattern.name}.json",
         );
       }

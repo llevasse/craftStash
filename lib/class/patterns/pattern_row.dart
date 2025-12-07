@@ -56,7 +56,17 @@ class PatternRow {
 
   toJson() {
     var obj = toMap();
-    obj["details"] = [for (final detail in details) detail.toJson()];
+    obj.remove('part_id');
+    obj['details'] = [];
+    obj['stitches'] = {};
+    Map<String, dynamic> stitches = {};
+    for (final detail in details) {
+      Map<String, dynamic> detailObj = detail.toJson();
+      stitches[detail.stitchId.toString()] = detailObj['stitch'];
+      detailObj.remove('stitch');
+      obj['details'].add(detailObj);
+    }
+    obj['stitches'] = stitches;
     return obj;
   }
 

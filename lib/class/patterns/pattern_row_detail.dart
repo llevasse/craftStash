@@ -57,6 +57,7 @@ class PatternRowDetail {
   toJson() {
     var obj = toMap();
     obj["stitch"] = stitch?.toMap();
+    obj.remove('row_id');
     return obj;
   }
 
