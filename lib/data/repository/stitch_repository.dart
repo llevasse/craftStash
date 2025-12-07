@@ -3,6 +3,7 @@ import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/class/stitch.dart';
 import 'package:craft_stash/data/repository/pattern/pattern_detail_repository.dart';
 import 'package:craft_stash/data/repository/pattern/pattern_row_repository.dart';
+import 'package:craft_stash/main.dart';
 import 'package:craft_stash/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -165,7 +166,13 @@ class StitchRepository {
         whereArgs: [stitch.hashCode],
       );
       if (list.isNotEmpty) {
+        if (debug) {
+          print("Stitch $stitch already exist");
+        }
         return list[0]['id'] as int;
+      }
+      if (debug) {
+        print("Stitch $stitch added");
       }
       return await db.insert(
         _tableName,
