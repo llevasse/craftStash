@@ -243,172 +243,110 @@
   },
   "stitches_sequence": {
     "12": {
-      "abreviation": "(sc, inc)",
-      "name": null,
-      "description": null,
-      "is_sequence": 1,
-      "sequence_id": 1,
-      "hidden": 0,
-      "stitch_nb": 3,
-      "nb_of_stitches_taken": 2,
-      "sequence": {
-        "start_row": 0,
-        "number_of_rows": 0,
-        "preview": null,
-        "in_same_stitch": 0,
-        "stitches_count_per_row": 3,
-        "note": null,
-        "details": [
-          {
-            "stitch_id": 3,
-            "repeat_x_time": 1,
-            "yarn_id": null,
-            "in_row_order": null,
-            "pattern_id": null,
-            "note": null
-          },
-          {
-            "stitch_id": 7,
-            "repeat_x_time": 1,
-            "yarn_id": null,
-            "in_row_order": null,
-            "pattern_id": null,
-            "note": null
-          }
-        ],
-        "stitches": {
-          "3": {
-            "abreviation": "sc",
-            "name": "single crochet",
-            "description": null,
-            "is_sequence": 0,
-            "sequence_id": null,
-            "hidden": 0,
-            "stitch_nb": 1,
-            "nb_of_stitches_taken": 1
-          },
-          "7": {
-            "abreviation": "inc",
-            "name": "increase",
-            "description": null,
-            "is_sequence": 0,
-            "sequence_id": null,
-            "hidden": 0,
-            "stitch_nb": 2,
-            "nb_of_stitches_taken": 1
-          }
+      "start_row": 0,
+      "number_of_rows": 0,
+      "preview": null,
+      "in_same_stitch": 0,
+      "stitches_count_per_row": 3,
+      "note": null,
+      "details": [
+        {
+          "stitch_id": 3,
+          "repeat_x_time": 1,
+          "yarn_id": null,
+          "in_row_order": null,
+          "pattern_id": null,
+          "note": null
+        },
+        {
+          "stitch_id": 7,
+          "repeat_x_time": 1,
+          "yarn_id": null,
+          "in_row_order": null,
+          "pattern_id": null,
+          "note": null
         }
-      }
+      ]
     },
     "13": {
-      "abreviation": "(sc, dec)",
-      "name": null,
-      "description": null,
-      "is_sequence": 1,
-      "sequence_id": 2,
-      "hidden": 0,
-      "stitch_nb": 2,
-      "nb_of_stitches_taken": 3,
-      "sequence": {
-        "start_row": 0,
-        "number_of_rows": 0,
-        "preview": null,
-        "in_same_stitch": 0,
-        "stitches_count_per_row": 2,
-        "note": null,
-        "details": [
-          {
-            "stitch_id": 3,
-            "repeat_x_time": 1,
-            "yarn_id": null,
-            "in_row_order": null,
-            "pattern_id": null,
-            "note": null
-          },
-          {
-            "stitch_id": 8,
-            "repeat_x_time": 1,
-            "yarn_id": null,
-            "in_row_order": null,
-            "pattern_id": null,
-            "note": null
-          }
-        ],
-        "stitches": {
-          "3": {
-            "abreviation": "sc",
-            "name": "single crochet",
-            "description": null,
-            "is_sequence": 0,
-            "sequence_id": null,
-            "hidden": 0,
-            "stitch_nb": 1,
-            "nb_of_stitches_taken": 1
-          },
-          "8": {
-            "abreviation": "dec",
-            "name": "decrease",
-            "description": null,
-            "is_sequence": 0,
-            "sequence_id": null,
-            "hidden": 0,
-            "stitch_nb": 1,
-            "nb_of_stitches_taken": 2
-          }
+      "start_row": 0,
+      "number_of_rows": 0,
+      "preview": null,
+      "in_same_stitch": 0,
+      "stitches_count_per_row": 2,
+      "note": null,
+      "details": [
+        {
+          "stitch_id": 3,
+          "repeat_x_time": 1,
+          "yarn_id": null,
+          "in_row_order": null,
+          "pattern_id": null,
+          "note": null
+        },
+        {
+          "stitch_id": 8,
+          "repeat_x_time": 1,
+          "yarn_id": null,
+          "in_row_order": null,
+          "pattern_id": null,
+          "note": null
         }
-      }
+      ]
     }
   },
-  "stitches_test": {
-    "11": {
-      "abreviation": "start color",
-      "name": null,
-      "description": null,
-      "is_sequence": 0,
-      "sequence_id": null,
-      "hidden": 1,
-      "stitch_nb": 0,
-      "nb_of_stitches_taken": 1
+  "stitches_sequence_test": {
+    "12": {
+      "start_row": 0,
+      "number_of_rows": 0,
+      "preview": null,
+      "in_same_stitch": 0,
+      "stitches_count_per_row": 3,
+      "note": null,
+      "details": [
+        {
+          "stitch_id": 3,
+          "repeat_x_time": 1,
+          "yarn_id": null,
+          "in_row_order": null,
+          "pattern_id": null,
+          "note": null
+        },
+        {
+          "stitch_id": 7,
+          "repeat_x_time": 1,
+          "yarn_id": null,
+          "in_row_order": null,
+          "pattern_id": null,
+          "note": null
+        }
+      ]
     },
-    "3": {
-      "abreviation": "sc",
-      "name": "single crochet",
-      "description": null,
-      "is_sequence": 0,
-      "sequence_id": null,
-      "hidden": 0,
-      "stitch_nb": 1,
-      "nb_of_stitches_taken": 1
-    },
-    "7": {
-      "abreviation": "inc",
-      "name": "increase",
-      "description": null,
-      "is_sequence": 0,
-      "sequence_id": null,
-      "hidden": 0,
-      "stitch_nb": 2,
-      "nb_of_stitches_taken": 1
-    },
-    "10": {
-      "abreviation": "color change",
-      "name": null,
-      "description": null,
-      "is_sequence": 0,
-      "sequence_id": null,
-      "hidden": 1,
-      "stitch_nb": 0,
-      "nb_of_stitches_taken": 1
-    },
-    "8": {
-      "abreviation": "dec",
-      "name": "decrease",
-      "description": null,
-      "is_sequence": 0,
-      "sequence_id": null,
-      "hidden": 0,
-      "stitch_nb": 1,
-      "nb_of_stitches_taken": 2
+    "13": {
+      "start_row": 0,
+      "number_of_rows": 0,
+      "preview": null,
+      "in_same_stitch": 0,
+      "stitches_count_per_row": 2,
+      "note": null,
+      "details": [
+        {
+          "stitch_id": 3,
+          "repeat_x_time": 1,
+          "yarn_id": null,
+          "in_row_order": null,
+          "pattern_id": null,
+          "note": null
+        },
+        {
+          "stitch_id": 8,
+          "repeat_x_time": 1,
+          "yarn_id": null,
+          "in_row_order": null,
+          "pattern_id": null,
+          "note": null
+        }
+      ]
     }
   },
   "yarns": {

@@ -30,12 +30,17 @@ IconButton patternDownloadButton({
             PatternRow sequence = await PatternRowRepository().getRowById(
               id: entry.value['sequence_id'],
             );
-            stitchesSequence[entry.key] = sequence.toJson();
+
+            entry.value['sequence'] = sequence.toJson();
+
+            stitchesSequence[entry.key] = entry.value;
           }
         });
+        json['stitches_test'] = stitchesObj;
+
         stitchesSequence.forEach((key, value) {
           stitchesObj.remove(key);
-          stitchesObj.addAll(value.remove('stitches'));
+          stitchesObj.addAll(value['sequence'].remove('stitches'));
         });
         json['stitches'] = stitchesObj;
         json['stitches_sequence'] = stitchesSequence;

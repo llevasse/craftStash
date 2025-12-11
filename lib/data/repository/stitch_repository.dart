@@ -171,14 +171,15 @@ class StitchRepository {
         }
         return list[0]['id'] as int;
       }
-      if (debug) {
-        print("Stitch $stitch added");
-      }
-      return await db.insert(
+      final id = await db.insert(
         _tableName,
         stitch.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
+      if (debug) {
+        print("Stitch($id) $stitch added");
+      }
+      return id;
     } else {
       throw DatabaseDoesNotExistException("Could not get database");
     }

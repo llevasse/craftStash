@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 
 class PatternRow {

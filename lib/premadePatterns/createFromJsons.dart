@@ -30,12 +30,14 @@ Future<String> loadAsset(String fileName) async {
 Map<int, int> _collectionIdToNewId = {};
 Map<int, int> _yarnIdToNewId = {};
 Map<int, int> _stitchIdToNewId = {};
+// Map<int, int> _stitchIdToNewId = {};
 
 Future<void> createFromJsons([Database? db]) async {
-  dynamic obj = jsonDecode(await loadAsset("bee.json"));
+  dynamic obj = jsonDecode(await loadAsset("Bee.json"));
   Map<String, dynamic> collectionsObj = obj['yarn_collections'];
   Map<String, dynamic> yarnsObj = obj['yarns'];
   Map<String, dynamic> stitchesObj = obj['stitches'];
+  Map<String, dynamic> stitchesSequenceObj = obj['stitches_sequence'];
   List<craft_yarn.Yarn> yarns = [];
 
   await Future.forEach(collectionsObj.entries, (entry) async {
@@ -69,6 +71,18 @@ Future<void> createFromJsons([Database? db]) async {
       obj: entry.value,
     )).id;
   });
+
+  await Future.forEach(stitchesSequenceObj.entries, (entry) async {
+    if (debug) {
+      print("Create stitch sequence from ${entry.value}");
+    }
+    _stitchIdToNewId[int.parse(entry.key)] = (await stitchSequenceFromJson(
+      db: db,
+      obj: entry.value,
+    )).id;
+  });
+
+  print(_stitchIdToNewId);
 
   // print(obj.runtimeType);
   craft_pattern.Pattern pattern = await patternFromJson(obj: obj, db: db);
@@ -105,10 +119,13 @@ Future<craft_pattern.Pattern> patternFromJson({
     );
 
     if (withParts == true && obj['parts'] != null) {
-      obj['parts'].forEach((partObj) async {
-        partObj['pattern_id'] = pattern.patternId;
-        pattern.parts.add(await partFromJson(obj: partObj, db: db));
-        // print("Add ${pattern.parts.last.toMap()}"),
+      await Future.forEach(obj['parts'], (Map<String, dynamic> partObj) async {
+        try {
+          partObj['pattern_id'] = pattern.patternId;
+          pattern.parts.add(await partFromJson(obj: partObj, db: db));
+        } catch (e) {
+          rethrow;
+        }
       });
     }
     return pattern;
@@ -123,6 +140,7 @@ Future<craft_part.PatternPart> partFromJson({
   bool withRows = true,
 }) async {
   try {
+    print(obj);
     craft_part.PatternPart part = craft_part.PatternPart(
       name: obj['name'],
       patternId: obj['pattern_id'],
@@ -132,14 +150,19 @@ Future<craft_part.PatternPart> partFromJson({
     );
     part.partId = await PatternPartRepository().insertPart(part, db);
     if (withRows == true && obj['rows'] != null) {
-      obj['rows'].forEach((rowObj) async {
-        rowObj['pattern_id'] = part.patternId;
-        rowObj['part_id'] = part.partId;
-        part.rows.add(await rowFromJson(obj: rowObj, db: db));
+      await Future.forEach(obj['rows'], (Map<String, dynamic> rowObj) async {
+        try {
+          rowObj['pattern_id'] = part.patternId;
+          rowObj['part_id'] = part.partId;
+          part.rows.add(await rowFromJson(obj: rowObj, db: db));
+        } catch (e) {
+          throw "Error creating row : $e";
+        }
       });
     }
     return part;
-  } catch (e) {
+  } catch (e, stack) {
+    print(stack);
     throw "Could not create part ($e)";
   }
 }
@@ -160,12 +183,20 @@ Future<craft_row.PatternRow> rowFromJson({
       preview: obj['preview'],
     );
     row.rowId = await PatternRowRepository().insertRow(patternRow: row, db: db);
+    if (debug) {
+      print("Insert row(${row.rowId}) : $obj");
+    }
     if (withDetails == true && obj['details'] != null) {
-      obj['details'].forEach((detailObj) async {
-        detailObj['pattern_id'] = obj['pattern_id'];
-        detailObj['row_id'] = row.rowId;
-        row.details.add(await detailFromJson(obj: detailObj, db: db));
-        // print(detailObj);
+      await Future.forEach(obj['details'], (
+        Map<String, dynamic> detailObj,
+      ) async {
+        try {
+          detailObj['pattern_id'] = obj['pattern_id'];
+          detailObj['row_id'] = row.rowId;
+          row.details.add(await detailFromJson(obj: detailObj, db: db));
+        } catch (e) {
+          rethrow;
+        }
       });
     }
     return row;
@@ -180,21 +211,27 @@ Future<craft_details.PatternRowDetail> detailFromJson({
   bool withDetails = true,
 }) async {
   try {
+    if (_stitchIdToNewId[obj['stitch_id']] == null) {
+      throw "Could not get stitch with id ${obj['stitch_id']}";
+    }
     craft_details.PatternRowDetail detail = craft_details.PatternRowDetail(
       rowId: obj['row_id'],
-      stitchId: obj['stitch_id'],
+      stitchId: _stitchIdToNewId[obj['stitch_id']]!,
       repeatXTime: obj['repeat_x_time'],
       patternId: obj['pattern_id'],
       note: obj['note'],
       inPatternYarnId: _yarnIdToNewId[obj['yarn_id']],
     );
+    if (debug) {
+      print("Insert detail : $obj");
+    }
     detail.rowDetailId = await PatternDetailRepository().insertDetail(
       detail,
       db,
     );
     return detail;
-  } catch (e) {
-    throw "Could not create detail ($e)";
+  } catch (e, stack) {
+    throw "Could not create detail ($e, $stack)";
   }
 }
 
@@ -256,6 +293,63 @@ Future<craft_stitch.Stitch> stitchFromJson({
       description: obj["description"],
       isSequence: obj["is_sequence"],
       sequenceId: obj["sequence_id"],
+      hidden: obj["hidden"],
+      stitchNb: obj["stitch_nb"],
+      nbStsTaken: obj["nb_of_stitches_taken"],
+    );
+    stitch.id = await StitchRepository().insertStitch(stitch, db);
+    return stitch;
+  } catch (e) {
+    throw "Could not create yarn ($e)";
+  }
+}
+
+Future<craft_stitch.Stitch> stitchSequenceFromJson({
+  Database? db,
+  required Map<String, dynamic> obj,
+}) async {
+  try {
+    Map<String, dynamic> sequenceObj = obj['sequence'];
+    craft_row.PatternRow sequence = craft_row.PatternRow(
+      startRow: 0,
+      numberOfRows: 0,
+      stitchesPerRow: sequenceObj['stitches_count_per_row'],
+      inSameStitch: sequenceObj['in_same_stitch'],
+      note: sequenceObj['note'],
+    );
+
+    sequence.rowId = await PatternRowRepository().insertRow(
+      patternRow: sequence,
+      db: db,
+    );
+
+    for (Map<String, dynamic> detailObj in sequenceObj['details']) {
+      try {
+        final stitchId = detailObj['stitch_id'];
+        if (stitchId == null || _stitchIdToNewId[stitchId] == null) {
+          throw ("Could not look up stitch : $detailObj");
+        }
+        craft_details.PatternRowDetail detail = craft_details.PatternRowDetail(
+          rowId: sequence.rowId,
+          stitchId: _stitchIdToNewId[stitchId]!,
+          repeatXTime: detailObj['repeat_x_time'],
+          note: detailObj['note'],
+        );
+        detail.rowDetailId = await PatternDetailRepository().insertDetail(
+          detail,
+          db,
+        );
+      } catch (e) {
+        print(e);
+      }
+    }
+
+    craft_stitch.Stitch stitch = craft_stitch.Stitch(
+      abreviation: obj["abreviation"],
+      name: obj["name"],
+      description: obj["description"],
+      isSequence: 1,
+      sequenceId: sequence.rowId,
       hidden: obj["hidden"],
       stitchNb: obj["stitch_nb"],
       nbStsTaken: obj["nb_of_stitches_taken"],
