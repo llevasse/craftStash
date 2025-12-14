@@ -6,6 +6,7 @@ import 'package:craft_stash/data/local_file.dart';
 import 'package:craft_stash/data/repository/pattern/pattern_row_repository.dart';
 import 'package:craft_stash/data/repository/yarn/collection_repository.dart';
 import 'package:craft_stash/data/repository/yarn/yarn_repository.dart';
+import 'package:craft_stash/main.dart';
 import 'package:craft_stash/ui/pattern/pattern_model.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -25,6 +26,10 @@ IconButton patternDownloadButton({
         Map<dynamic, dynamic> stitchesSequence = {};
         json['stitches_sequence'] = {};
 
+        if (debug) {
+          print(stitchesObj);
+        }
+
         await Future.forEach(stitchesObj.entries, (entry) async {
           if (entry.value['is_sequence'] == 1) {
             PatternRow sequence = await PatternRowRepository().getRowById(
@@ -36,8 +41,6 @@ IconButton patternDownloadButton({
             stitchesSequence[entry.key] = entry.value;
           }
         });
-        json['stitches_test'] = stitchesObj;
-
         stitchesSequence.forEach((key, value) {
           stitchesObj.remove(key);
           stitchesObj.addAll(value['sequence'].remove('stitches'));

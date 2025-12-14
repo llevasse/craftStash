@@ -208,12 +208,14 @@ class PatternRowModel extends ChangeNotifier {
 
   Future<void> addSubrow(PatternRowDetail? detail) async {
     if (detail == null) return;
+    detail.rowId = row!.rowId;
     if (row!.details.isNotEmpty &&
         row!.details.last.hashCode == detail.hashCode) {
       await PatternDetailRepository().deleteDetail(detail.rowDetailId);
       row!.details.last.repeatXTime += 1;
       detailsCountButtonList.removeLast();
     } else {
+      detail.rowDetailId = await PatternDetailRepository().insertDetail(detail);
       row!.details.add(detail);
     }
     row!.stitchesPerRow += detail.stitch!.stitchNb;
@@ -316,6 +318,9 @@ class PatternRowModel extends ChangeNotifier {
 
   Future<void> saveRow() async {
     if (debug) print("Row stitch nb : ${_row?.stitchesPerRow}");
+    if (debug) {
+      print(row!.toJson());
+    }
     if (_row!.stitchesPerRow < 1) {
       await _patternRowRepository.deleteRow(_row!.rowId);
     } else {
@@ -342,9 +347,9 @@ class PatternRowModel extends ChangeNotifier {
       if (debug) print("Row stitch nb : ${_row!.stitchesPerRow}");
       PatternRowDetail detail = PatternRowDetail(rowId: 0, stitchId: 0);
 
-      if (row?.rowId != null) {
-        detail.rowId = row!.rowId;
-      }
+      // if (row?.rowId != null) {
+      //   detail.rowId = row!.rowId;
+      // }
       Stitch stitch = Stitch(
         abreviation: _row!.toString(),
         isSequence: 1,
@@ -354,19 +359,19 @@ class PatternRowModel extends ChangeNotifier {
       );
 
       if (id == null) {
-        for (PatternRowDetail e in _row!.details) {
+        await Future.forEach(_row!.details, (PatternRowDetail e) async {
           if (e.repeatXTime != 0) {
             e.rowId = _row!.rowId;
             await PatternDetailRepository().insertDetail(e);
           }
-        }
+        });
         detail.stitch = stitch;
         detail.stitchId = await StitchRepository().insertStitch(detail.stitch!);
       } else {
         await _patternRowRepository.updateRow(row!);
         await StitchRepository().updateStitch(stitch);
 
-        for (PatternRowDetail e in _row!.details) {
+        await Future.forEach(_row!.details, (PatternRowDetail e) async {
           if (e.repeatXTime != 0) {
             e.rowId = _row!.rowId;
             if (e.rowDetailId == 0) {
@@ -379,7 +384,7 @@ class PatternRowModel extends ChangeNotifier {
               await PatternDetailRepository().deleteDetail(e.rowDetailId);
             }
           }
-        }
+        });
       }
 
       Navigator.pop(context, detail);

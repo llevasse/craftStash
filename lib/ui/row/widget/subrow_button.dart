@@ -1,5 +1,6 @@
 import 'package:craft_stash/class/patterns/pattern_row_detail.dart';
 import 'package:craft_stash/data/repository/pattern/pattern_row_repository.dart';
+import 'package:craft_stash/main.dart';
 import 'package:craft_stash/ui/row/row_model.dart';
 import 'package:craft_stash/ui/row/row_screen.dart';
 import 'package:craft_stash/ui/core/pattern_detail_buttons/add_custom_detail_button.dart';
@@ -32,6 +33,9 @@ class RowSubrowButton extends AddCustomDetailButton {
                 )
                 as PatternRowDetail?;
         if (t == null) return;
+        if (debug) {
+          print(t.toJson());
+        }
         await onPressed.call(t);
       },
     );

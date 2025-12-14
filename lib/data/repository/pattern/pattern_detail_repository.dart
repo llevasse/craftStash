@@ -28,6 +28,9 @@ class PatternDetailRepository {
   ]) async {
     db ??= (await DbService().database);
     if (db != null) {
+      if (debug) {
+        print("Insert detail : ${patternRowDetail.toJson()}");
+      }
       return await db.insert(
         _tableName,
         patternRowDetail.toMap(),
