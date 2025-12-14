@@ -77,13 +77,13 @@ class DbService {
     await db.execute(
       '''CREATE TABLE IF NOT EXISTS yarn_in_pattern(id INTEGER PRIMARY KEY, pattern_id INT, yarn_id INT, in_preview_id INT, FOREIGN KEY (pattern_id) REFERENCES pattern(pattern_id) ON DELETE CASCADE, FOREIGN KEY (yarn_id) REFERENCES yarn(id))''',
     );
-    // await StitchRepository().insertDefaultStitches(db);
+    await StitchRepository().insertDefaultStitches(db);
     if (debug) {
       // await insertPhildarYarn(db);
       // await insertJellyFishPattern(db);
       // await insertBeePattern(db);
-      await StitchRepository().setStitchToIdMap(db);
-      await createFromJsons(db);
+      // await StitchRepository().setStitchToIdMap(db);
+      // await createPatternFromJsons(db: db);
     }
 
     await db.execute(

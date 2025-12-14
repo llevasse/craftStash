@@ -1,5 +1,6 @@
 import 'dart:async' show Future;
 import 'dart:convert';
+import 'dart:io';
 import 'package:craft_stash/data/repository/pattern/pattern_detail_repository.dart';
 import 'package:craft_stash/data/repository/pattern/pattern_part_repository.dart';
 import 'package:craft_stash/data/repository/pattern/pattern_repository.dart';
@@ -32,8 +33,13 @@ Map<int, int> _yarnIdToNewId = {};
 Map<int, int> _stitchIdToNewId = {};
 // Map<int, int> _stitchIdToNewId = {};
 
-Future<void> createFromJsons([Database? db]) async {
-  dynamic obj = jsonDecode(await loadAsset("Bee.json"));
+Future<void> createPatternFromJsons({
+  Database? db,
+  required String path,
+}) async {
+  File file = File(path);
+  dynamic obj = jsonDecode(file.readAsStringSync());
+  ;
   Map<String, dynamic> collectionsObj = obj['yarn_collections'];
   Map<String, dynamic> yarnsObj = obj['yarns'];
   Map<String, dynamic> stitchesObj = obj['stitches'];

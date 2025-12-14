@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:craft_stash/data/repository/stitch_repository.dart';
-import 'package:craft_stash/services/database_service.dart';
 import 'package:craft_stash/ui/home/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,7 +20,6 @@ Future<void> main() async {
       }
     });
   }
-  await DbService().recreateDb();
 
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await StitchRepository().setStitchToIdMap();

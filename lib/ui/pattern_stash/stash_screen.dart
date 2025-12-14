@@ -1,5 +1,6 @@
 import 'package:craft_stash/ui/core/loading_screen.dart';
 import 'package:craft_stash/ui/pattern_stash/stash_model.dart';
+import 'package:craft_stash/ui/pattern_stash/widget/import_button.dart';
 import 'package:craft_stash/ui/pattern_stash/widget/pattern_list_tile.dart';
 import 'package:craft_stash/class/patterns/patterns.dart' as craft;
 import 'package:craft_stash/ui/core/widgets/buttons/page_select_dropdown_button.dart';
@@ -31,6 +32,7 @@ class _state extends State<PatternStashScreen> {
             appBar: AppBar(
               backgroundColor: theme.colorScheme.primary,
               actions: [
+                patternImportButton(context: context),
                 PageSelectDropdownButton(
                   onQuit: widget.patternStashModel.reload,
                 ),
