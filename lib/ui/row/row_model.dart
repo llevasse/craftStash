@@ -316,14 +316,17 @@ class PatternRowModel extends ChangeNotifier {
     setPreview(_row!.detailsAsString());
   }
 
-  Future<void> saveRow() async {
-    if (debug) print("Row stitch nb : ${_row?.stitchesPerRow}");
-    if (debug) {
-      print(row!.toJson());
-    }
+  Future<void> saveRow({deleteIfEmpty = false}) async {
     if (_row!.stitchesPerRow < 1) {
-      await _patternRowRepository.deleteRow(_row!.rowId);
+      if (deleteIfEmpty) {
+        await _patternRowRepository.deleteRow(_row!.rowId);
+      } 
+      return;
     } else {
+      if (debug) print("Row stitch nb : ${_row?.stitchesPerRow}");
+      if (debug) {
+        print(row!.toJson());
+      }
       _row?.preview = _row?.detailsAsString();
       await _patternRowRepository.updateRow(row!);
       for (int i = 0; i < _row!.details.length; i++) {

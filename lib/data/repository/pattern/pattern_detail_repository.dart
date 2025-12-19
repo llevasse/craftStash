@@ -29,8 +29,11 @@ class PatternDetailRepository {
     db ??= (await DbService().database);
     if (db != null) {
       if (debug) {
-        print("Insert detail : ${patternRowDetail.toJson()}");
+        print(
+          "Insert detail : row_id: ${patternRowDetail.rowId} ${patternRowDetail.toJson()}",
+        );
       }
+
       return await db.insert(
         _tableName,
         patternRowDetail.toMap(),
