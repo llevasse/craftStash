@@ -1,6 +1,7 @@
 import 'package:craft_stash/ui/core/loading_screen.dart';
 import 'package:craft_stash/ui/row/row_model.dart';
 import 'package:craft_stash/ui/row/widget/delete_button.dart';
+import 'package:craft_stash/ui/row/widget/in_same_stitch_button.dart';
 import 'package:craft_stash/ui/row/widget/nb_row_button%20copy.dart';
 import 'package:craft_stash/ui/row/widget/preview_field.dart';
 import 'package:craft_stash/ui/row/widget/save_button.dart';
@@ -71,8 +72,9 @@ class RowScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   spacing: spacing,
                   children: [
-                    ?patternRowModel.isSubRow == false
-                        ? Row(
+                    patternRowModel.isSubRow == true
+                        ? InSameStitchButton(patternRowModel: patternRowModel)
+                        : Row(
                             spacing: spacing,
                             children: [
                               Expanded(
@@ -86,8 +88,7 @@ class RowScreen extends StatelessWidget {
                                 ),
                               ),
                             ],
-                          )
-                        : null,
+                          ),
                     rowPreviewField(patternRowModel: patternRowModel),
                     rowStitchDetailsList(patternRowModel: patternRowModel),
                     Expanded(

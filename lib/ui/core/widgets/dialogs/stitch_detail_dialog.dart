@@ -55,7 +55,8 @@ class _StitchDetailDialogState extends State<StitchDetailDialog> {
       decoration: InputDecoration(label: Text("In ...")),
       keyboardType: TextInputType.text,
       onChanged: (value) {
-        widget.detail.note = value.trim();
+        value = value.trim();
+        widget.detail.note = value.isEmpty ? null : value;
         setState(() {});
       },
       validator: (value) {

@@ -165,6 +165,11 @@ class PatternRowModel extends ChangeNotifier {
     _row = newRow;
   }
 
+  void setInSameStitch(int value) {
+    _row?.inSameStitch = value;
+    _setUpdateTimer();
+  }
+
   void scrollDown({required ScrollController ctrl, int duration = 0}) {
     ctrl.animateTo(
       ctrl.position.maxScrollExtent,
@@ -320,7 +325,7 @@ class PatternRowModel extends ChangeNotifier {
     if (_row!.stitchesPerRow < 1) {
       if (deleteIfEmpty) {
         await _patternRowRepository.deleteRow(_row!.rowId);
-      } 
+      }
       return;
     } else {
       if (debug) print("Row stitch nb : ${_row?.stitchesPerRow}");

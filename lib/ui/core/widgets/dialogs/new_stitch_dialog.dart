@@ -120,7 +120,6 @@ class _NewStitchDialogState extends State<NewStitchDialog> {
           onPressed: () async {
             try {
               await StitchRepository().deleteStitch(widget.base!);
-              await PatternRowRepository().deleteRow(widget.base!.sequenceId!);
               Navigator.pop(context);
             } on StitchIsUsed catch (e) {
               showDialog(
