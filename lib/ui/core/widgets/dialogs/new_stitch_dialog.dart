@@ -19,10 +19,12 @@ class _NewStitchDialogState extends State<NewStitchDialog> {
   String? fullName;
   String? description;
   late int fillXStitches;
+  late int createXStitches;
 
   @override
   void initState() {
     fillXStitches = widget.base?.nbStsTaken ?? 0;
+    createXStitches = widget.base?.stitchNb ?? 1;
   }
 
   Widget _createAbreviationInput() {
@@ -60,7 +62,7 @@ class _NewStitchDialogState extends State<NewStitchDialog> {
     return TextFormField(
       decoration: InputDecoration(label: Text("Description")),
       maxLines: 5,
-      minLines: 1,
+      minLines: 2,
       maxLength: 500,
       initialValue: widget.base?.description,
       validator: (value) {
@@ -75,7 +77,7 @@ class _NewStitchDialogState extends State<NewStitchDialog> {
   Widget _createStitchFillNumberInput() {
     return TextFormField(
       decoration: InputDecoration(
-        label: Text("Number of stitch field from previous row"),
+        label: Text("Number of stitch used in previous row"),
       ),
       initialValue: fillXStitches.toString(),
       keyboardType: TextInputType.number,
@@ -87,6 +89,25 @@ class _NewStitchDialogState extends State<NewStitchDialog> {
       },
       onSaved: (newValue) {
         fillXStitches = int.tryParse((newValue!.trim())) ?? 0;
+      },
+    );
+  }
+
+  Widget _createStitchCreateNumberInput() {
+    return TextFormField(
+      decoration: InputDecoration(
+        label: Text("Number of stitch in this stitch"),
+      ),
+      initialValue: createXStitches.toString(),
+      keyboardType: TextInputType.number,
+      validator: (value) {
+        if (value == null || int.tryParse(value) == null) {
+          return "Value must be a valid number";
+        }
+        return null;
+      },
+      onSaved: (newValue) {
+        createXStitches = int.tryParse((newValue!.trim())) ?? 0;
       },
     );
   }
@@ -122,6 +143,7 @@ class _NewStitchDialogState extends State<NewStitchDialog> {
               name: fullName,
               description: description,
               nbStsTaken: fillXStitches,
+              stitchNb: createXStitches,
             );
             if (widget.base == null) {
               await StitchRepository().insertStitch(s);
@@ -145,15 +167,18 @@ class _NewStitchDialogState extends State<NewStitchDialog> {
       title: Text(widget.base == null ? "Create stitch" : "Edit stitch"),
       content: Form(
         key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+        child: ListView(
           children: [
             _createAbreviationInput(),
             _createFullNameInput(),
             _createDescriptionInput(),
             _createStitchFillNumberInput(),
+            _createStitchCreateNumberInput(),
           ],
         ),
+        // child: Column(
+        //   mainAxisSize: MainAxisSize.min,
+        // ),
       ),
       actions: actions(),
     );
