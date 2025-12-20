@@ -118,7 +118,7 @@ class PatternRowModel extends ChangeNotifier {
       timer!.cancel();
       timer = null;
     }
-    if (formKey.currentState!.validate()) {
+    if (formKey.currentState != null && formKey.currentState!.validate()) {
       formKey.currentState!.save();
       timer = Timer(const Duration(seconds: 1), () async {
         if (debug) {
@@ -127,6 +127,10 @@ class PatternRowModel extends ChangeNotifier {
         await saveRow();
         timer = null;
       });
+    } else {
+      if (debug) {
+        print("Could not save current row");
+      }
     }
   }
 

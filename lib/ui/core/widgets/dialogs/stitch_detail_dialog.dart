@@ -21,8 +21,12 @@ class StitchDetailDialog extends StatefulWidget {
 
 class _StitchDetailDialogState extends State<StitchDetailDialog> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  TextEditingController inStitchInputControler = TextEditingController();
+  TextEditingController repeatXTimeControler = TextEditingController();
   bool displaySelector = false;
   Set selection = {false};
+  int repeatXtimes = 0;
+  String? note;
 
   @override
   void initState() {
@@ -30,6 +34,12 @@ class _StitchDetailDialogState extends State<StitchDetailDialog> {
     widget.originalPreviousRowStitchNbUsed = widget.previousRowStitchNbUsed;
     widget.previousRowStitchNbUsed +=
         widget.detail.repeatXTime * (widget.detail.stitch?.stitchNb ?? 1);
+
+    inStitchInputControler.value = widget.detail.note == null
+        ? TextEditingValue.empty
+        : TextEditingValue(text: widget.detail.note!);
+
+    repeatXTimeControler.text = widget.detail.repeatXTime.toString();
     displaySelectorChecker();
     // print("Init StitchDetailDialog with var : ");
     // print("\tDetail : ${widget.detail.toString()}");
@@ -44,19 +54,30 @@ class _StitchDetailDialogState extends State<StitchDetailDialog> {
   displaySelectorChecker() {
     displaySelector = false;
     if (widget.prevRowStitchNb != null &&
-        widget.prevRowStitchNb! > widget.previousRowStitchNbUsed) {
+        widget.prevRowStitchNb! >= widget.previousRowStitchNbUsed) {
       displaySelector = true;
     }
   }
 
+  @override
+  void setState(VoidCallback fn) {
+    super.setState(fn);
+    inStitchInputControler.value = note == null
+        ? TextEditingValue.empty
+        : TextEditingValue(text: note!);
+
+    repeatXTimeControler.text = repeatXtimes.toString();
+    displaySelectorChecker();
+  }
+
   TextFormField _inStitchInput() {
     return TextFormField(
-      initialValue: widget.detail.note,
+      controller: inStitchInputControler,
       decoration: InputDecoration(label: Text("In ...")),
       keyboardType: TextInputType.text,
       onChanged: (value) {
         value = value.trim();
-        widget.detail.note = value.isEmpty ? null : value;
+        note = value.isEmpty ? null : value;
         setState(() {});
       },
       validator: (value) {
@@ -70,14 +91,15 @@ class _StitchDetailDialogState extends State<StitchDetailDialog> {
 
   TextFormField _repeatXTimeInput() {
     return TextFormField(
-      initialValue: widget.detail.repeatXTime.toString(),
+      controller: repeatXTimeControler,
       decoration: InputDecoration(label: Text("Repeat x times")),
       keyboardType: TextInputType.number,
+      readOnly: selection.first == true,
       onChanged: (value) {
+        repeatXtimes = int.tryParse(value.trim()) ?? 0;
         widget.previousRowStitchNbUsed =
             widget.originalPreviousRowStitchNbUsed +
-            (int.tryParse(value.trim()) ?? 0) *
-                (widget.detail.stitch?.stitchNb ?? 1);
+            repeatXtimes * (widget.detail.stitch?.stitchNb ?? 1);
         if (widget.prevRowStitchNb != null) {
           setState(() {});
         }
@@ -107,7 +129,7 @@ class _StitchDetailDialogState extends State<StitchDetailDialog> {
       selected: selection,
       onSelectionChanged: (p0) {
         if (p0.first == true) {
-          widget.detail.repeatXTime = widget.prevRowStitchNb!;
+          repeatXtimes = widget.prevRowStitchNb!;
         }
         selection = p0;
         setState(() {});
@@ -136,7 +158,7 @@ class _StitchDetailDialogState extends State<StitchDetailDialog> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ?displaySelector ? _toggleButton() : null,
-            ?selection.first == false ? _repeatXTimeInput() : null,
+            _repeatXTimeInput(),
             _inStitchInput(),
           ],
         ),
@@ -153,6 +175,11 @@ class _StitchDetailDialogState extends State<StitchDetailDialog> {
           onPressed: () async {
             if (_formKey.currentState!.validate()) {
               _formKey.currentState!.save();
+
+              if (widget.detail.note != null &&
+                  widget.detail.note!.trim().isEmpty) {
+                widget.detail.note = null;
+              }
 
               if (widget.detail.repeatXTime <= 0) {
                 widget.detail.rowId = -1;
