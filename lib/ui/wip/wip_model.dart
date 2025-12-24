@@ -22,7 +22,7 @@ class WipModel extends ChangeNotifier {
 
   Future<void> load() async {
     try {
-      _wip = await _wipRepository.getWipById(id: id);
+      _wip = await _wipRepository.getWipById(id: id, withPattern: true, withParts: true);
       _yarnNameMap = await _wipRepository.getYarnIdToName(id);
       loaded = true;
     } finally {

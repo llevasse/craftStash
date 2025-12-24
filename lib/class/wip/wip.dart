@@ -30,6 +30,18 @@ class Wip {
     };
   }
 
+  Map<String, dynamic> toJson() {
+    var obj = toMap();
+
+    obj['pattern'] = pattern?.toJson();
+    obj['parts'] = [];
+    for (final part in parts) {
+      Map<String, dynamic> partObj = part.toJson();
+      obj['parts'].add(partObj);
+    }
+    return obj;
+  }
+
   @override
   String toString() {
     String tmp = "${pattern?.name} :\n";

@@ -101,6 +101,9 @@ class WipRepository {
         limit: 1,
       );
       Wip p = _fromMap(patternMaps[0]);
+      if (withPattern) {
+        p.pattern = await PatternRepository().getPatternById(id: p.patternId);
+      }
       if (withParts) {
         p.parts = await WipPartRepository().getAllWipPart(wipId: id);
       }

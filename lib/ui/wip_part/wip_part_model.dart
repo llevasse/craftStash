@@ -30,7 +30,7 @@ class WipPartModel extends ChangeNotifier {
 
   Future<void> load() async {
     try {
-      _wipPart = await _wipPartRepository.getWipPartById(id: id);
+      _wipPart = await _wipPartRepository.getWipPartById(id: id, withRows: true);
       totalNumberOfRows = 0;
       for (PatternRow row in _wipPart!.part!.rows) {
         totalNumberOfRows += row.numberOfRows;

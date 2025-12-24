@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:ffi';
-
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 
 class PatternPart {

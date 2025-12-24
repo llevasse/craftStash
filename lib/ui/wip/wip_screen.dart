@@ -1,3 +1,4 @@
+import 'package:craft_stash/main.dart';
 import 'package:craft_stash/ui/core/loading_screen.dart';
 import 'package:craft_stash/ui/wip/widget/assembly_input.dart';
 import 'package:craft_stash/ui/wip/widget/delete_button.dart';
@@ -25,6 +26,9 @@ class WipScreen extends StatelessWidget {
         if (!wipModel.loaded) {
           return LoadingScreen();
         } else {
+          if (debug) {
+            print(wipModel.wip?.toJson());
+          }
           return Scaffold(
             appBar: AppBar(
               title: Text(wipModel.wip!.name),

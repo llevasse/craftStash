@@ -37,6 +37,22 @@ class WipPart {
     };
   }
 
+  toJson() {
+    var obj = toMap();
+    obj.remove('wip_id');
+    obj.remove('part_id');
+    obj['name'] = part?.name;
+    // obj['rows'] = [];
+    // obj['stitches'] = {};
+    // for (final row in rows) {
+    //   Map<String, dynamic> rowObj = row.toJson();
+    //   obj['stitches'].addAll(rowObj['stitches']);
+    //   rowObj.remove('stitches');
+    //   obj['rows'].add(rowObj);
+    // }
+    return obj;
+  }
+
   @override
   String toString() {
     if (part == null) return "";
