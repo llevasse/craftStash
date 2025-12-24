@@ -1,6 +1,7 @@
 import 'package:craft_stash/ui/core/loading_screen.dart';
 import 'package:craft_stash/ui/wip_part/widget/finish_button.dart';
 import 'package:craft_stash/ui/wip_part/widget/part_count_button.dart';
+import 'package:craft_stash/ui/wip_part/widget/return_button.dart';
 import 'package:craft_stash/ui/wip_part/widget/row_count_button.dart';
 import 'package:craft_stash/ui/wip_part/widget/stitch_count_button.dart';
 import 'package:craft_stash/ui/wip_part/widget/wip_part_rows.dart';
@@ -27,6 +28,10 @@ class WipPartScreen extends StatelessWidget {
             appBar: AppBar(
               title: Text(wipPartModel.wipPart!.part!.name),
               backgroundColor: theme.colorScheme.primary,
+              leading: wipPartReturnButton(
+                wipPartModel: wipPartModel,
+                context: context,
+              ),
               actions: [
                 ?wipPartModel.wipPart!.part!.numbersToMake > 1
                     ? wipPartMadeCount(wpm: wipPartModel)

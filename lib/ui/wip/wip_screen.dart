@@ -1,3 +1,4 @@
+import 'package:craft_stash/data/repository/wip/wip_part_repository.dart';
 import 'package:craft_stash/main.dart';
 import 'package:craft_stash/ui/core/loading_screen.dart';
 import 'package:craft_stash/ui/wip/widget/assembly_input.dart';
@@ -60,6 +61,9 @@ class WipScreen extends StatelessWidget {
                       itemBuilder: (_, index) => WipPartsListTile(
                         wipModel: wipModel,
                         wipPart: wipModel.wip!.parts[index],
+                        onReturn: () async {
+                          wipModel.reload();
+                        },
                       ),
                     ),
                   ),

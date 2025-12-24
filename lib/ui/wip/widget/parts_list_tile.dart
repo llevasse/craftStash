@@ -6,14 +6,17 @@ import 'package:craft_stash/ui/wip_part/wip_part_screen.dart';
 import 'package:flutter/material.dart';
 
 class WipPartsListTile extends StatelessWidget {
-  const WipPartsListTile({
+  WipPartsListTile({
     super.key,
     required this.wipPart,
     required this.wipModel,
+    required this.onReturn,
   });
   final WipPart wipPart;
 
   final WipModel wipModel;
+
+  Function() onReturn;
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +42,7 @@ class WipPartsListTile extends StatelessWidget {
             ),
           ),
         );
+        onReturn();
       },
     );
   }

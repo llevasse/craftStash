@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:craft_stash/class/patterns/pattern_row.dart';
 import 'package:craft_stash/class/wip/wip_part.dart';
 import 'package:craft_stash/data/repository/wip/wip_part_repository.dart';
@@ -11,7 +13,6 @@ class WipPartModel extends ChangeNotifier {
     required this.wipId,
   }) : _wipPartRepository = wipPartRepository;
   final WipPartRepository _wipPartRepository;
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   int id;
   int wipId;
@@ -28,9 +29,14 @@ class WipPartModel extends ChangeNotifier {
 
   final double spacing = 10;
 
+  Timer? timer;
+
   Future<void> load() async {
     try {
-      _wipPart = await _wipPartRepository.getWipPartById(id: id, withRows: true);
+      _wipPart = await _wipPartRepository.getWipPartById(
+        id: id,
+        withRows: true,
+      );
       totalNumberOfRows = 0;
       for (PatternRow row in _wipPart!.part!.rows) {
         totalNumberOfRows += row.numberOfRows;
@@ -61,6 +67,7 @@ class WipPartModel extends ChangeNotifier {
       _wipPart!.currentRowNumber = _wipPart!.part!.rows.first.startRow;
     }
     notifyListeners();
+    _setUpdateTimer();
   }
 
   void setCurrentRow(int value) {
@@ -93,6 +100,7 @@ class WipPartModel extends ChangeNotifier {
       _wipPart!.stitchDoneNb -= row.stitchesPerRow;
     }
     notifyListeners();
+    _setUpdateTimer();
   }
 
   void setCurrentStitch(int value) {
@@ -113,5 +121,20 @@ class WipPartModel extends ChangeNotifier {
     }
 
     notifyListeners();
+    _setUpdateTimer();
+  }
+
+  void _setUpdateTimer() {
+    if (timer != null) {
+      timer!.cancel();
+      timer = null;
+    }
+    timer = Timer(const Duration(seconds: 1), () async {
+      if (debug) {
+        print("Save wip part");
+      }
+      await _wipPartRepository.updateWipPart(_wipPart!);
+      timer = null;
+    });
   }
 }
