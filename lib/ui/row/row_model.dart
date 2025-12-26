@@ -253,10 +253,14 @@ class PatternRowModel extends ChangeNotifier {
     }
     if (detail == null) return;
     bool addRowStitchCountButton = false;
+    bool needToInsertDetail = false;
 
     detail.order = _row?.details.length;
     if (_row!.details.isNotEmpty) {
       if (_row!.details.last.hashCode == detail.hashCode) {
+        if (debug) {
+          print("Removing new detail because their hash code are identical");
+        }
         // If last detail is already a color change with the same color as this detail
         await PatternDetailRepository().deleteDetail(detail.rowDetailId);
       } else if (_row!.details.last.stitchId == stitchToIdMap['color change']) {
@@ -266,35 +270,37 @@ class PatternRowModel extends ChangeNotifier {
         );
         _row!.details.removeLast();
         detailsCountButtonList.removeLast();
-
-        _row!.details.add(detail);
-        addRowStitchCountButton = true;
+        needToInsertDetail = true;
       } else if (_row!.details.last.stitchId == stitchToIdMap['start color']) {
         // If last detail is a start color
         _row!.details.last.inPatternYarnId = detail.inPatternYarnId;
         await PatternDetailRepository().updateDetail(_row!.details.last);
       } else {
         // If last detail is NOT a color change
-        try {
-          detail.rowDetailId = await PatternDetailRepository().insertDetail(
-            detail,
-          );          
-          _row!.details.add(detail);
-          addRowStitchCountButton = true;
-        } catch (e) {
-          print(e);
-          if (debug) {
-            DbService().printDbTables(
-              patternRow: true,
-              yarnInPattern: true,
-              yarn: true,
-              yarnCollection: true,
-              stitch: true,
-            );
-          }
+        needToInsertDetail = true;
+      }
+    }
+    if (needToInsertDetail) {
+      try {
+        detail.rowDetailId = await PatternDetailRepository().insertDetail(
+          detail,
+        );
+        _row!.details.add(detail);
+        addRowStitchCountButton = true;
+      } catch (e) {
+        print(e);
+        if (debug) {
+          DbService().printDbTables(
+            patternRow: true,
+            yarnInPattern: true,
+            yarn: true,
+            yarnCollection: true,
+            stitch: true,
+          );
         }
       }
     }
+
     if (addRowStitchCountButton) {
       detailsCountButtonList.add(
         RowStitchCountButton(
