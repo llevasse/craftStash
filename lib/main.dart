@@ -22,7 +22,7 @@ Future<void> main() async {
     });
   }
 
-  // await DbService().recreateDb();
+  await DbService().recreateDb();
 
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await StitchRepository().setStitchToIdMap();

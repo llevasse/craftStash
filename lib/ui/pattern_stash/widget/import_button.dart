@@ -21,8 +21,9 @@ IconButton patternImportButton({required BuildContext context}) {
         }
       } on PlatformException catch (e) {
         print('Failed to open file manager: ${e.message}');
-      } catch (e) {
+      } catch (e, stack) {
         print('An unknown error occurred: $e');
+        print(stack);
       }
     },
     icon: Icon(Icons.folder),

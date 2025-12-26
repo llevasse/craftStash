@@ -39,7 +39,7 @@ Future<void> createPatternFromJsons({
 }) async {
   File file = File(path);
   dynamic obj = jsonDecode(file.readAsStringSync());
-  ;
+
   Map<String, dynamic> collectionsObj = obj['yarn_collections'];
   Map<String, dynamic> yarnsObj = obj['yarns'];
   Map<String, dynamic> stitchesObj = obj['stitches'];
@@ -64,8 +64,13 @@ Future<void> createPatternFromJsons({
     if (debug) {
       print("Create yarn from ${entry.value}");
     }
+    // try {
     yarns.add(await yarnFromJson(obj: entry.value, db: db));
     _yarnIdToNewId[int.parse(entry.key)] = yarns.last.id;
+    // } catch (e) {
+    // print(e);
+    // print(entry.value);
+    // }
   });
 
   await Future.forEach(stitchesObj.entries, (entry) async {
@@ -261,7 +266,7 @@ Future<craft_collection.YarnCollection> yarnCollectionFromJson({
     );
     return collection;
   } catch (e) {
-    throw "Could not create yarn ($e)";
+    throw "Could not create yarn collection ($e)";
   }
 }
 
@@ -270,19 +275,19 @@ Future<craft_yarn.Yarn> yarnFromJson({
   required Map<String, dynamic> obj,
 }) async {
   try {
-    craft_yarn.Yarn yarn = craft_yarn.Yarn(
-      color: obj['color'],
-      brand: obj["brand"],
-      material: obj["material"],
-      colorName: obj["color_name"],
-      minHook: obj["min_hook"],
-      maxHook: obj["max_hook"],
-      thickness: obj["thickness"],
-      inPreviewId: obj["in_preview_id"],
-      collectionId: obj["collection_id"],
-    );
-    yarn.id = await YarnRepository().insertYarn(yarn, db, false);
-    return yarn;
+  craft_yarn.Yarn yarn = craft_yarn.Yarn(
+    color: obj['color'],
+    brand: obj["brand"],
+    material: obj["material"],
+    colorName: obj["color_name"],
+    minHook: obj["min_hook"],
+    maxHook: obj["max_hook"],
+    thickness: obj["thickness"],
+    inPreviewId: obj["in_preview_id"],
+    collectionId: _collectionIdToNewId[obj["collection_id"]],
+  );
+  yarn.id = await YarnRepository().insertYarn(yarn, db, false);
+  return yarn;
   } catch (e) {
     throw "Could not create yarn ($e)";
   }
@@ -306,7 +311,7 @@ Future<craft_stitch.Stitch> stitchFromJson({
     stitch.id = await StitchRepository().insertStitch(stitch, db);
     return stitch;
   } catch (e) {
-    throw "Could not create yarn ($e)";
+    throw "Could not create stitch ($e)";
   }
 }
 
