@@ -24,27 +24,39 @@ IconButton patternDownloadButton({
 
         Map<dynamic, dynamic> stitchesObj = json['stitches'];
         Map<dynamic, dynamic> stitchesSequence = {};
+        bool needSequenceCheck = true;
         json['stitches_sequence'] = {};
 
         if (debug) {
           print(stitchesObj);
         }
 
-        await Future.forEach(stitchesObj.entries, (entry) async {
-          if (entry.value['is_sequence'] == 1) {
-            PatternRow sequence = await PatternRowRepository().getRowById(
-              id: entry.value['sequence_id'],
-            );
-
-            entry.value['sequence'] = sequence.toJson();
-
-            stitchesSequence[entry.key] = entry.value;
-          }
+        await Future.doWhile(() async {
+          needSequenceCheck = false;
+          await Future.forEach(stitchesObj.entries, (entry) async {
+            if (entry.value['is_sequence'] == 1 &&
+                stitchesSequence[entry.key] == null) {
+              if (debug) {
+                print("${entry.key}  : ${entry.value}");
+                print("\n");
+              }
+              needSequenceCheck = true;
+              PatternRow sequence = await PatternRowRepository().getRowById(
+                id: entry.value['sequence_id'],
+              );
+              entry.value['sequence'] = sequence.toJson();
+              stitchesSequence[entry.key] = entry.value;
+            }
+          });
+          stitchesSequence.forEach((key, value) {
+            if (stitchesObj.containsKey(key)) {
+              stitchesObj.addAll(value['sequence'].remove('stitches'));
+              stitchesObj.remove(key);
+            }
+          });
+          return needSequenceCheck;
         });
-        stitchesSequence.forEach((key, value) {
-          stitchesObj.remove(key);
-          stitchesObj.addAll(value['sequence'].remove('stitches'));
-        });
+
         json['stitches'] = stitchesObj;
         json['stitches_sequence'] = stitchesSequence;
 
@@ -64,6 +76,20 @@ IconButton patternDownloadButton({
                 )).toJson();
           }
         });
+
+        // if (debug) {
+        //   print("Stitches :");
+        //   stitchesObj.forEach((key, value) {
+        //     print("$key  : $value");
+        //     print("\n");
+        //   });
+
+        //   print("Stitches sequence :");
+        //   stitchesSequence.forEach((key, value) {
+        //     print("$key  : $value");
+        //     print("\n");
+        //   });
+        // }
 
         await FileStorage.writeCounter(
           jsonEncode(json),
