@@ -248,59 +248,82 @@ class PatternRowModel extends ChangeNotifier {
   }
 
   Future<void> addColorChange(PatternRowDetail? detail) async {
+    if (debug) {
+      print("row_model:addColorChange(${detail?.toJson()})");
+    }
     if (detail == null) return;
+    bool addRowStitchCountButton = false;
+
     detail.order = _row?.details.length;
     if (_row!.details.isNotEmpty) {
       if (_row!.details.last.hashCode == detail.hashCode) {
+        // If last detail is already a color change with the same color as this detail
         await PatternDetailRepository().deleteDetail(detail.rowDetailId);
       } else if (_row!.details.last.stitchId == stitchToIdMap['color change']) {
+        // If last detail is already a color change with a different color
         await PatternDetailRepository().deleteDetail(
           _row!.details.last.rowDetailId,
         );
         _row!.details.removeLast();
         detailsCountButtonList.removeLast();
+
         _row!.details.add(detail);
-        detailsCountButtonList.add(
-          RowStitchCountButton(
-            patternRowModel: this,
-            detail: detail,
-            index: detailsCountButtonList.length,
-            allowIncrease: false,
-            allowDecrease: false,
-            showCount: false,
-          ),
-        );
+        addRowStitchCountButton = true;
       } else if (_row!.details.last.stitchId == stitchToIdMap['start color']) {
+        // If last detail is a start color
         _row!.details.last.inPatternYarnId = detail.inPatternYarnId;
         await PatternDetailRepository().updateDetail(_row!.details.last);
       } else {
-        _row!.details.add(detail);
-        detailsCountButtonList.add(
-          RowStitchCountButton(
-            patternRowModel: this,
-            detail: detail,
-            index: detailsCountButtonList.length,
-            allowIncrease: false,
-            allowDecrease: false,
-            showCount: false,
-          ),
-        );
+        // If last detail is NOT a color change
+        try {
+          detail.rowDetailId = await PatternDetailRepository().insertDetail(
+            detail,
+          );          
+          _row!.details.add(detail);
+          addRowStitchCountButton = true;
+        } catch (e) {
+          print(e);
+          if (debug) {
+            DbService().printDbTables(
+              patternRow: true,
+              yarnInPattern: true,
+              yarn: true,
+              yarnCollection: true,
+              stitch: true,
+            );
+          }
+        }
       }
     }
-
+    if (addRowStitchCountButton) {
+      detailsCountButtonList.add(
+        RowStitchCountButton(
+          patternRowModel: this,
+          detail: detail,
+          index: detailsCountButtonList.length,
+          allowIncrease: false,
+          allowDecrease: false,
+          showCount: false,
+        ),
+      );
+    }
     needScroll = true;
     setPreview(_row!.detailsAsString());
   }
 
   Future<void> addStartColor(PatternRowDetail? detail) async {
-    print("row_model:addStartColor(${detail?.toJson()})");
+    if (debug) {
+      print("row_model:addStartColor(${detail?.toJson()})");
+    }
     if (detail == null) return;
 
     if (_row!.details.isNotEmpty) {
       if (_row!.details.first.stitchId == stitchToIdMap["start color"]) {
+        // If there is already a start color detail
         _row!.details.first.inPatternYarnId = detail.inPatternYarnId;
         await PatternDetailRepository().updateDetail(_row!.details.first);
       } else {
+        // if the detail is added with already present details
         for (PatternRowDetail detail in _row!.details) {
           if (detail.order != null) detail.order! + (1);
         }
@@ -319,6 +342,7 @@ class PatternRowModel extends ChangeNotifier {
         );
       }
     } else {
+      // If it's the very first detail to be added
       try {
         detail.rowDetailId = await PatternDetailRepository().insertDetail(
           detail,
