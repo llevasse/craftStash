@@ -71,6 +71,7 @@ class StitchRepository {
         description: null,
         hidden: 1,
         stitchNb: 0,
+        nbStsTaken: 0
       ),
       Stitch(
         abreviation: "start color",
@@ -78,6 +79,7 @@ class StitchRepository {
         description: null,
         hidden: 1,
         stitchNb: 0,
+        nbStsTaken: 0
       ),
     ];
     for (Stitch s in stitches) {

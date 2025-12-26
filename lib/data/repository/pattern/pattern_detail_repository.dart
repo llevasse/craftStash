@@ -33,7 +33,6 @@ class PatternDetailRepository {
           "Insert detail : row_id: ${patternRowDetail.rowId} ${patternRowDetail.toJson()}",
         );
       }
-
       return await db.insert(
         _tableName,
         patternRowDetail.toMap(),

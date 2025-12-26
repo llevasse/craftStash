@@ -26,8 +26,9 @@ class Yarn extends YarnCollection {
     return ("color: $color, collection_id: $collectionId, brand: $brand, material: $material, color_name: $colorName, min_hook: $minHook, max_hook: $maxHook, thickness: $thickness, number_of_skeins: $nbOfSkeins, hash: $hashCode, ");
   }
 
-  Map<String, dynamic> toMap() {
-    return {
+  @override
+  Map<String, dynamic> toMap({withId = false}) {
+    var map = {
       "color": color,
       "collection_id": collectionId,
       "brand": brand,
@@ -40,8 +41,13 @@ class Yarn extends YarnCollection {
       "hash": hashCode,
       "in_preview_id": inPreviewId,
     };
+    if (withId) {
+      map['id'] = id;
+    }
+    return map;
   }
 
+  @override
   Map<String, dynamic> toJson() {
     Map<String, dynamic> obj = toMap();
     obj.remove('hash');
@@ -70,5 +76,10 @@ class Yarn extends YarnCollection {
       minHook: minHook,
       maxHook: maxHook,
     );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return super.hashCode == other;
   }
 }

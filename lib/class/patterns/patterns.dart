@@ -1,8 +1,5 @@
-import 'dart:convert';
-import 'dart:developer';
 
 import 'package:craft_stash/class/patterns/pattern_part.dart';
-import 'package:flutter/material.dart';
 
 class Pattern {
   int patternId;

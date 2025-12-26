@@ -8,6 +8,7 @@ import 'package:craft_stash/data/repository/pattern/pattern_detail_repository.da
 import 'package:craft_stash/data/repository/pattern/pattern_row_repository.dart';
 import 'package:craft_stash/data/repository/stitch_repository.dart';
 import 'package:craft_stash/main.dart';
+import 'package:craft_stash/services/database_service.dart';
 import 'package:craft_stash/ui/row/widget/stitch_count_button.dart';
 import 'package:flutter/material.dart';
 
@@ -193,6 +194,7 @@ class PatternRowModel extends ChangeNotifier {
         rowId: _row!.rowId,
         stitchId: stitch.id,
         stitch: stitch,
+        order: _row!.details.length,
       );
       prd.rowDetailId = await PatternDetailRepository().insertDetail(prd);
       _row!.details.add(prd);
@@ -224,6 +226,7 @@ class PatternRowModel extends ChangeNotifier {
       row!.details.last.repeatXTime += 1;
       detailsCountButtonList.removeLast();
     } else {
+      detail.order = _row?.details.length;
       detail.rowDetailId = await PatternDetailRepository().insertDetail(detail);
       row!.details.add(detail);
     }
@@ -246,6 +249,7 @@ class PatternRowModel extends ChangeNotifier {
 
   Future<void> addColorChange(PatternRowDetail? detail) async {
     if (detail == null) return;
+    detail.order = _row?.details.length;
     if (_row!.details.isNotEmpty) {
       if (_row!.details.last.hashCode == detail.hashCode) {
         await PatternDetailRepository().deleteDetail(detail.rowDetailId);
@@ -289,12 +293,18 @@ class PatternRowModel extends ChangeNotifier {
   }
 
   Future<void> addStartColor(PatternRowDetail? detail) async {
+    print("row_model:addStartColor(${detail?.toJson()})");
     if (detail == null) return;
+
     if (_row!.details.isNotEmpty) {
       if (_row!.details.first.stitchId == stitchToIdMap["start color"]) {
         _row!.details.first.inPatternYarnId = detail.inPatternYarnId;
         await PatternDetailRepository().updateDetail(_row!.details.first);
       } else {
+        for (PatternRowDetail detail in _row!.details) {
+          if (detail.order != null) detail.order! + (1);
+        }
+        detail.order = 0;
         _row!.details.insert(0, detail);
         detailsCountButtonList.insert(
           0,
@@ -309,17 +319,33 @@ class PatternRowModel extends ChangeNotifier {
         );
       }
     } else {
-      _row!.details.add(detail);
-      detailsCountButtonList.add(
-        RowStitchCountButton(
-          patternRowModel: this,
-          detail: detail,
-          index: 0,
-          allowIncrease: false,
-          allowDecrease: false,
-          showCount: false,
-        ),
-      );
+      try {
+        detail.rowDetailId = await PatternDetailRepository().insertDetail(
+          detail,
+        );
+        _row!.details.add(detail);
+        detailsCountButtonList.add(
+          RowStitchCountButton(
+            patternRowModel: this,
+            detail: detail,
+            index: 0,
+            allowIncrease: false,
+            allowDecrease: false,
+            showCount: false,
+          ),
+        );
+      } catch (e) {
+        print(e);
+        if (debug) {
+          DbService().printDbTables(
+            patternRow: true,
+            yarnInPattern: true,
+            yarn: true,
+            yarnCollection: true,
+            stitch: true,
+          );
+        }
+      }
     }
     needScroll = true;
     setPreview(_row!.detailsAsString());
@@ -332,8 +358,8 @@ class PatternRowModel extends ChangeNotifier {
       }
       return;
     } else {
-      if (debug) print("Row stitch nb : ${_row?.stitchesPerRow}");
       if (debug) {
+        print("Row stitch nb : ${_row?.stitchesPerRow}");
         print(row!.toJson());
       }
       _row?.preview = _row?.detailsAsString();

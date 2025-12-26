@@ -25,14 +25,19 @@ class PatternYarnListWidget extends StatelessWidget {
       builder: (BuildContext context) => YarnListDialog(
         onPressed: (yarn, numberOfYarns) async {
           try {
+            if (patternModel.pattern == null) {
+              throw Exception("Can't add yarn to pattern if pattern is null");
+            }
+            int inPreviewId = patternModel.pattern!.yarnIdToNameMap.length + 1;
             await patternModel.insertYarn(
               yarnId: yarn.id,
-              inPreviewId: numberOfYarns + 1,
+              inPreviewId: inPreviewId,
             );
-            patternModel.pattern?.yarnIdToNameMap[numberOfYarns + 1] =
-                yarn.colorName;
+            patternModel.pattern!.yarnIdToNameMap[inPreviewId] = yarn.colorName;
             yarnListInitFunction.call();
-          } catch (e) {}
+          } catch (e) {
+            print(e);
+          }
         },
       ),
     );
